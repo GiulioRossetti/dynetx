@@ -1,2 +1,2 @@
-# dynet
+# DyNet
 Python Dynamic Network implementation
