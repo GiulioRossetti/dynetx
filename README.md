@@ -1,2 +1,2 @@
 # DyNet
-Python Dynamic Network implementation
+Python Dynamic Network implementation built upon networkx.
