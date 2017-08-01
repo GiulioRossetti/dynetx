@@ -1,5 +1,5 @@
 from networkx.utils import open_file, make_str
-from dynet.classes.sngraph import SNGraph
+from dynet.classes.dyngraph import DynGraph
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"
@@ -15,13 +15,13 @@ def generate_sn_edgelist(G, delimiter=' '):
 
     for u, v, d in G.edges(data=True):
 
-        if 'time' not in d:
+        if 't' not in d:
             raise NotImplemented
-        for t in d['time']:
+        for t in d['t']:
             e = [u, v, t]
 
             try:
-                e.extend(d[k] for k in d if k != "time" and k != "pres")
+                e.extend(d[k] for k in d if k != "t")
             except KeyError:
                 pass
             yield delimiter.join(map(make_str, e))
@@ -37,7 +37,7 @@ def write_sn_edgelist(G, path, delimiter=' ',  encoding='utf-8'):
 
 def parse_sn_edgelist(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None):
     if create_using is None:
-        G = SNGraph()
+        G = DynGraph()
     else:
         try:
             G = create_using
@@ -55,16 +55,23 @@ def parse_sn_edgelist(lines, comments='#', delimiter=None, create_using=None, no
         s = line.strip().split(delimiter)
         if len(s) < 3:
             continue
-        u = s.pop(0)
-        v = s.pop(0)
-        t = s.pop(0)
+        if len(s) == 3:
+            u = s.pop(0)
+            v = s.pop(0)
+            t = s.pop(0)
+            e = None
+        else:
+            u = s.pop(0)
+            v = s.pop(0)
+            t = s.pop(0)
+            e = s.pop(0)
 
         if nodetype is not None:
             try:
                 u = nodetype(u)
                 v = nodetype(v)
             except:
-                raise TypeError("Failed to convert nodes %s,%s to type %s." %(u, v, nodetype))
+                raise TypeError("Failed to convert nodes %s,%s to type %s." % (u, v, nodetype))
 
         if timestamptype is not None:
             try:
@@ -72,7 +79,7 @@ def parse_sn_edgelist(lines, comments='#', delimiter=None, create_using=None, no
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (t, nodetype))
 
-        G.add_edge(u, v, attr_dict={'time': t})
+        G.add_edge(u, v, t=t, e=e)
     return G
 
 
@@ -81,7 +88,7 @@ def read_sn_edgelist(path, comments="#", delimiter=None, create_using=None,
                   nodetype=None, timestamptype=None, encoding='utf-8'):
 
     lines = (line.decode(encoding) for line in path)
-    return parse_sn_edgelist(lines,comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
+    return parse_sn_edgelist(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
                              timestamptype=timestamptype)
 
 

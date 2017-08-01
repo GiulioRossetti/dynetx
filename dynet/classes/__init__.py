@@ -1,1 +1,1 @@
-from .sngraph import SNGraph
+from .dyngraph import DynGraph
