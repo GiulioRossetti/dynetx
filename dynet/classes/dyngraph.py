@@ -7,10 +7,22 @@ __email__ = "giulio.rossetti@gmail.com"
 
 
 class DynGraph(nx.Graph):
-
     def __init__(self, data=None, **attr):
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = {}
+        self.snapshots = {}
+
+    def temporal_snapshots(self):
+        return sorted(self.snapshots.keys())
+
+    def number_of_interactions(self, t=None):
+        if t is None:
+            return self.snapshots
+        else:
+            try:
+                return self.snapshots[t]
+            except KeyError:
+                raise KeyError("Snapshot not present.")
 
     def nodes_iter(self, t=None, data=False):
         if t is not None:
@@ -24,7 +36,7 @@ class DynGraph(nx.Graph):
         return list(self.edges_iter(nbunch, t, data, default))
 
     def edges_iter(self, nbunch=None, t=None, data=False, default=None):
-        seen = {}     # helper dict to keep track of multiply stored edges
+        seen = {}  # helper dict to keep track of multiply stored edges
         if nbunch is None:
             nodes_nbrs = self.adj.items()
         else:
@@ -44,7 +56,7 @@ class DynGraph(nx.Graph):
     def add_edge(self, u, v, t=None, e=None, attr_dict=None, **attr):
         if t is None:
             raise nx.NetworkXError(
-                    "The t argument must be specified.")
+                "The t argument must be specified.")
 
         if u not in self.node:
             self.adj[u] = self.adjlist_dict_factory()
@@ -70,14 +82,27 @@ class DynGraph(nx.Graph):
 
         # add the edge
         datadict = self.adj[u].get(v, self.edge_attr_dict_factory())
+
+        old_t = copy.deepcopy(t)
         if 't' in datadict:
             t.extend(datadict['t'])
             if e is not None:
                 t.extend(range(max(t), e))
 
         if e is not None:
-            span = range(max(t), e)
+            span = range(max(old_t), e)
             t.extend(span)
+            for idt in span:
+                if idt not in self.snapshots:
+                    self.snapshots[idt] = 1
+                else:
+                    self.snapshots[idt] += 1
+        else:
+            for idt in t:
+                if idt not in self.snapshots:
+                    self.snapshots[idt] = 1
+                else:
+                    self.snapshots[idt] += 1
 
         datadict.update({'t': t})
         datadict['t'] = sorted(list(set(t)))
@@ -89,7 +114,7 @@ class DynGraph(nx.Graph):
         # set up attribute dict
         if t is None:
             raise nx.NetworkXError(
-                    "The t argument must be a specified.")
+                "The t argument must be a specified.")
         # process ebunch
         for e in ebunch:
             self.add_edge(e[0], e[1], t)
@@ -117,7 +142,8 @@ class DynGraph(nx.Graph):
 
     def number_of_edges(self, u=None, v=None, t=None):
         if t is None:
-            if u is None: return int(self.size())
+            if u is None:
+                return int(self.size())
             if v in self.adj[u]:
                 return 1
             else:
@@ -160,9 +186,9 @@ class DynGraph(nx.Graph):
 
     def degree(self, nbunch=None, t=None):
 
-        if nbunch in self:      # return a single node
+        if nbunch in self:  # return a single node
             return next(self.degree_iter(nbunch, t))[1]
-        else:           # return a dict
+        else:  # return a dict
             return dict(self.degree_iter(nbunch, t))
 
     def degree_iter(self, nbunch=None, t=None):
@@ -203,7 +229,7 @@ class DynGraph(nx.Graph):
         else:
             return self.degree([n], t).values()[0] > 0
 
-    def add_star(self, nodes,  t=None, **attr):
+    def add_star(self, nodes, t=None, **attr):
         nlist = list(nodes)
         v = nlist[0]
         edges = ((v, n) for n in nlist[1:])
@@ -251,7 +277,10 @@ class DynGraph(nx.Graph):
                 continue
 
             if ixs < 0:
-                ixs = e[2]['t'].index(ot_from)
+                try:
+                    ixs = e[2]['t'].index(ot_from)
+                except ValueError:
+                    continue
 
             if ixe < 0:
                 ixe = ixs

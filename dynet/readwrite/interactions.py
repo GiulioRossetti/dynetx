@@ -28,7 +28,6 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
         path.write(line.encode(encoding))
 
 
-
 @open_file(0,mode='rb')
 def read_interactions(path, comments="#", delimiter=None, create_using=None,
                   nodetype=None, timestamptype=None, encoding='utf-8'):
@@ -54,7 +53,7 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
             line = line[:p]
         if not len(line):
             continue
-        # split line, should have 2 or more
+
         s = line.strip().split(delimiter)
         if len(s) != 4:
             continue
@@ -164,11 +163,3 @@ def read_sn_edgelist(path, comments="#", delimiter=None, create_using=None,
     lines = (line.decode(encoding) for line in path)
     return parse_sn_edgelist(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
                              timestamptype=timestamptype)
-
-
-# fixture for nose tests
-def teardown_module(module):
-    import os
-    for fname in ['test.sn_edgelist', 'test.sn_edgelist.gz']:
-        if os.path.isfile(fname):
-            os.unlink(fname)
