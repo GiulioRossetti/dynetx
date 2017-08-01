@@ -1,1 +1,1 @@
-from dynet.readwrite.sn_edgelist import *
+from dynet.readwrite.interactions import *

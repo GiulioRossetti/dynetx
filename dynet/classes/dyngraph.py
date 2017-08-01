@@ -1,5 +1,5 @@
 import networkx as nx
-
+import copy
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"
@@ -11,6 +11,35 @@ class DynGraph(nx.Graph):
     def __init__(self, data=None, **attr):
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = {}
+
+    def nodes_iter(self, t=None, data=False):
+        if t is not None:
+            return iter([n for n in self.degree(t=t).values() if n > 0])
+        return iter(self.node)
+
+    def nodes(self, t=None, data=False):
+        return list(self.nodes_iter(t=t, data=data))
+
+    def edges(self, nbunch=None, t=None, data=False, default=None):
+        return list(self.edges_iter(nbunch, t, data, default))
+
+    def edges_iter(self, nbunch=None, t=None, data=False, default=None):
+        seen = {}     # helper dict to keep track of multiply stored edges
+        if nbunch is None:
+            nodes_nbrs = self.adj.items()
+        else:
+            nodes_nbrs = ((n, self.adj[n]) for n in self.nbunch_iter(nbunch))
+
+        for n, nbrs in nodes_nbrs:
+            for nbr in nbrs:
+                if t is not None:
+                    if nbr not in seen and t in self.adj[n][nbr]['t']:
+                        yield (n, nbr, {"t": [t]})
+                else:
+                    if nbr not in seen:
+                        yield (n, nbr, self.adj[n][nbr])
+                seen[n] = 1
+        del seen
 
     def add_edge(self, u, v, t=None, e=None, attr_dict=None, **attr):
         if t is None:
@@ -203,8 +232,9 @@ class DynGraph(nx.Graph):
             t_to = t_from
 
         # copy node and attribute dictionaries
-        for e in self.edges(data=True):
+        for ed in self.edges(data=True):
             ixs, ixe = -1, -1
+            e = copy.deepcopy(ed)
 
             if e[2]['t'][0] > t_from:
                 ot_from = e[2]['t'][0]
