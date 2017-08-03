@@ -19,9 +19,9 @@ Goals
 - tools for the study dynamic social, biological, and infrastructure networks,
 - a rapid development environment for collaborative, multidisciplinary, projects.
 
-------------------------
-The Python NDlib library
-------------------------
+-------------------------
+The Python DyNetx library
+-------------------------
 
 ``DyNetx`` is a powerful Python package that allows simple and flexible modelling of dynamic networks.
 
