@@ -1,6 +1,6 @@
-**************
+***************
 DyNetx Tutorial
-**************
+***************
 
 DyNetx is built upon networkx and is designed to configure, model and analyze dynamic networks.
 
