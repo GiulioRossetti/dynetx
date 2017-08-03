@@ -28,7 +28,7 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
         path.write(line.encode(encoding))
 
 
-@open_file(0,mode='rb')
+@open_file(0, mode='rb')
 def read_interactions(path, comments="#", delimiter=None, create_using=None,
                   nodetype=None, timestamptype=None, encoding='utf-8'):
 
@@ -74,7 +74,7 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
             try:
                 s = timestamptype(s)
             except:
-                raise TypeError("Failed to convert timestamp %s to type %s." % (t, nodetype))
+                raise TypeError("Failed to convert timestamp %s to type %s." % (s, nodetype))
         if op == '+':
             G.add_edge(u, v, t=s)
         else:
@@ -156,7 +156,7 @@ def parse_sn_edgelist(lines, comments='#', delimiter=None, create_using=None, no
     return G
 
 
-@open_file(0,mode='rb')
+@open_file(0, mode='rb')
 def read_sn_edgelist(path, comments="#", delimiter=None, create_using=None,
                   nodetype=None, timestamptype=None, encoding='utf-8'):
 

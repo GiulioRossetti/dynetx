@@ -203,7 +203,7 @@ class DynGraph(nx.Graph):
         else:
             # edge weighted graph - degree is sum of nbr edge weights
             for n, nbrs in nodes_nbrs:
-                edges_t = len([v for v, k in nbrs.iteritems() if t in k['t']])
+                edges_t = len([v for v, k in nbrs.items() if t in k['t']])
                 yield (n, edges_t)
 
     def size(self, t=None, weight=None):
