@@ -302,6 +302,8 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+html_logo = 'dynetx.png'
+
 # Documents to append as an appendix to all manuals.
 #texinfo_appendices = []
 
