@@ -1,5 +1,5 @@
 from networkx.utils import open_file, make_str
-from dynet.classes.dyngraph import DynGraph
+from dynetx.classes.dyngraph import DynGraph
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"

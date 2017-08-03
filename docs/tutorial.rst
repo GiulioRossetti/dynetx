@@ -1,8 +1,8 @@
 **************
-DyNet Tutorial
+DyNetx Tutorial
 **************
 
-DyNet is built upon networkx and is designed to configure, model and analyze dynamic networks.
+DyNetx is built upon networkx and is designed to configure, model and analyze dynamic networks.
 
 ------------------------
 Creating a Dynamic Graph
@@ -13,7 +13,7 @@ Creating a Dynamic Graph
 Tutorial
 ========
 
-Start here to begin working with DyNet.
+Start here to begin working with DyNetx.
 
 Creating a graph
 ----------------
@@ -22,7 +22,7 @@ Create an empty dynamic graph with no nodes and no edges.
 
 .. code:: python
 
-	import dynet as dt
+	import dynetx as dt
 	g = dt.DynGraph()
 
 

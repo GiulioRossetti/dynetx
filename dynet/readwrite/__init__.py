@@ -1,1 +1,0 @@
-from dynet.readwrite.interactions import *

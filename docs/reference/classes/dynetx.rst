@@ -13,7 +13,7 @@ Methods
 Configure
 ^^^^^^^^^
 
-.. py:currentmodule:: dynet.classes.dyngraph
+.. py:currentmodule:: dynetx.classes.dyngraph
 
 ^^^^^
 Nodes

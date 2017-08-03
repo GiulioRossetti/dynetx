@@ -12,7 +12,7 @@ __email__ = "giulio.rossetti@gmail.com"
 # with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #    long_description = f.read()
 
-setup(name='dynet',
+setup(name='dynetx',
       version='0.1.0',
       license='GNU General Public License v3 or later (GPLv3+)',
       description='Dynamic Network library',

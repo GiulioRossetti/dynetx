@@ -1,7 +1,7 @@
 
 # -*- coding: utf-8 -*-
 #
-# DyNet documentation build configuration file, created by
+# DyNetx documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug  3 14:05:17 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -75,7 +75,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'DyNet'
+project = u'DyNetx'
 copyright = u'2017, Giulio Rossetti'
 author = u'Giulio Rossetti'
 
@@ -149,7 +149,7 @@ todo_include_todos = True
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-#html_title = u'DyNet v0.1.0'
+#html_title = u'DyNetx v0.1.0'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -253,7 +253,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'DyNet.tex', u'DyNet Documentation',
+    (master_doc, 'DyNetx.tex', u'DyNetx Documentation',
      u'Giulio Rossetti', 'manual'),
 ]
 
@@ -283,7 +283,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'dynet', u'DyNet Documentation',
+    (master_doc, 'dynet', u'DyNetx Documentation',
      [author], 1)
 ]
 
@@ -297,8 +297,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'DyNet', u'DyNet Documentation',
-     author, 'DyNet', 'One line description of project.',
+    (master_doc, 'DyNetx', u'DyNetx Documentation',
+     author, 'DyNetx', 'One line description of project.',
      'Miscellaneous'),
 ]
 

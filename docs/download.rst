@@ -6,9 +6,9 @@ Download
 Software
 --------
 
-Source and binary releases: https://pypi.python.org/pypi/dynet
+Source and binary releases: https://pypi.python.org/pypi/dynetx
 
-Github (latest development): https://github.com/GiulioRossetti/dynet
+Github (latest development): https://github.com/GiulioRossetti/dynetx
 
 -------------
 Documentation

@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-DyNet - Dynamic Network library
-===============================
+DyNetx - Dynamic Network library
+================================
 
 
 DyNet is a Python software package that extends ``networkx`` with dynamic network models and algorithms.
