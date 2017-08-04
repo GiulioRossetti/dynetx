@@ -17,3 +17,13 @@ In ``DyNetx`` are implemented the following **Dynamic Graph** models:
    :maxdepth: 2
 
    classes/dynetx.rst
+
+=========
+Functions
+=========
+
+
+.. toctree::
+   :maxdepth: 2
+
+	functions.rst

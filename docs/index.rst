@@ -7,7 +7,7 @@ DyNetx - Dynamic Network library
 ================================
 
 
-DyNet is a Python software package that extends ``networkx`` with dynamic network models and algorithms.
+DyNetx is a Python software package that extends ``networkx`` with dynamic network models and algorithms.
 
 =========== ============== =================== ==================  ==========  ===============
 **Release**    **Date**    **Python Versions**   **Main Author**   **GitHub**     **pypl**

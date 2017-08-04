@@ -7,15 +7,34 @@ __email__ = "giulio.rossetti@gmail.com"
 
 
 class DynGraph(nx.Graph):
+    """
+    DynGraph, base class for undirected dynamic graphs.
+    """
+
     def __init__(self, data=None, **attr):
+        """
+
+        :param data:
+        :param attr:
+        """
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = {}
         self.snapshots = {}
 
     def temporal_snapshots(self):
+        """
+
+        :return:
+        """
+
         return sorted(self.snapshots.keys())
 
     def number_of_interactions(self, t=None):
+        """
+
+        :param t:
+        :return:
+        """
         if t is None:
             return self.snapshots
         else:
@@ -25,17 +44,46 @@ class DynGraph(nx.Graph):
                 raise KeyError("Snapshot not present.")
 
     def nodes_iter(self, t=None, data=False):
+        """
+        Iterator over nodes
+
+        :param t:
+        :param data:
+        :return:
+        """
         if t is not None:
             return iter([n for n in self.degree(t=t).values() if n > 0])
         return iter(self.node)
 
     def nodes(self, t=None, data=False):
+        """
+
+        :param t:
+        :param data:
+        :return:
+        """
         return list(self.nodes_iter(t=t, data=data))
 
     def edges(self, nbunch=None, t=None, data=False, default=None):
+        """
+
+        :param nbunch:
+        :param t:
+        :param data:
+        :param default:
+        :return:
+        """
         return list(self.edges_iter(nbunch, t, data, default))
 
     def edges_iter(self, nbunch=None, t=None, data=False, default=None):
+        """
+
+        :param nbunch:
+        :param t:
+        :param data:
+        :param default:
+        :return:
+        """
         seen = {}  # helper dict to keep track of multiply stored edges
         if nbunch is None:
             nodes_nbrs = self.adj.items()
@@ -54,6 +102,16 @@ class DynGraph(nx.Graph):
         del seen
 
     def add_edge(self, u, v, t=None, e=None, attr_dict=None, **attr):
+        """
+
+        :param u:
+        :param v:
+        :param t:
+        :param e:
+        :param attr_dict:
+        :param attr:
+        :return:
+        """
         if t is None:
             raise nx.NetworkXError(
                 "The t argument must be specified.")
@@ -111,6 +169,14 @@ class DynGraph(nx.Graph):
         self.adj[v][u] = datadict
 
     def add_edges_from(self, ebunch, t=None, attr_dict=None, **attr):
+        """
+
+        :param ebunch:
+        :param t:
+        :param attr_dict:
+        :param attr:
+        :return:
+        """
         # set up attribute dict
         if t is None:
             raise nx.NetworkXError(
@@ -120,6 +186,13 @@ class DynGraph(nx.Graph):
             self.add_edge(e[0], e[1], t)
 
     def remove_edge(self, u, v, t=None):
+        """
+
+        :param u:
+        :param v:
+        :param t:
+        :return:
+        """
         try:
             if t is None:
                 del self.adj[v][u]
@@ -137,10 +210,23 @@ class DynGraph(nx.Graph):
             raise nx.NetworkXError("The edge %s-%s is not in the graph" % (u, v))
 
     def remove_edges_from(self, ebunch, t=None):
+        """
+
+        :param ebunch:
+        :param t:
+        :return:
+        """
         for e in ebunch:
             self.remove_edge(e[0], e[1], t)
 
     def number_of_edges(self, u=None, v=None, t=None):
+        """
+
+        :param u:
+        :param v:
+        :param t:
+        :return:
+        """
         if t is None:
             if u is None:
                 return int(self.size())
@@ -158,6 +244,13 @@ class DynGraph(nx.Graph):
                     return 0
 
     def has_edge(self, u, v, t=None):
+        """
+
+        :param u:
+        :param v:
+        :param t:
+        :return:
+        """
         try:
             if t is None:
                 return v in self.adj[u]
@@ -167,6 +260,12 @@ class DynGraph(nx.Graph):
             return False
 
     def neighbors(self, n, t=None):
+        """
+
+        :param n:
+        :param t:
+        :return:
+        """
         try:
             if t is None:
                 return list(self.adj[n])
@@ -176,6 +275,12 @@ class DynGraph(nx.Graph):
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
     def neighbors_iter(self, n, t=None):
+        """
+
+        :param n:
+        :param t:
+        :return:
+        """
         try:
             if t is None:
                 return iter(self.adj[n])
@@ -185,6 +290,12 @@ class DynGraph(nx.Graph):
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
     def degree(self, nbunch=None, t=None):
+        """
+
+        :param nbunch:
+        :param t:
+        :return:
+        """
 
         if nbunch in self:  # return a single node
             return next(self.degree_iter(nbunch, t))[1]
@@ -192,6 +303,12 @@ class DynGraph(nx.Graph):
             return dict(self.degree_iter(nbunch, t))
 
     def degree_iter(self, nbunch=None, t=None):
+        """
+
+        :param nbunch:
+        :param t:
+        :return:
+        """
         if nbunch is None:
             nodes_nbrs = self.adj.items()
         else:
@@ -207,10 +324,21 @@ class DynGraph(nx.Graph):
                 yield (n, edges_t)
 
     def size(self, t=None, weight=None):
+        """
+
+        :param t:
+        :param weight:
+        :return:
+        """
         s = sum(self.degree(t=t).values()) / 2
         return int(s)
 
     def number_of_nodes(self, t=None):
+        """
+
+        :param t:
+        :return:
+        """
         if t is None:
             return len(self.node)
         else:
@@ -218,9 +346,20 @@ class DynGraph(nx.Graph):
             return nds
 
     def order(self, t=None):
+        """
+
+        :param t:
+        :return:
+        """
         return self.number_of_nodes(t)
 
     def has_node(self, n, t=None):
+        """
+
+        :param n:
+        :param t:
+        :return:
+        """
         if t is None:
             try:
                 return n in self.node
@@ -230,28 +369,59 @@ class DynGraph(nx.Graph):
             return self.degree([n], t).values()[0] > 0
 
     def add_star(self, nodes, t=None, **attr):
+        """
+
+        :param nodes:
+        :param t:
+        :param attr:
+        :return:
+        """
         nlist = list(nodes)
         v = nlist[0]
         edges = ((v, n) for n in nlist[1:])
         self.add_edges_from(edges, t, **attr)
 
     def add_path(self, nodes, t=None, **attr):
+        """
+
+        :param nodes:
+        :param t:
+        :param attr:
+        :return:
+        """
         nlist = list(nodes)
         edges = zip(nlist[:-1], nlist[1:])
         self.add_edges_from(edges, t, **attr)
 
     def add_cycle(self, nodes, t=None, **attr):
+        """
+
+        :param nodes:
+        :param t:
+        :param attr:
+        :return:
+        """
         nlist = list(nodes)
         edges = zip(nlist, nlist[1:] + [nlist[0]])
         self.add_edges_from(edges, t, **attr)
 
     def stream_edges(self):
+        """
+
+        :return:
+        """
         timestamps = sorted(self.time_to_edge.keys())
         for t in timestamps:
             for e in self.time_to_edge[t]:
                 yield (e[0], e[1], e[2], t)
 
     def time_slice(self, t_from, t_to=None):
+        """
+
+        :param t_from:
+        :param t_to:
+        :return:
+        """
         # create new graph and copy subgraph into it
         H = self.__class__()
         if t_to is None:
