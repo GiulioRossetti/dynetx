@@ -16,6 +16,12 @@
 import sys
 import os
 
+import sphinx
+if sphinx.__version__ < "1.3":
+    raise RuntimeError("Sphinx 1.3 or newer required")
+
+
+
 from mock import Mock as MagicMock
 import sphinx_rtd_theme
 
@@ -25,10 +31,11 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return MagicMock()
 
+numpydoc_show_class_members = False
 
-MOCK_MODULES = ['networkx', 'networkx.utils', 'pygtk', 'gtk', 'gobject', 'argparse', 'matplotlib', 'matplotlib.pyplot', 'numpy', 'pandas',
-                'scipy']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+#MOCK_MODULES = ['networkx', 'numpy', 'networkx.utils', 'pygtk', 'gtk', 'gobject', 'argparse',  'pandas',
+#                'scipy']
+#sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
@@ -38,7 +45,7 @@ html_theme_options = {
     'display_version': False,
 }
 
-#sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../'))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -54,16 +61,15 @@ html_theme_options = {
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.mathjax',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    #'sphinx.ext.autodoc',
-    #'sphinx.ext.doctest',
-    #'sphinx.ext.todo',
-    #'sphinx.ext.coverage',
-    #'sphinx.ext.imgmath',
-    #'sphinx.ext.autosummary',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.todo',
+    'nb2plots',
 ]
 
 sphinx_gallery_conf = {
