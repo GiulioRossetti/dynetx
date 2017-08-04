@@ -22,8 +22,7 @@ In ``DyNetx`` are implemented the following **Dynamic Graph** models:
 Functions
 =========
 
-
 .. toctree::
    :maxdepth: 2
 
-	functions.rst
+   functions.rst
