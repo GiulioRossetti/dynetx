@@ -15,15 +15,15 @@ __license__ = "GPL"
 __email__ = "giulio.rossetti@gmail.com"
 
 
-__all__ = ['nodes', 'edges', 'degree', 'degree_histogram', 'neighbors',
-           'number_of_nodes', 'number_of_edges', 'density',
+__all__ = ['nodes', 'interactions', 'degree', 'degree_histogram', 'neighbors',
+           'number_of_nodes', 'number_of_interactions', 'density',
            'is_directed', 'freeze', 'is_frozen', 'subgraph',
            'add_star', 'add_path', 'add_cycle',
            'create_empty_copy', 'set_node_attributes',
            'get_node_attributes', 'set_edge_attributes',
            'get_edge_attributes', 'all_neighbors', 'non_neighbors',
-           'non_edges', 'is_empty', 'time_slice', 'stream_edges', 'number_of_interactions',
-           'temporal_snapshots']
+           'non_edges', 'is_empty', 'time_slice', 'stream_interactions', 'interactions_per_snapshots',
+           'temporal_snapshots_ids']
 
 
 def nodes(G, t=None):
@@ -57,7 +57,7 @@ def nodes(G, t=None):
     return G.nodes(t)
 
 
-def edges(G, nbunch=None, t=None):
+def interactions(G, nbunch=None, t=None):
     """Return the list of edges present in a given snapshot.
 
            Edges are returned as tuples
@@ -92,14 +92,14 @@ def edges(G, nbunch=None, t=None):
            >>> G = dn.DynGraph()
            >>> G.add_path([0,1,2], t=0)
            >>> G.add_edge(2,3, t=1)
-           >>> dn.edges(G, t=0)
+           >>> dn.interactions(G, t=0)
            [(0, 1), (1, 2)]
-           >>> dn.edges(G)
+           >>> dn.interactions(G)
            [(0, 1), (1, 2), (2, 3)]
-           >>> dn.edges(G, [0,3], t=0)
+           >>> dn.interactions(G, [0,3], t=0)
            [(0, 1)]
            """
-    return G.edges(nbunch, t=t)
+    return G.interactions(nbunch, t=t)
 
 
 def degree(G, nbunch=None, t=None):
@@ -211,39 +211,31 @@ def number_of_nodes(G, t=None):
     return G.number_of_nodes(t)
 
 
-def number_of_edges(G, t=None):
-    """Remove all edges specified in ebunch at time t (if specified).
+def number_of_interactions(G, t=None):
+    """Return the number of edges between two nodes at time t.
 
-            Parameters
-            ----------
-
-            G : Graph opject
-                DyNetx graph object
-
-            ebunch: list or container of edge tuples
-                Each edge given in the list or container will be removed
-                from the graph.
-
-            t : snapshot id (default=None)
-                If None the number of edges will be computed on the flattened graph.
+        Parameters
+        ----------
+        u, v : nodes, optional (default=all edges)
+            If u and v are specified, return the number of edges between
+            u and v. Otherwise return the total number of all edges.
+        t : snapshot id (default=None)
+            If None will be returned the number of edges on the flattened graph.
 
 
-            See Also
-            --------
-            remove_edge : remove a single edge at time t
+        Returns
+        -------
+        nedges : int
+            The number of edges in the graph.  If nodes u and v are specified
+            return the number of edges between those nodes.
 
-            Notes
-            -----
-            Will fail silently if an edge in ebunch is not in the graph.
-
-            Examples
-            --------
+        Examples
+        --------
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
-            >>> ebunch=[(1,2),(2,3)]
-            >>> dn.remove_edges_from(G, ebunch, t=0)
+            >>> dn.number_of_interactions(G, t=0)
             """
-    return G.number_of_edges(t)
+    return G.number_of_interactions(t)
 
 
 def density(G, t=None):
@@ -280,7 +272,7 @@ def density(G, t=None):
         loops can have density higher than 1.
     """
     n = number_of_nodes(G, t)
-    m = number_of_edges(G, t)
+    m = number_of_interactions(G, t)
     if m == 0 or n <= 1:
         return 0
     d = m / (n * (n - 1))
@@ -788,7 +780,7 @@ def time_slice(G, t_from, t_to=None):
     return G.time_slice(t_from, t_to)
 
 
-def stream_edges(G):
+def stream_interactions(G):
     """Generate a temporal ordered stream of interactions.
 
             Parameters
@@ -811,10 +803,10 @@ def stream_edges(G):
             >>> list(dn.stream_edges(G))
             [(0, 1, '+', 0), (1, 2, '+', 0), (2, 3, '+', 0), (3, 4, '+', 1), (4, 5, '+', 1), (5, 6, '+', 1)]
             """
-    return G.stream_edges()
+    return G.stream_interactions()
 
 
-def temporal_snapshots(G):
+def temporal_snapshots_ids(G):
     """Return the ordered list of snapshot ids present in the dynamic graph.
 
         Parameters
@@ -838,10 +830,10 @@ def temporal_snapshots(G):
         >>> dn.temporal_snapshots(G)
         [0, 1, 2]
     """
-    return G.temporal_snapshots()
+    return G.temporal_snapshots_ids()
 
 
-def number_of_interactions(G, t=None):
+def interactions_per_snapshots(G, t=None):
     """Return the number of interactions within snapshot t.
 
         Parameters
@@ -868,7 +860,7 @@ def number_of_interactions(G, t=None):
         >>> G.add_path([7,1,2,3], t=2)
         >>> dn.number_of_interactions(G, t=0)
         3
-        >>> dn.number_of_interactions(G)
+        >>> dn.interactions_per_snapshots(G)
         {0: 3, 1: 3, 2: 3}
         """
-    return G.number_of_interactions(t)
+    return G.interactions_per_snapshots(t)

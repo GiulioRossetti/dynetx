@@ -7,6 +7,7 @@ Self-loops are allowed.
 """
 
 import networkx as nx
+from dynetx.utils import not_implemented
 import copy
 
 __author__ = 'Giulio Rossetti'
@@ -231,7 +232,7 @@ class DynGraph(nx.Graph):
         """
         return list(self.nodes_iter(t=t, data=data))
 
-    def edges(self, nbunch=None, t=None, data=False, default=None):
+    def interactions(self, nbunch=None, t=None, data=False, default=None):
         """Return the list of edges present in a given snapshot.
 
         Edges are returned as tuples
@@ -272,9 +273,9 @@ class DynGraph(nx.Graph):
         >>> G.edges([0,3], t=0)
         [(0, 1)]
         """
-        return list(self.edges_iter(nbunch, t, data, default))
+        return list(self.interactions_iter(nbunch, t, data, default))
 
-    def edges_iter(self, nbunch=None, t=None, data=False, default=None):
+    def interactions_iter(self, nbunch=None, t=None, data=False, default=None):
         """Return an iterator over the edges present in a given snapshot.
 
         Edges are returned as tuples
@@ -329,7 +330,7 @@ class DynGraph(nx.Graph):
                 seen[n] = 1
         del seen
 
-    def add_edge(self, u, v, t=None, e=None, attr_dict=None, **attr):
+    def add_interaction(self, u, v, t=None, e=None, attr_dict=None, **attr):
         """Add an edge between u and v at time t vanishing (optional) at time e.
 
         The nodes u and v will be automatically added if they are
@@ -379,15 +380,20 @@ class DynGraph(nx.Graph):
             self.node[v] = {}
 
         if type(t) != list:
-            t = [t]
+            t = [t, t]
 
-        for idt in t:
+        for idt in [t[0]]:
+
             if idt not in self.time_to_edge:
                 self.time_to_edge[idt] = [(u, v, "+")]
             else:
-                self.time_to_edge[idt].append((u, v, "+"))
+                #@todo: costly, change
+                if (u, v, "+") not in self.time_to_edge[idt]:
+                    self.time_to_edge[idt].append((u, v, "+"))
 
         if e is not None:
+
+            t[1] = e-1
             if e not in self.time_to_edge:
                 self.time_to_edge[e] = [(u, v, "-")]
             else:
@@ -396,15 +402,36 @@ class DynGraph(nx.Graph):
         # add the edge
         datadict = self.adj[u].get(v, self.edge_attr_dict_factory())
 
-        old_t = copy.deepcopy(t)
         if 't' in datadict:
-            t.extend(datadict['t'])
-            if e is not None:
-                t.extend(range(max(t), e))
+            app = datadict['t']
+            max_end = app[-1][1]
+
+            if max_end == app[-1][0] and t[0] == app[-1][0]+1:
+
+                app[-1] = [app[-1][0], t[0]]
+                if app[-1][0]+1 in self.time_to_edge:
+                    # @todo: costly, change
+                    self.time_to_edge[app[-1][0]+1].remove((u, v, "+"))
+
+            else:
+                if t[0] < app[-1][0]:
+                    raise ValueError("The specified interaction extension is broader than "
+                                     "the ones already present for the given nodes.")
+
+                if t[0] <= max_end < t[1]:
+                    app[-1][1] = t[1]
+                    if max_end + 1 in self.time_to_edge:
+                        #@todo: costly, change
+                        self.time_to_edge[max_end+1].remove((u, v, "-"))
+                        self.time_to_edge[t[0]-1].remove((u, v, "+"))
+
+                else:
+                    app.append(t)
+        else:
+            datadict['t'] = [t]
 
         if e is not None:
-            span = range(max(old_t), e)
-            t.extend(span)
+            span = range(t[0], t[1]+1)
             for idt in span:
                 if idt not in self.snapshots:
                     self.snapshots[idt] = 1
@@ -412,18 +439,19 @@ class DynGraph(nx.Graph):
                     self.snapshots[idt] += 1
         else:
             for idt in t:
-                if idt not in self.snapshots:
-                    self.snapshots[idt] = 1
-                else:
-                    self.snapshots[idt] += 1
+                if idt is not None:
+                    if idt not in self.snapshots:
+                        self.snapshots[idt] = 1
+                    else:
+                        self.snapshots[idt] += 1
 
-        datadict.update({'t': t})
-        datadict['t'] = sorted(list(set(t)))
+        #datadict.update({'t': app})
+        #datadict['t'] = sorted(list(set(t)))
 
         self.adj[u][v] = datadict
         self.adj[v][u] = datadict
 
-    def add_edges_from(self, ebunch, t=None, attr_dict=None, **attr):
+    def add_interactions_from(self, ebunch, t=None, e=None, attr_dict=None, **attr):
         """Add all the edges in ebunch at time t.
 
         Parameters
@@ -434,6 +462,7 @@ class DynGraph(nx.Graph):
             3-tuples (u,v,d) where d is a dictionary containing edge
             data.
         t : appearance snapshot id, mandatory
+        e : vanishing snapshot id, optional
 
         See Also
         --------
@@ -453,81 +482,26 @@ class DynGraph(nx.Graph):
             raise nx.NetworkXError(
                 "The t argument must be a specified.")
         # process ebunch
-        for e in ebunch:
-            self.add_edge(e[0], e[1], t)
+        for ed in ebunch:
+            self.add_interaction(ed[0], ed[1], t, e)
 
-    def remove_edge(self, u, v, t=None):
-        """Remove the edge between u and v at time t (if specified).
+    @not_implemented()
+    def remove_edge(self, u, v):
+        pass
 
-                Parameters
-                ----------
-                u, v : nodes
-                    Remove the edge between nodes u and v.
-                t : snapshot id (default=None)
-                    If None the edge will be removed at from all snapshots.
+    @not_implemented()
+    def remove_edges_from(self, ebunch):
+        pass
 
-                Raises
-                ------
-                NetworkXError
-                    If there is not an edge between u and v.
+    @not_implemented()
+    def remove_node(self, u):
+        pass
 
-                See Also
-                --------
-                remove_edges_from : remove a collection of edges
+    @not_implemented()
+    def remove_nodes_from(self, nbunch):
+        pass
 
-                Examples
-                --------
-                >>> G = dn.DynGraph()
-                >>> G.add_path([0,1,2,3], 0)
-                >>> G.remove_edge(0,1, t=0)
-                """
-        try:
-            if t is None:
-                del self.adj[v][u]
-
-            edge_pres = self.adj[u][v]['t']
-            if t in edge_pres:
-                edge_pres.remove(t)
-            if len(edge_pres) == 0:
-                del self.adj[u][v]
-                if u != v:  # self-loop needs only one entry removed
-                    del self.adj[v][u]
-            else:
-                self.adj[u][v]['t'] = edge_pres
-        except KeyError:
-            raise nx.NetworkXError("The edge %s-%s is not in the graph" % (u, v))
-
-    def remove_edges_from(self, ebunch, t=None):
-        """Remove all edges specified in ebunch at time t (if specified).
-
-        Parameters
-        ----------
-        ebunch: list or container of edge tuples
-            Each edge given in the list or container will be removed
-            from the graph.
-        t : snapshot id (default=None)
-            If None the edge will be removed at from all snapshots.
-
-
-        See Also
-        --------
-        remove_edge : remove a single edge at time t
-
-        Notes
-        -----
-        Will fail silently if an edge in ebunch is not in the graph.
-
-        Examples
-        --------
-        >>> G = dn.DynGraph()
-        >>> G.add_path([0,1,2,3], t=0)
-        >>> ebunch=[(1,2),(2,3)]
-        >>> G.remove_edges_from(ebunch, t=0)
-        """
-        for e in ebunch:
-            self.remove_edge(e[0], e[1], t)
-
-    def number_of_edges(self, u=None, v=None, t=None):
+    def number_of_interactions(self, u=None, v=None, t=None):
         """Return the number of edges between two nodes at time t.
 
         Parameters
@@ -553,12 +527,12 @@ class DynGraph(nx.Graph):
         --------
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
-        >>> G.number_of_edges()
+        >>> G.number_of_interactions()
         3
-        >>> G.number_of_edges(0,1, t=0)
+        >>> G.number_of_interactions(0,1, t=0)
         1
         >>> G.add_edge(3, 4, t=1)
-        >>> G.number_of_edges()
+        >>> G.number_of_interactions()
         4
         """
         if t is None:
@@ -577,7 +551,7 @@ class DynGraph(nx.Graph):
                 else:
                     return 0
 
-    def has_edge(self, u, v, t=None):
+    def has_interaction(self, u, v, t=None):
         """Return True if the edge (u,v) is in the graph at time t.
 
         Parameters
@@ -600,9 +574,9 @@ class DynGraph(nx.Graph):
 
         >>> G = nx.Graph()
         >>> G.add_path([0,1,2,3], t=0)
-        >>> G.has_edge(0,1, t=0)
+        >>> G.has_interaction(0,1, t=0)
         True
-        >>> G.has_edge(0,1, t=1)
+        >>> G.has_interaction(0,1, t=1)
         False
         """
         try:
@@ -946,7 +920,7 @@ class DynGraph(nx.Graph):
         edges = zip(nlist, nlist[1:] + [nlist[0]])
         self.add_edges_from(edges, t, **attr)
 
-    def stream_edges(self):
+    def stream_interactions(self):
         """Generate a temporal ordered stream of interactions.
 
 
@@ -960,7 +934,7 @@ class DynGraph(nx.Graph):
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.add_path([3,4,5,6], t=1)
-        >>> list(G.stream_edges())
+        >>> list(G.stream_interactions())
         [(0, 1, '+', 0), (1, 2, '+', 0), (2, 3, '+', 0), (3, 4, '+', 1), (4, 5, '+', 1), (5, 6, '+', 1)]
         """
         timestamps = sorted(self.time_to_edge.keys())
@@ -1042,7 +1016,7 @@ class DynGraph(nx.Graph):
                 H.add_edge(e[0], e[1], t)
         return H
 
-    def temporal_snapshots(self):
+    def temporal_snapshots_ids(self):
         """Return the ordered list of snapshot ids present in the dynamic graph.
 
             Returns
@@ -1062,7 +1036,7 @@ class DynGraph(nx.Graph):
         """
         return sorted(self.snapshots.keys())
 
-    def number_of_interactions(self, t=None):
+    def interactions_per_snapshots(self, t=None):
         """Return the number of interactions within snapshot t.
 
         Parameters
@@ -1084,9 +1058,9 @@ class DynGraph(nx.Graph):
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.add_path([0,4,5,6], t=1)
         >>> G.add_path([7,1,2,3], t=2)
-        >>> G.number_of_interactions(t=0)
+        >>> G.interactions_per_snapshots(t=0)
         3
-        >>> G.number_of_interactions()
+        >>> G.interactions_per_snapshots()
         {0: 3, 1: 3, 2: 3}
         """
         if t is None:
@@ -1097,3 +1071,53 @@ class DynGraph(nx.Graph):
             except KeyError:
                 raise KeyError("Snapshot not present.")
 
+    def inter_event_time(self, u=None, v=None):
+        """
+
+        :param u:
+        :param v:
+        :return:
+        """
+        dist = {}
+        if u is None:
+            # global inter event
+            delta = (0, 0, 0, 0)
+            for ext in self.stream_interactions():
+                disp = ext[-1] - delta[-1]
+                delta = ext
+                if disp in dist:
+                    dist[disp] += 1
+                else:
+                    dist[disp] = 1
+
+        elif u is not None and v is None:
+            # node inter event
+            delta = (0, 0, 0, 0)
+            flag = False
+            for ext in self.stream_interactions():
+                if ext[0] == u or ext[1] == u:
+                    if flag:
+                        disp = ext[-1] - delta[-1]
+                        delta = ext
+                        if disp in dist:
+                            dist[disp] += 1
+                        else:
+                            dist[disp] = 1
+                    else:
+                        delta = ext
+                        flag = True
+        else:
+            # edge inter event
+            evt = self.adj[u][v]['t']
+            delta = []
+            for i in evt:
+                for j in [0, 1]:
+                    delta.append(i[j])
+            for i in range(0, len(delta)-1):
+                e = delta[i+1] - delta[i]
+                if e not in dist:
+                    dist[e] = 1
+                else:
+                    dist[e] += 1
+
+        return dist

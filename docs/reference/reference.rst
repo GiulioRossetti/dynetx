@@ -11,7 +11,7 @@ In this section are introduced the components that constitute ``DyNetx``, namely
 In ``DyNetx`` are implemented the following **Dynamic Graph** models:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    classes/gtypes.rst
    functions.rst

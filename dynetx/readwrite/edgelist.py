@@ -21,7 +21,7 @@ Interaction:
 >>> 1 2 - 3
 """
 
-from networkx.utils import open_file, make_str
+from dynetx.utils import open_file, make_str
 from dynetx import DynGraph
 
 __author__ = 'Giulio Rossetti'
