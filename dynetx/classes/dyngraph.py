@@ -262,12 +262,12 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
-        >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
+        >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2], t=0)
         >>> G.add_edge(2,3, t=1)
         >>> G.edges(t=0)
         [(0, 1), (1, 2)]
-        >>> G.edges() # default edge data is {} (empty dictionary)
+        >>> G.edges()
         [(0, 1), (1, 2), (2, 3)]
         >>> G.edges([0,3], t=0)
         [(0, 1)]

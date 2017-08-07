@@ -96,13 +96,13 @@ In order to read a snapshot graph file
 
 .. code:: python
 
-	g = dn.read_sn_edgelist(graph_filename, nodetype=int, timestamptype=int)
+	g = dn.read_snapshots(graph_filename, nodetype=int, timestamptype=int)
 
 in order to save a graph in the same format
 
 .. code:: python
 
-	dn.write_sn_edgelist(graph, graph_filename)
+	dn.write_snapshots(graph, graph_filename)
 
 
 ^^^^^^^^^^^^^^^^^

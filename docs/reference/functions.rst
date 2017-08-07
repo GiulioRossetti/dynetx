@@ -2,6 +2,8 @@
 Functions
 *********
 
+Functional interface to graph methods and assorted utilities.
+
 .. automodule:: dynetx.classes.function
 
 Graph
@@ -67,3 +69,5 @@ Snapshots and Interaction Stream
 
 	time_slice
 	stream_edges
+	number_of_interactions
+	temporal_snapshots

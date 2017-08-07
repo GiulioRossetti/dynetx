@@ -1,3 +1,26 @@
+"""
+Read and write DyNetx graphs as edge lists.
+
+The multi-line adjacency list format is useful for graphs with nodes
+that can be meaningfully represented as strings.
+
+With the edgelist format simple edge data can be stored but node or graph data is not.
+There is no way of representing isolated nodes unless the node has a self-loop edge.
+
+Format
+------
+You can read or write three formats of edge lists with these functions.
+
+Node pairs with timestamp:
+
+>>> 1 2 0
+
+Interaction:
+
+>>> 1 2 + 0
+>>> 1 2 - 3
+"""
+
 from networkx.utils import open_file, make_str
 from dynetx import DynGraph
 
@@ -9,10 +32,10 @@ __all__ = ['write_interactions',
            'generate_interactions',
            'parse_interactions',
            'read_interactions',
-           'generate_sn_edgelist',
-           'write_sn_edgelist',
-           'parse_sn_edgelist',
-           'read_sn_edgelist']
+           'generate_snapshots',
+           'write_snapshots',
+           'parse_snapshots',
+           'read_snapshots']
 
 
 def generate_interactions(G, delimiter=' '):
@@ -85,7 +108,7 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
     return G
 
 
-def generate_sn_edgelist(G, delimiter=' '):
+def generate_snapshots(G, delimiter=' '):
 
     for u, v, d in G.edges(data=True):
         if 't' not in d:
@@ -101,14 +124,14 @@ def generate_sn_edgelist(G, delimiter=' '):
 
 
 @open_file(1, mode='wb')
-def write_sn_edgelist(G, path, delimiter=' ',  encoding='utf-8'):
+def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
 
-    for line in generate_sn_edgelist(G, delimiter):
+    for line in generate_snapshots(G, delimiter):
         line += '\n'
         path.write(line.encode(encoding))
 
 
-def parse_sn_edgelist(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None):
+def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None):
     if create_using is None:
         G = DynGraph()
     else:
@@ -157,9 +180,9 @@ def parse_sn_edgelist(lines, comments='#', delimiter=None, create_using=None, no
 
 
 @open_file(0, mode='rb')
-def read_sn_edgelist(path, comments="#", delimiter=None, create_using=None,
-                  nodetype=None, timestamptype=None, encoding='utf-8'):
+def read_snapshots(path, comments="#", delimiter=None, create_using=None,
+                   nodetype=None, timestamptype=None, encoding='utf-8'):
 
     lines = (line.decode(encoding) for line in path)
-    return parse_sn_edgelist(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
-                             timestamptype=timestamptype)
+    return parse_snapshots(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
+                           timestamptype=timestamptype)

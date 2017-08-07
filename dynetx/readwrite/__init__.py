@@ -1,1 +1,1 @@
-from dynetx.readwrite.interactions import *
+from dynetx.readwrite.edgelist import *

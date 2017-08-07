@@ -15,3 +15,4 @@ In ``DyNetx`` are implemented the following **Dynamic Graph** models:
 
    classes/gtypes.rst
    functions.rst
+   read_write
