@@ -102,57 +102,5 @@ install:
       pip install nose-ignore-docstring;
     fi
 
-script:
-  - printenv PWD
-  - if [[ "${PYTHON_VM}" != ipy ]]; then
-      pip install .;
-      export NX_INSTALL=`pip show networkx | grep Location | awk '{print $2"/networkx"}'`;
-    fi
-
-  # nose 1.3.0 does not tell coverage to only cover the requested
-  # package (except during the report).  So to restrict coverage, we must
-  # inform coverage through the .coveragerc file.
-  - if [[ "${PYTHON_VM}" != ipy ]]; then
-      cp .coveragerc $NX_INSTALL;
-      cp setup.cfg $NX_INSTALL;
-    fi
-
-  # Move to new directory so that networkx is not imported from repository.
-  # Why? Because we want the tests to make sure that NetworkX was installed
-  # correctly. Example: setup.py might not have included some submodules.
-  # Testing from the git repository cannot catch a mistake like that.
-  #
-  # Export current directory for logs.
-  - if [[ "${PYTHON_VM}" != ipy ]]; then
-      cd $NX_INSTALL;
-      printenv PWD;
-    fi
-
-      # Run nosetests.
-  - if [[ "${PYTHON_VM}" != ipy ]]; then
-      if [[ "${PYTHON_VM}" == pypy ]]; then
-          nosetests --verbosity=2 --with-ignore-docstrings;
-      else
-          nosetests --verbosity=2 --with-ignore-docstrings --with-coverage --cover-package=networkx;
-      fi;
-    else
-      mono "${IPY}" -X:ExceptionDetail -X:FullFrames -c 'from nose import main; main()' \--verbosity=2;
-    fi
-
-after_success:
-  # `coveralls` needs to be run from the git repository, and it requires
-  # the .coverage file that was generated during the testing phase. The
-  # .coverage file stores absolute paths to the modules, and since we ran
-  # tests from the installed directory, the paths do not point to files in
-  # the git repository. Although this does not affect reported statistics,
-  # it does prevent coveralls from providing more detailed information on
-  # each file. So the paths in .coverage must be modified to match the
-  # repository paths. This is what `fixcoverage.py` does.
-  #
-  # Report coverage for 2.7 and 3.4 miniconda runs only.
-  - if [[ "${TRAVIS_PYTHON_VERSION}${OPTIONAL_DEPS}" =~ 2\.7miniconda|3\.4miniconda ]]; then
-      codecov;
-    fi
-
 notifications:
   email: false
