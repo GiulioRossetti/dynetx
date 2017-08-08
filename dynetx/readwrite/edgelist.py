@@ -21,7 +21,7 @@ Sequence of **Interaction** events (u, v, +/-, t):
 >>> 1 2 - 3
 """
 
-from dynetx.utils import open_file, make_str
+from dynetx.utils import open_file, make_str, clean_timeslot
 from dynetx import DynGraph
 
 __author__ = 'Giulio Rossetti'
@@ -67,7 +67,7 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
 
 @open_file(0, mode='rb')
 def read_interactions(path, comments="#", delimiter=None, create_using=None,
-                  nodetype=None, timestamptype=None, encoding='utf-8'):
+                  nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
     """Read a DyNetx graph from interaction list format.
 
 
@@ -80,13 +80,16 @@ def read_interactions(path, comments="#", delimiter=None, create_using=None,
         delimiter : character
             Column delimiter
     """
-
+    ids = None
     lines = (line.decode(encoding) for line in path)
+    if keys:
+        ids = read_ids(path.name, delimiter=delimiter, timestamptype=timestamptype)
+
     return parse_interactions(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
-                             timestamptype=timestamptype)
+                             timestamptype=timestamptype, keys=ids)
 
 
-def parse_interactions(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None):
+def parse_interactions(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None, keys=None):
     if create_using is None:
         G = DynGraph()
     else:
@@ -97,6 +100,7 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
             raise TypeError("create_using input is not a DyNet graph type")
 
     for line in lines:
+
         p = line.find(comments)
         if p >= 0:
             line = line[:p]
@@ -104,6 +108,7 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
             continue
 
         s = line.strip().split(delimiter)
+
         if len(s) != 4:
             continue
         else:
@@ -125,22 +130,31 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (s, nodetype))
         if op == '+':
-            G.add_interaction(u, v, t=s)
+            if keys is not None:
+                G.add_interaction(u, v, t=keys[s])
+            else:
+                G.add_interaction(u, v, t=s)
         else:
             timestamps = G.edge[u][v]['t']
             if len(timestamps) > 0 and timestamps[-1] < s:
                 for t in range(timestamps[-1], s):
-                    G.add_interaction(u, v, t=t)
+                    if keys is not None:
+                        G.add_interaction(u, v, t=keys[t])
+                    else:
+                        G.add_interaction(u, v, t=t)
     return G
 
 
 def generate_snapshots(G, delimiter=' '):
 
-    for u, v, d in G.interactions(data=True):
+    for u, v, d in G.interactions():
         if 't' not in d:
             raise NotImplemented
         for t in d['t']:
-            e = [u, v, t]
+            e = [u, v, t[0]]
+            if t[1] is not None or t[0] != t[1]:
+                for s in xrange(t[0], t[1]):
+                    e = [u, v, t]
 
             try:
                 e.extend(d[k] for k in d if k != "t")
@@ -171,7 +185,8 @@ def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
         path.write(line.encode(encoding))
 
 
-def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None):
+def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, nodetype=None, timestamptype=None, keys=None):
+
     if create_using is None:
         G = DynGraph()
     else:
@@ -214,14 +229,19 @@ def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, node
                 t = timestamptype(t)
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (t, nodetype))
-
-        G.add_interaction(u, v, t=t, e=e)
+        if keys is not None:
+            if e is not None:
+                G.add_interaction(u, v, t=keys[t], e=keys[e])
+            else:
+                G.add_interaction(u, v, t=keys[t], e=e)
+        else:
+            G.add_interaction(u, v, t=t, e=e)
     return G
 
 
 @open_file(0, mode='rb')
 def read_snapshots(path, comments="#", delimiter=None, create_using=None,
-                   nodetype=None, timestamptype=None, encoding='utf-8'):
+                   nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
     """Read a DyNetx graph from snapshot graph list format.
 
 
@@ -234,6 +254,28 @@ def read_snapshots(path, comments="#", delimiter=None, create_using=None,
         delimiter : character
             Column delimiter
     """
+    ids = None
     lines = (line.decode(encoding) for line in path)
+    if keys:
+        ids = read_ids(path.name, delimiter=delimiter, timestamptype=timestamptype)
+
     return parse_snapshots(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
-                           timestamptype=timestamptype)
+                           timestamptype=timestamptype, keys=ids)
+
+
+def read_ids(path, delimiter=None, timestamptype=None):
+    f = open(path)
+    ids = {}
+    for line in f:
+        s = line.rstrip().split(delimiter)
+        ids[timestamptype(s[-1])] = None
+        if len(line) == 4:
+            if s[-2] not in ['+', '-']:
+                ids[timestamptype(s[-2])] = None
+
+    f.flush()
+    f.close()
+
+    ids = clean_timeslot(ids.keys())
+    return ids
+
