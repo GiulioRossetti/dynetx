@@ -1,5 +1,6 @@
 from __future__ import division
 
+from dynetx.utils import not_implemented
 from collections import Counter
 from itertools import chain
 try:
@@ -22,8 +23,8 @@ __all__ = ['nodes', 'interactions', 'degree', 'degree_histogram', 'neighbors',
            'create_empty_copy', 'set_node_attributes',
            'get_node_attributes', 'set_edge_attributes',
            'get_edge_attributes', 'all_neighbors', 'non_neighbors',
-           'non_edges', 'is_empty', 'time_slice', 'stream_interactions', 'interactions_per_snapshots',
-           'temporal_snapshots_ids']
+           'non_interactions', 'is_empty', 'time_slice', 'stream_interactions', 'interactions_per_snapshots',
+           'temporal_snapshots_ids', 'inter_event_time_distribution']
 
 
 def nodes(G, t=None):
@@ -560,79 +561,14 @@ def get_node_attributes(G, name):
     return {n: d[name] for n, d in G.node.items() if name in d}
 
 
+@not_implemented()
 def set_edge_attributes(G, values, name=None):
-    """Set edge attributes from dictionary of edge tuples and values.
-
-        Parameters
-        ----------
-
-        G : DyNetx Graph
-
-        name : string
-           Attribute name
-
-        values : dict
-           Dictionary of attribute values keyed by edge (tuple).
-           The keys must be tuples of the form (u, v). If `values` is not a
-           dictionary, then it is treated as a single attribute value that is then
-           applied to every edge in `G`.
-    """
-    if name is not None:
-        # `values` does not contain attribute names
-        try:
-            # if `values` is a dict using `.items()` => {edge: value}
-            if G.is_multigraph():
-                for (u, v, key), value in values.items():
-                    try:
-                        G[u][v][key][name] = value
-                    except KeyError:
-                        pass
-            else:
-                for (u, v), value in values.items():
-                    try:
-                        G[u][v][name] = value
-                    except KeyError:
-                        pass
-        except AttributeError:
-            # treat `values` as a constant
-            for u, v, data in G.edges(data=True):
-                data[name] = values
-    else:
-        # `values` consists of doct-of-dict {edge: {attr: value}} shape
-        if G.is_multigraph():
-            for (u, v, key), d in values.items():
-                try:
-                    G[u][v][key].update(d)
-                except KeyError:
-                    pass
-        else:
-            for (u, v), d in values.items():
-                try:
-                    G[u][v].update(d)
-                except KeyError:
-                    pass
+    pass
 
 
+@not_implemented()
 def get_edge_attributes(G, name):
-    """Get edge attributes from graph
-
-        Parameters
-        ----------
-        G : DyNetx Graph
-
-        name : string
-           Attribute name
-
-        Returns
-        -------
-        Dictionary of attributes keyed by edge.
-        Keys are 2-tuples of the form: (u,v).
-    """
-    if G.is_multigraph():
-        edges = G.edges(keys=True, data=True)
-    else:
-        edges = G.edges(data=True)
-    return {x[:-1]: x[-1][name] for x in edges if name in x[-1]}
+    pass
 
 
 def all_neighbors(graph, node, t=None):
@@ -689,7 +625,7 @@ def non_neighbors(graph, node, t=None):
     return (nnode for nnode in graph if nnode not in nbors)
 
 
-def non_edges(graph, t=None):
+def non_interactions(graph, t=None):
     """Returns the non-existent edges in the graph at time t.
 
         Parameters
@@ -800,7 +736,7 @@ def stream_interactions(G):
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([3,4,5,6], t=1)
-            >>> list(dn.stream_edges(G))
+            >>> list(dn.stream_interactions(G))
             [(0, 1, '+', 0), (1, 2, '+', 0), (2, 3, '+', 0), (3, 4, '+', 1), (4, 5, '+', 1), (5, 6, '+', 1)]
             """
     return G.stream_interactions()
@@ -864,3 +800,25 @@ def interactions_per_snapshots(G, t=None):
         {0: 3, 1: 3, 2: 3}
         """
     return G.interactions_per_snapshots(t)
+
+
+def inter_event_time_distribution(G, u=None, v=None):
+    """Return the distribution of inter event time.
+     If u and v are None the dynamic graph intere event distribution is returned.
+     If u is specified the inter event time distribution of interactions involving u is returned.
+     If u and v are specified the inter event time distribution of (u, v) interactions is returned
+
+     Parameters
+     ----------
+     G : graph
+            A DyNetx graph.
+     u : node id
+     v : node id
+
+     Returns
+     -------
+
+     nd : dictionary
+         A dictionary from inter event time to number of occurrences
+    """
+    return G.interactions_per_snapshots(u, v)

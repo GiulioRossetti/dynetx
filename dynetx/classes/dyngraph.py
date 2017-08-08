@@ -8,7 +8,6 @@ Self-loops are allowed.
 
 import networkx as nx
 from dynetx.utils import not_implemented
-import copy
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"
@@ -174,6 +173,7 @@ class DynGraph(nx.Graph):
         self.time_to_edge = {}
         self.snapshots = {}
 
+
     def nodes_iter(self, t=None, data=False):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
 
@@ -232,7 +232,7 @@ class DynGraph(nx.Graph):
         """
         return list(self.nodes_iter(t=t, data=data))
 
-    def interactions(self, nbunch=None, t=None, data=False, default=None):
+    def interactions(self, nbunch=None, t=None):
         """Return the list of edges present in a given snapshot.
 
         Edges are returned as tuples
@@ -266,16 +266,24 @@ class DynGraph(nx.Graph):
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2], t=0)
         >>> G.add_edge(2,3, t=1)
-        >>> G.edges(t=0)
+        >>> G.interactions(t=0)
         [(0, 1), (1, 2)]
-        >>> G.edges()
+        >>> G.interactions()
         [(0, 1), (1, 2), (2, 3)]
-        >>> G.edges([0,3], t=0)
+        >>> G.interactions([0,3], t=0)
         [(0, 1)]
         """
-        return list(self.interactions_iter(nbunch, t, data, default))
+        return list(self.interactions_iter(nbunch, t))
 
-    def interactions_iter(self, nbunch=None, t=None, data=False, default=None):
+    def __presence_test(self, u, v, t):
+        spans = self.adj[u][v]['t']
+        if spans[0][0] <= t <= spans[-1][1]:
+            for s in spans:
+                if t in range(s[0], s[1]+1):
+                    return True
+        return False
+
+    def interactions_iter(self, nbunch=None, t=None):
         """Return an iterator over the edges present in a given snapshot.
 
         Edges are returned as tuples
@@ -313,7 +321,7 @@ class DynGraph(nx.Graph):
         >>> list(G.edges_iter())
         [(0, 1), (1, 2), (2, 3)]
         """
-        seen = {}  # helper dict to keep track of multiply stored edges
+        seen = {}  # helper dict to keep track of multiply stored interactions
         if nbunch is None:
             nodes_nbrs = self.adj.items()
         else:
@@ -322,7 +330,7 @@ class DynGraph(nx.Graph):
         for n, nbrs in nodes_nbrs:
             for nbr in nbrs:
                 if t is not None:
-                    if nbr not in seen and t in self.adj[n][nbr]['t']:
+                    if nbr not in seen and self.__presence_test(n, nbr, t):
                         yield (n, nbr, {"t": [t]})
                 else:
                     if nbr not in seen:
@@ -330,7 +338,7 @@ class DynGraph(nx.Graph):
                 seen[n] = 1
         del seen
 
-    def add_interaction(self, u, v, t=None, e=None, attr_dict=None, **attr):
+    def add_interaction(self, u, v, t=None, e=None):
         """Add an edge between u and v at time t vanishing (optional) at time e.
 
         The nodes u and v will be automatically added if they are
@@ -387,13 +395,13 @@ class DynGraph(nx.Graph):
             if idt not in self.time_to_edge:
                 self.time_to_edge[idt] = [(u, v, "+")]
             else:
-                #@todo: costly, change
+                # @todo: costly, change
                 if (u, v, "+") not in self.time_to_edge[idt]:
                     self.time_to_edge[idt].append((u, v, "+"))
 
         if e is not None:
 
-            t[1] = e-1
+            t[1] = e - 1
             if e not in self.time_to_edge:
                 self.time_to_edge[e] = [(u, v, "-")]
             else:
@@ -406,12 +414,12 @@ class DynGraph(nx.Graph):
             app = datadict['t']
             max_end = app[-1][1]
 
-            if max_end == app[-1][0] and t[0] == app[-1][0]+1:
+            if max_end == app[-1][0] and t[0] == app[-1][0] + 1:
 
                 app[-1] = [app[-1][0], t[0]]
-                if app[-1][0]+1 in self.time_to_edge:
+                if app[-1][0] + 1 in self.time_to_edge:
                     # @todo: costly, change
-                    self.time_to_edge[app[-1][0]+1].remove((u, v, "+"))
+                    self.time_to_edge[app[-1][0] + 1].remove((u, v, "+"))
 
             else:
                 if t[0] < app[-1][0]:
@@ -421,9 +429,9 @@ class DynGraph(nx.Graph):
                 if t[0] <= max_end < t[1]:
                     app[-1][1] = t[1]
                     if max_end + 1 in self.time_to_edge:
-                        #@todo: costly, change
-                        self.time_to_edge[max_end+1].remove((u, v, "-"))
-                        self.time_to_edge[t[0]-1].remove((u, v, "+"))
+                        # @todo: costly, change
+                        self.time_to_edge[max_end + 1].remove((u, v, "-"))
+                        self.time_to_edge[t[0]].remove((u, v, "+"))
 
                 else:
                     app.append(t)
@@ -431,7 +439,7 @@ class DynGraph(nx.Graph):
             datadict['t'] = [t]
 
         if e is not None:
-            span = range(t[0], t[1]+1)
+            span = range(t[0], t[1] + 1)
             for idt in span:
                 if idt not in self.snapshots:
                     self.snapshots[idt] = 1
@@ -445,13 +453,10 @@ class DynGraph(nx.Graph):
                     else:
                         self.snapshots[idt] += 1
 
-        #datadict.update({'t': app})
-        #datadict['t'] = sorted(list(set(t)))
-
         self.adj[u][v] = datadict
         self.adj[v][u] = datadict
 
-    def add_interactions_from(self, ebunch, t=None, e=None, attr_dict=None, **attr):
+    def add_interactions_from(self, ebunch, t=None, e=None):
         """Add all the edges in ebunch at time t.
 
         Parameters
@@ -517,7 +522,7 @@ class DynGraph(nx.Graph):
         -------
         nedges : int
             The number of edges in the graph.  If nodes u and v are specified
-            return the number of edges between those nodes.
+            return the number of edges between those nodes. If a single node is specified return None.
 
         See Also
         --------
@@ -538,18 +543,20 @@ class DynGraph(nx.Graph):
         if t is None:
             if u is None:
                 return int(self.size())
-            if v in self.adj[u]:
-                return 1
-            else:
-                return 0
-        else:
-            if u is None:
-                return int(self.size(t))
-            if v in self.adj[u]:
-                if t in self.adj[u][v]:
+            elif u is not None and v is not None:
+                if v in self.adj[u]:
                     return 1
                 else:
                     return 0
+        else:
+            if u is None:
+                return int(self.size(t))
+            elif u is not None and v is not None:
+                if v in self.adj[u]:
+                    if self.__presence_test(u, v, t):
+                        return 1
+                    else:
+                        return 0
 
     def has_interaction(self, u, v, t=None):
         """Return True if the edge (u,v) is in the graph at time t.
@@ -583,7 +590,7 @@ class DynGraph(nx.Graph):
             if t is None:
                 return v in self.adj[u]
             else:
-                return v in self.adj[u] and t in self.adj[u][v]['t']
+                return v in self.adj[u] and self.__presence_test(u, v, t)
         except KeyError:
             return False
 
@@ -621,7 +628,7 @@ class DynGraph(nx.Graph):
             if t is None:
                 return list(self.adj[n])
             else:
-                return [i for i in self.adj[n] if t in self.adj[n][i]['t']]
+                return [i for i in self.adj[n] if self.__presence_test(n, i, t)]
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -646,7 +653,7 @@ class DynGraph(nx.Graph):
             if t is None:
                 return iter(self.adj[n])
             else:
-                return iter([i for i in self.adj[n] if t in self.adj[n][i]['t']])
+                return iter([i for i in self.adj[n] if self.__presence_test(n, i, t)])
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -729,12 +736,14 @@ class DynGraph(nx.Graph):
             for n, nbrs in nodes_nbrs:
                 yield (n, len(nbrs) + (n in nbrs))  # return tuple (n,degree)
         else:
-            # edge weighted graph - degree is sum of nbr edge weights
             for n, nbrs in nodes_nbrs:
-                edges_t = len([v for v, k in nbrs.items() if t in k['t']])
-                yield (n, edges_t)
+                edges_t = len([v for v in nbrs.keys() if self.__presence_test(n, v, t)])
+                if edges_t > 0:
+                    yield (n, edges_t)
+                else:
+                    yield (n, 0)
 
-    def size(self, t=None, weight=None):
+    def size(self, t=None):
         """Return the number of edges at time t.
 
         Parameters
@@ -848,9 +857,13 @@ class DynGraph(nx.Graph):
             except TypeError:
                 return False
         else:
-            return self.degree([n], t).values()[0] > 0
+            deg = self.degree([n], t).values()
+            if len(deg) > 0:
+                return deg[0] > 0
+            else:
+                return False
 
-    def add_star(self, nodes, t=None, **attr):
+    def add_star(self, nodes, t=None):
         """Add a star at time t.
 
         The first node in nodes is the middle of the star.  It is connected
@@ -874,9 +887,9 @@ class DynGraph(nx.Graph):
         nlist = list(nodes)
         v = nlist[0]
         edges = ((v, n) for n in nlist[1:])
-        self.add_edges_from(edges, t, **attr)
+        self.add_interactions_from(edges, t)
 
-    def add_path(self, nodes, t=None, **attr):
+    def add_path(self, nodes, t=None):
         """Add a path at time t.
 
         Parameters
@@ -896,9 +909,9 @@ class DynGraph(nx.Graph):
         """
         nlist = list(nodes)
         edges = zip(nlist[:-1], nlist[1:])
-        self.add_edges_from(edges, t, **attr)
+        self.add_interactions_from(edges, t)
 
-    def add_cycle(self, nodes, t=None, **attr):
+    def add_cycle(self, nodes, t=None):
         """Add a cycle at time t.
 
         Parameters
@@ -918,7 +931,7 @@ class DynGraph(nx.Graph):
         """
         nlist = list(nodes)
         edges = zip(nlist, nlist[1:] + [nlist[0]])
-        self.add_edges_from(edges, t, **attr)
+        self.add_interactions_from(edges, t)
 
     def stream_interactions(self):
         """Generate a temporal ordered stream of interactions.
@@ -966,54 +979,41 @@ class DynGraph(nx.Graph):
             >>> G.add_path([0,4,5,6], t=1)
             >>> G.add_path([7,1,2,3], t=2)
             >>> H = G.time_slice(0)
-            >>> H.edges()
+            >>> H.interactions()
             [(0, 1), (1, 2), (1, 3)]
             >>> H = G.time_slice(0, 1)
-            >>> H.edges()
+            >>> H.interactions()
             [(0, 1), (1, 2), (1, 3), (0, 4), (4, 5), (5, 6)]
         """
         # create new graph and copy subgraph into it
         H = self.__class__()
-        if t_to is None:
-            t_to = t_from
 
-        # copy node and attribute dictionaries
-        for ed in self.edges(data=True):
-            ixs, ixe = -1, -1
-            e = copy.deepcopy(ed)
+        if t_to is not None:
+            if t_to == t_from:
+                t_to = None
+            elif t_to < t_from:
+                raise ValueError("Invalid range: t_to must be grater that t_from")
 
-            if e[2]['t'][0] > t_from:
-                ot_from = e[2]['t'][0]
-                ixs = 0
-            else:
-                ot_from = t_from
-            if e[2]['t'][-1] < t_to:
-                ot_to = e[2]['t'][-1]
-                ixe = len(e[2]['t']) - 1
-            else:
-                ot_to = t_to
+        for u, v, ts in self.interactions_iter():
+            t_to_cp = t_to
+            t_from_cp = t_from
 
-            if ot_from > t_to:
-                continue
+            for r in ts['t']:
+                if t_to is not None and t_to < r[0]:
+                    break
 
-            if ixs < 0:
-                try:
-                    ixs = e[2]['t'].index(ot_from)
-                except ValueError:
-                    continue
-
-            if ixe < 0:
-                ixe = ixs
-                while e[2]['t'][ixe] < ot_to:
-                    ixe += 1
-
-            if ixs == ixe:
-                ixe += 1
-
-            attr = e[2]
-            attr['t'] = e[2]['t'][ixs:ixe]
-            for t in attr['t']:
-                H.add_edge(e[0], e[1], t)
+                if t_from < r[0] < t_to or t_to >= r[1]:
+                    t_from_cp = r[0]
+                    t_to_cp = t_to
+                if r[0] <= t_from_cp <= r[1]:
+                    if t_to_cp is None:
+                        H.add_interaction(u, v, t_from_cp)
+                    else:
+                        if t_from_cp < t_to_cp <= r[1]:
+                            H.add_interaction(u, v, t_from_cp, t_to_cp+1)
+                        else:
+                            H.add_interaction(u, v, t_from_cp, r[1]+1)
+                            t_to_cp = r[1]
         return H
 
     def temporal_snapshots_ids(self):
@@ -1064,25 +1064,42 @@ class DynGraph(nx.Graph):
         {0: 3, 1: 3, 2: 3}
         """
         if t is None:
-            return self.snapshots
+            return {k: v/2 for k, v in self.snapshots.items()}
         else:
             try:
-                return self.snapshots[t]
+                return self.snapshots[t]/2
             except KeyError:
-                raise KeyError("Snapshot not present.")
+                return 0
 
-    def inter_event_time(self, u=None, v=None):
-        """
+    def inter_event_time_distribution(self, u=None, v=None):
+        """Return the distribution of inter event time.
+        If u and v are None the dynamic graph intere event distribution is returned.
+        If u is specified the inter event time distribution of interactions involving u is returned.
+        If u and v are specified the inter event time distribution of (u, v) interactions is returned
 
-        :param u:
-        :param v:
-        :return:
+        Parameters
+        ----------
+
+        u : node id
+        v : node id
+
+        Returns
+        -------
+
+        nd : dictionary
+            A dictionary from inter event time to number of occurrences
+
         """
         dist = {}
         if u is None:
             # global inter event
-            delta = (0, 0, 0, 0)
+            first = True
+            delta = None
             for ext in self.stream_interactions():
+                if first:
+                    delta = ext
+                    first = False
+                    continue
                 disp = ext[-1] - delta[-1]
                 delta = ext
                 if disp in dist:
@@ -1110,11 +1127,16 @@ class DynGraph(nx.Graph):
             # edge inter event
             evt = self.adj[u][v]['t']
             delta = []
+
             for i in evt:
                 for j in [0, 1]:
                     delta.append(i[j])
-            for i in range(0, len(delta)-1):
-                e = delta[i+1] - delta[i]
+
+            if len(delta) == 2 and delta[0] == delta[1]:
+                return {}
+
+            for i in range(0, len(delta) - 1):
+                e = delta[i + 1] - delta[i]
                 if e not in dist:
                     dist[e] = 1
                 else:

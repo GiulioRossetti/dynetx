@@ -11,7 +11,7 @@ DyNetx is a Python software package that extends ``networkx`` with dynamic netwo
 
 =========== ============== =================== ==================  ==========  ===============
 **Release**    **Date**    **Python Versions**   **Main Author**   **GitHub**     **pypl**
-   0.1.0    August 3, 2017       2.7.x/3.x     `Giulio Rossetti`_  `Source`_   `Distribution`_
+   0.1.1    August 8, 2017       2.7.x/3.x     `Giulio Rossetti`_  `Source`_   `Distribution`_
 =========== ============== =================== ==================  ==========  ===============
 
 

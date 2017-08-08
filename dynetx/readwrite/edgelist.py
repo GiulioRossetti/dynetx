@@ -11,11 +11,11 @@ Format
 ------
 You can read or write three formats of edge lists with these functions.
 
-Node pairs with timestamp:
+Node pairs with **timestamp** (u, v, t):
 
 >>> 1 2 0
 
-Interaction:
+Sequence of **Interaction** events (u, v, +/-, t):
 
 >>> 1 2 + 0
 >>> 1 2 - 3
@@ -45,7 +45,21 @@ def generate_interactions(G, delimiter=' '):
 
 @open_file(1, mode='wb')
 def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
+    """Write a DyNetx graph in interaction list format.
 
+
+        Parameters
+        ----------
+
+        G : graph
+            A DyNetx graph.
+
+        path : basestring
+            The desired output filename
+
+        delimiter : character
+            Column delimiter
+        """
     for line in generate_interactions(G, delimiter):
         line += '\n'
         path.write(line.encode(encoding))
@@ -54,6 +68,18 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
 @open_file(0, mode='rb')
 def read_interactions(path, comments="#", delimiter=None, create_using=None,
                   nodetype=None, timestamptype=None, encoding='utf-8'):
+    """Read a DyNetx graph from interaction list format.
+
+
+        Parameters
+        ----------
+
+        path : basestring
+            The desired output filename
+
+        delimiter : character
+            Column delimiter
+    """
 
     lines = (line.decode(encoding) for line in path)
     return parse_interactions(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
@@ -125,7 +151,21 @@ def generate_snapshots(G, delimiter=' '):
 
 @open_file(1, mode='wb')
 def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
+    """Write a DyNetx graph in snapshot graph list format.
 
+
+        Parameters
+        ----------
+
+        G : graph
+            A DyNetx graph.
+
+        path : basestring
+            The desired output filename
+
+        delimiter : character
+            Column delimiter
+        """
     for line in generate_snapshots(G, delimiter):
         line += '\n'
         path.write(line.encode(encoding))
@@ -182,7 +222,18 @@ def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, node
 @open_file(0, mode='rb')
 def read_snapshots(path, comments="#", delimiter=None, create_using=None,
                    nodetype=None, timestamptype=None, encoding='utf-8'):
+    """Read a DyNetx graph from snapshot graph list format.
 
+
+        Parameters
+        ----------
+
+        path : basestring
+            The desired output filename
+
+        delimiter : character
+            Column delimiter
+    """
     lines = (line.decode(encoding) for line in path)
     return parse_snapshots(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype,
                            timestamptype=timestamptype)
