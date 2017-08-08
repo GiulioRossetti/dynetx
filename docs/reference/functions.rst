@@ -32,26 +32,15 @@ Nodes
    non_neighbors
 
 
-Edges
------
+Interactions
+------------
 .. autosummary::
    :toctree: generated/
 
 
-   edges
-   number_of_edges
-   non_edges
-
-
-Attributes
-----------
-.. autosummary::
-   :toctree: generated/
-
-   set_node_attributes
-   get_node_attributes
-   set_edge_attributes
-   get_edge_attributes
+   interactions
+   number_of_interactions
+   non_interactions
 
 
 Freezing graph structure
@@ -67,7 +56,8 @@ Snapshots and Interaction Stream
 .. autosummary::
    :toctree: generated/
 
+	stream_interactions
 	time_slice
-	stream_edges
-	number_of_interactions
-	temporal_snapshots
+	temporal_snapshots_ids
+	interactions_per_snapshots
+	inter_event_time_distribution

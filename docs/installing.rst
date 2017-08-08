@@ -4,6 +4,12 @@ Installing
 
 Before installing ``DyNetx``, you need to have setuptools installed.
 
+
+Note
+----
+
+In case of misaligned versions between pypl and GitHub, the documentation will refer to the GitHub version.
+
 =============
 Quick install
 =============

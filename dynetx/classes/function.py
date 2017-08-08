@@ -1,5 +1,6 @@
 from __future__ import division
 
+from dynetx.utils import not_implemented
 from collections import Counter
 from itertools import chain
 try:
@@ -15,15 +16,15 @@ __license__ = "GPL"
 __email__ = "giulio.rossetti@gmail.com"
 
 
-__all__ = ['nodes', 'edges', 'degree', 'degree_histogram', 'neighbors',
-           'number_of_nodes', 'number_of_edges', 'density',
+__all__ = ['nodes', 'interactions', 'degree', 'degree_histogram', 'neighbors',
+           'number_of_nodes', 'number_of_interactions', 'density',
            'is_directed', 'freeze', 'is_frozen', 'subgraph',
            'add_star', 'add_path', 'add_cycle',
            'create_empty_copy', 'set_node_attributes',
            'get_node_attributes', 'set_edge_attributes',
            'get_edge_attributes', 'all_neighbors', 'non_neighbors',
-           'non_edges', 'is_empty', 'time_slice', 'stream_edges', 'number_of_interactions',
-           'temporal_snapshots']
+           'non_interactions', 'is_empty', 'time_slice', 'stream_interactions', 'interactions_per_snapshots',
+           'temporal_snapshots_ids', 'inter_event_time_distribution']
 
 
 def nodes(G, t=None):
@@ -57,7 +58,7 @@ def nodes(G, t=None):
     return G.nodes(t)
 
 
-def edges(G, nbunch=None, t=None):
+def interactions(G, nbunch=None, t=None):
     """Return the list of edges present in a given snapshot.
 
            Edges are returned as tuples
@@ -92,14 +93,14 @@ def edges(G, nbunch=None, t=None):
            >>> G = dn.DynGraph()
            >>> G.add_path([0,1,2], t=0)
            >>> G.add_edge(2,3, t=1)
-           >>> dn.edges(G, t=0)
+           >>> dn.interactions(G, t=0)
            [(0, 1), (1, 2)]
-           >>> dn.edges(G)
+           >>> dn.interactions(G)
            [(0, 1), (1, 2), (2, 3)]
-           >>> dn.edges(G, [0,3], t=0)
+           >>> dn.interactions(G, [0,3], t=0)
            [(0, 1)]
            """
-    return G.edges(nbunch, t=t)
+    return G.interactions(nbunch, t=t)
 
 
 def degree(G, nbunch=None, t=None):
@@ -211,39 +212,31 @@ def number_of_nodes(G, t=None):
     return G.number_of_nodes(t)
 
 
-def number_of_edges(G, t=None):
-    """Remove all edges specified in ebunch at time t (if specified).
+def number_of_interactions(G, t=None):
+    """Return the number of edges between two nodes at time t.
 
-            Parameters
-            ----------
-
-            G : Graph opject
-                DyNetx graph object
-
-            ebunch: list or container of edge tuples
-                Each edge given in the list or container will be removed
-                from the graph.
-
-            t : snapshot id (default=None)
-                If None the number of edges will be computed on the flattened graph.
+        Parameters
+        ----------
+        u, v : nodes, optional (default=all edges)
+            If u and v are specified, return the number of edges between
+            u and v. Otherwise return the total number of all edges.
+        t : snapshot id (default=None)
+            If None will be returned the number of edges on the flattened graph.
 
 
-            See Also
-            --------
-            remove_edge : remove a single edge at time t
+        Returns
+        -------
+        nedges : int
+            The number of edges in the graph.  If nodes u and v are specified
+            return the number of edges between those nodes.
 
-            Notes
-            -----
-            Will fail silently if an edge in ebunch is not in the graph.
-
-            Examples
-            --------
+        Examples
+        --------
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
-            >>> ebunch=[(1,2),(2,3)]
-            >>> dn.remove_edges_from(G, ebunch, t=0)
+            >>> dn.number_of_interactions(G, t=0)
             """
-    return G.number_of_edges(t)
+    return G.number_of_interactions(t)
 
 
 def density(G, t=None):
@@ -280,7 +273,7 @@ def density(G, t=None):
         loops can have density higher than 1.
     """
     n = number_of_nodes(G, t)
-    m = number_of_edges(G, t)
+    m = number_of_interactions(G, t)
     if m == 0 or n <= 1:
         return 0
     d = m / (n * (n - 1))
@@ -568,79 +561,14 @@ def get_node_attributes(G, name):
     return {n: d[name] for n, d in G.node.items() if name in d}
 
 
+@not_implemented()
 def set_edge_attributes(G, values, name=None):
-    """Set edge attributes from dictionary of edge tuples and values.
-
-        Parameters
-        ----------
-
-        G : DyNetx Graph
-
-        name : string
-           Attribute name
-
-        values : dict
-           Dictionary of attribute values keyed by edge (tuple).
-           The keys must be tuples of the form (u, v). If `values` is not a
-           dictionary, then it is treated as a single attribute value that is then
-           applied to every edge in `G`.
-    """
-    if name is not None:
-        # `values` does not contain attribute names
-        try:
-            # if `values` is a dict using `.items()` => {edge: value}
-            if G.is_multigraph():
-                for (u, v, key), value in values.items():
-                    try:
-                        G[u][v][key][name] = value
-                    except KeyError:
-                        pass
-            else:
-                for (u, v), value in values.items():
-                    try:
-                        G[u][v][name] = value
-                    except KeyError:
-                        pass
-        except AttributeError:
-            # treat `values` as a constant
-            for u, v, data in G.edges(data=True):
-                data[name] = values
-    else:
-        # `values` consists of doct-of-dict {edge: {attr: value}} shape
-        if G.is_multigraph():
-            for (u, v, key), d in values.items():
-                try:
-                    G[u][v][key].update(d)
-                except KeyError:
-                    pass
-        else:
-            for (u, v), d in values.items():
-                try:
-                    G[u][v].update(d)
-                except KeyError:
-                    pass
+    pass
 
 
+@not_implemented()
 def get_edge_attributes(G, name):
-    """Get edge attributes from graph
-
-        Parameters
-        ----------
-        G : DyNetx Graph
-
-        name : string
-           Attribute name
-
-        Returns
-        -------
-        Dictionary of attributes keyed by edge.
-        Keys are 2-tuples of the form: (u,v).
-    """
-    if G.is_multigraph():
-        edges = G.edges(keys=True, data=True)
-    else:
-        edges = G.edges(data=True)
-    return {x[:-1]: x[-1][name] for x in edges if name in x[-1]}
+    pass
 
 
 def all_neighbors(graph, node, t=None):
@@ -697,7 +625,7 @@ def non_neighbors(graph, node, t=None):
     return (nnode for nnode in graph if nnode not in nbors)
 
 
-def non_edges(graph, t=None):
+def non_interactions(graph, t=None):
     """Returns the non-existent edges in the graph at time t.
 
         Parameters
@@ -788,7 +716,7 @@ def time_slice(G, t_from, t_to=None):
     return G.time_slice(t_from, t_to)
 
 
-def stream_edges(G):
+def stream_interactions(G):
     """Generate a temporal ordered stream of interactions.
 
             Parameters
@@ -808,13 +736,13 @@ def stream_edges(G):
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([3,4,5,6], t=1)
-            >>> list(dn.stream_edges(G))
+            >>> list(dn.stream_interactions(G))
             [(0, 1, '+', 0), (1, 2, '+', 0), (2, 3, '+', 0), (3, 4, '+', 1), (4, 5, '+', 1), (5, 6, '+', 1)]
             """
-    return G.stream_edges()
+    return G.stream_interactions()
 
 
-def temporal_snapshots(G):
+def temporal_snapshots_ids(G):
     """Return the ordered list of snapshot ids present in the dynamic graph.
 
         Parameters
@@ -838,10 +766,10 @@ def temporal_snapshots(G):
         >>> dn.temporal_snapshots(G)
         [0, 1, 2]
     """
-    return G.temporal_snapshots()
+    return G.temporal_snapshots_ids()
 
 
-def number_of_interactions(G, t=None):
+def interactions_per_snapshots(G, t=None):
     """Return the number of interactions within snapshot t.
 
         Parameters
@@ -868,7 +796,29 @@ def number_of_interactions(G, t=None):
         >>> G.add_path([7,1,2,3], t=2)
         >>> dn.number_of_interactions(G, t=0)
         3
-        >>> dn.number_of_interactions(G)
+        >>> dn.interactions_per_snapshots(G)
         {0: 3, 1: 3, 2: 3}
         """
-    return G.number_of_interactions(t)
+    return G.interactions_per_snapshots(t)
+
+
+def inter_event_time_distribution(G, u=None, v=None):
+    """Return the distribution of inter event time.
+     If u and v are None the dynamic graph intere event distribution is returned.
+     If u is specified the inter event time distribution of interactions involving u is returned.
+     If u and v are specified the inter event time distribution of (u, v) interactions is returned
+
+     Parameters
+     ----------
+     G : graph
+            A DyNetx graph.
+     u : node id
+     v : node id
+
+     Returns
+     -------
+
+     nd : dictionary
+         A dictionary from inter event time to number of occurrences
+    """
+    return G.interactions_per_snapshots(u, v)

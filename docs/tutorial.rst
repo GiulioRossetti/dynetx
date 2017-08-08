@@ -16,36 +16,36 @@ Create an empty dynamic graph with no nodes and no edges.
 	import dynetx as dn
 	g = dt.DynGraph()
 
-^^^^^
-Edges
-^^^^^
+^^^^^^^^^^^^
+Interactions
+^^^^^^^^^^^^
 
-``G`` can  be grown by adding one edge at a time.
-Every edge is univocally defined by its endpoints, ``u`` and ``v``, as well as its timestamp ``t``.
-
-.. code:: python
-
-	g.add_edge(u=1, v=2, t=0)
-
-Moreover, also edge duration can be specified at creation time:
+``G`` can  be grown by adding one interaction at a time.
+Every interaction is univocally defined by its endpoints, ``u`` and ``v``, as well as its timestamp ``t``.
 
 .. code:: python
 
-	g.add_edge(u=1, v=2, t=0, e=3)
+	g.add_interaction(u=1, v=2, t=0)
 
-In the above example the edge ``(1, 2)`` appear at time ``0`` and vanish at time ``3``, thus being present in ``[0, 2]``.
-
-Edges list can also be added: in such scenario all the edges in the list will have a same timestamp (i.e. they will belong to a same network *snapshot*)
+Moreover, also interaction duration can be specified at creation time:
 
 .. code:: python
 
-	g.add_edges_from([(1, 2), (2, 3), (3, 1)], t=2)
+	g.add_interaction(u=1, v=2, t=0, e=3)
 
-The same method can be used to add any ``ebunch`` of edges.  An *ebunch* is any iterable container of edge-tuples.
+In the above example the interaction ``(1, 2)`` appear at time ``0`` and vanish at time ``3``, thus being present in ``[0, 2]``.
+
+Interaction list can also be added: in such scenario all the interactions in the list will have a same timestamp (i.e. they will belong to a same network *snapshot*)
 
 .. code:: python
 
-	g.add_edges_from(H.edges(), t=2)
+	g.add_interactions_from([(1, 2), (2, 3), (3, 1)], t=2)
+
+The same method can be used to add any ``ebunch`` of interaction.  An *ebunch* is any iterable container of interaction-tuples.
+
+.. code:: python
+
+	g.add_interaction_from(H.edges(), t=2)
 
 
 ^^^^^
@@ -74,7 +74,7 @@ The former format describes the dynamic graph one edge per row as a 3-tuple
 where
 
  - ``n1`` and ``n2`` are nodes
- - ``t1`` is the timestamp of edge appearance
+ - ``t1`` is the timestamp of interaction appearance
 
 The latter format describes the dynamic graph one interaction per row as a 4-tuple
 
@@ -85,7 +85,7 @@ The latter format describes the dynamic graph one interaction per row as a 4-tup
 where
 
  - ``n1`` and ``n2`` are nodes
- - ``t1`` is the timestamp of edge appearance
+ - ``t1`` is the timestamp of interaction appearance
  - ``op`` identify either the insertion, ``+``, or deletion, ``-`` of the edge
 
 ^^^^^^^^^^^^^^
@@ -130,9 +130,9 @@ The timestamps associated to graph edges can be retrieved through
 
 .. code:: python
 
-	g.temporal_snapshots()
+	g.temporal_snapshots_ids()
 
-Similarly, the number of edges in a given snapshot can be obtained via
+Similarly, the number of interactions in a given snapshot can be obtained via
 
 .. code:: python
 
@@ -150,22 +150,22 @@ Once loaded a graph it is possible to extract from it a time slice, i.e., a time
 
 	s = g.time_slice(t_from=2, t_to=3)
 
-the resulting ``DynGraph`` stored in ``s`` will be composed by nodes and edges existing within the time span ``[2, 3]``.
+the resulting ``DynGraph`` stored in ``s`` will be composed by nodes and interactions existing within the time span ``[2, 3]``.
 
 
 Obtain the Interaction Stream
 -----------------------------
 
-A dynamic network can be also described as stream of interactions, a chronologically ordered list of edges
+A dynamic network can be also described as stream of interactions, a chronologically ordered list of interactions
 
 .. code:: python
 
 	for e in g.stream_edges():
 		print e
 
-the ``stream_edges`` method returns a generator that streams the edges in ``g``, where ``e`` is a 4-tuple ``(u, v, op, t)``
+the ``stream_edges`` method returns a generator that streams the interactions in ``g``, where ``e`` is a 4-tuple ``(u, v, op, t)``
 
  - ``u, v`` are nodes
  - ``op`` is a edge creation or deletion event (respectively ``+``, ``.``)
- - ``t`` is the edge timestamp
+ - ``t`` is the interactions timestamp
 
