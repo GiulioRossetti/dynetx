@@ -125,12 +125,12 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (s, nodetype))
         if op == '+':
-            G.add_edge(u, v, t=s)
+            G.add_interaction(u, v, t=s)
         else:
             timestamps = G.edge[u][v]['t']
             if len(timestamps) > 0 and timestamps[-1] < s:
                 for t in range(timestamps[-1], s):
-                    G.add_edge(u, v, t=t)
+                    G.add_interaction(u, v, t=t)
     return G
 
 
@@ -215,7 +215,7 @@ def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, node
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (t, nodetype))
 
-        G.add_edge(u, v, t=t, e=e)
+        G.add_interaction(u, v, t=t, e=e)
     return G
 
 
