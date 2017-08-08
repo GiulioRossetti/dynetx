@@ -733,7 +733,8 @@ class DynGraph(nx.Graph):
 
         if t is None:
             for n, nbrs in nodes_nbrs:
-                yield (n, len(nbrs) + (n in nbrs))  # return tuple (n,degree)
+                deg = sum([len(self.adj[n][v]['t']) for v in nbrs.keys()])
+                yield (n, deg)
         else:
             for n, nbrs in nodes_nbrs:
                 edges_t = len([v for v in nbrs.keys() if self.__presence_test(n, v, t)])
