@@ -4,9 +4,6 @@ language: python
 
 python:
   - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
 
 cache:
   directories:
@@ -18,15 +15,9 @@ matrix:
   include:
     - python: "2.7"
       env: PYTHON_VM=ipy OPTIONAL_DEPS=no
-    - python: "pypy-5.7.1"
-      env: PYTHON_VM=pypy OPTIONAL_DEPS=no
-    - python: "pypy3.5-5.8.0"
-      env: PYTHON_VM=pypy OPTIONAL_DEPS=no
 
   allow_failures:
     - env: PYTHON_VM=ipy OPTIONAL_DEPS=no
-    - python: "pypy-5.7.1"
-    - python: "pypy3.5-5.8.0"
 
 addons:
   apt:
