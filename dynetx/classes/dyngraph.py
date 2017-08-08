@@ -91,7 +91,7 @@ class DynGraph(nx.Graph):
     add_edge, add_node or direct manipulation of the attribute
     dictionaries named graph, node and edge respectively.
 
-    >>> G = dn.Graph(day="Friday")
+    >>> G = dn.DynGraph(day="Friday")
     >>> G.graph
     {'day': 'Friday'}
 
