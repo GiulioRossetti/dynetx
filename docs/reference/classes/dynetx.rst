@@ -15,10 +15,8 @@ Adding and removing nodes and edges
 	:toctree: generated/
 
 	DynGraph.__init__
-	DynGraph.add_edge
-	DynGraph.add_edges_from
-	DynGraph.remove_edge
-	DynGraph.remove_edges_from
+	DynGraph.add_interaction
+	DynGraph.add_interactions_from
 	DynGraph.add_star
 	DynGraph.add_path
 	DynGraph.add_cycle
@@ -30,8 +28,8 @@ Iterating over nodes and edges
 .. autosummary::
 	:toctree: generated/
 
-	DynGraph.edges
-	DynGraph.edges_iter
+	DynGraph.interactions
+	DynGraph.interactions_iter
 	DynGraph.neighbors
 	DynGraph.neighbors_iter
 	DynGraph.nodes
@@ -43,8 +41,8 @@ Information about graph structure
 .. autosummary::
 	:toctree: generated/
 
-	DynGraph.has_edge
-	DynGraph.number_of_edges
+	DynGraph.has_interaction
+	DynGraph.number_of_interactions
 	DynGraph.degree
 	DynGraph.degree_iter
 	DynGraph.size
@@ -59,7 +57,8 @@ Dynamic Representation: Access Snapshots and Iterations
 .. autosummary::
 	:toctree: generated/
 
-	DynGraph.stream_edges
+	DynGraph.stream_interactions
 	DynGraph.time_slice
-	DynGraph.temporal_snapshots
-	DynGraph.number_of_interactions
+	DynGraph.temporal_snapshots_ids
+	DynGraph.interactions_per_snapshots
+	DynGraph.inter_event_time_distribution
