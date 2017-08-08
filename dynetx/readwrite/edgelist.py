@@ -39,7 +39,7 @@ __all__ = ['write_interactions',
 
 
 def generate_interactions(G, delimiter=' '):
-    for e in G.stream_edges():
+    for e in G.stream_interactions():
         yield delimiter.join(map(make_str, e))
 
 
@@ -136,7 +136,7 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
 
 def generate_snapshots(G, delimiter=' '):
 
-    for u, v, d in G.edges(data=True):
+    for u, v, d in G.interactions(data=True):
         if 't' not in d:
             raise NotImplemented
         for t in d['t']:
