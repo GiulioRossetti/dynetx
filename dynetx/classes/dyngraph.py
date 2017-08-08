@@ -173,7 +173,6 @@ class DynGraph(nx.Graph):
         self.time_to_edge = {}
         self.snapshots = {}
 
-
     def nodes_iter(self, t=None, data=False):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
 
