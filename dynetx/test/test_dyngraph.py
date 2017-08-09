@@ -30,6 +30,53 @@ class DynGraphTestCase(unittest.TestCase):
         its = g.interactions(t=20)
         self.assertEqual(len(its), 0)
 
+        self.assertEqual(len(list(g.neighbors_iter(1))), 3)
+        self.assertEqual(len(list(g.neighbors_iter(1, 7))), 1)
+        self.assertEqual(len(list(g.neighbors_iter(1, 0))), 0)
+        self.assertEqual(g.order(), len(g.nodes()))
+
+        self.assertEqual(g.has_node(42), False)
+
+        self.assertEqual(g.has_node(42, 3), False)
+        g.add_cycle([3, 4, 5, 6], t=34)
+        try:
+            g.time_slice(2, 1)
+        except:
+            pass
+
+        g.interactions_iter([1, 2])
+
+        try:
+            g.add_interaction(1, 5)
+        except:
+            pass
+
+        try:
+            g.add_interactions_from([(1, 4), (3, 6)])
+        except:
+            pass
+
+        try:
+            g.remove_edge(1, 2)
+        except:
+            pass
+
+        try:
+            g.remove_edges_from([(1, 2)])
+        except:
+            pass
+        try:
+            g.remove_node(1)
+        except:
+            pass
+        try:
+            g.remove_nodes_from([1, 2])
+        except:
+            pass
+
+        self.assertEqual(g.number_of_interactions(1, 90), 0)
+
+
     def test_nodes(self):
         g = dn.DynGraph()
         g.add_star([0, 1, 2, 3, 4], t=5)

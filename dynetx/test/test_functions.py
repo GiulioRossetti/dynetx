@@ -48,14 +48,17 @@ class FunctionTestCase(unittest.TestCase):
         self.assertEqual(len(dn.all_neighbors(g, 1, t=0)), 0)
         self.assertEqual(len(dn.all_neighbors(g, 1)), 3)
         self.assertEqual(len(dn.all_neighbors(g, 1, t=2)), 1)
-        dn.non_neighbors(g, 1, t=0)
-        dn.non_neighbors(g, 1)
-        dn.non_neighbors(g, 1, t=2)
+        self.assertEqual(len(list(dn.non_neighbors(g, 1, t=0))), 6)
+        self.assertEqual(len(list(dn.non_neighbors(g, 1))), 3)
+        self.assertEqual(len(list(dn.non_neighbors(g, 1, t=2))), 5)
         dn.non_interactions(g, 2)
         dn.non_interactions(g, 0)
         dn.non_interactions(g)
-        dn.is_empty(g)
-        dn.time_slice(g, 2, 4)
+        self.assertEqual(dn.is_empty(g), False)
+        h = dn.DynGraph()
+        self.assertEqual(dn.is_empty(h), True)
+        h = dn.time_slice(g, 2, 4)
+        self.assertEqual(len(h.nodes()), 2)
         dn.stream_interactions(g)
         dn.temporal_snapshots_ids(g)
         dn.interactions_per_snapshots(g, 0)
@@ -76,9 +79,7 @@ class FunctionTestCase(unittest.TestCase):
             pass
 
         dn.freeze(g)
-        dn.is_frozen(g)
-
-
+        self.assertEqual(dn.is_frozen(g), True)
 
 if __name__ == '__main__':
     unittest.main()

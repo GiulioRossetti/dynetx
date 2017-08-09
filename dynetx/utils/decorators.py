@@ -6,64 +6,9 @@ from decorator import decorator
 from networkx.utils import is_string_like
 
 __all__ = [
-    'not_implemented_for',
     'open_file',
-'not_implemented',
+    'not_implemented',
 ]
-
-def not_implemented_for(*graph_types):
-    """Decorator to mark algorithms as not implemented
-
-    Parameters
-    ----------
-    graph_types : container of strings
-        Entries must be one of 'dyngraph','didyngraph'
-    Returns
-    -------
-    _require : function
-        The decorated function.
-
-    Raises
-    ------
-    NetworkXNotImplemnted
-    If any of the packages cannot be imported
-
-    Notes
-    -----
-    Multiple types are joined logically with "and".
-    For "or" use multiple @not_implemented_for() lines.
-
-    Examples
-    --------
-    Decorate functions like this::
-
-       @not_implemnted_for('dyngraph')
-       def sp_function():
-           pass
-
-       @not_implemnted_for('dyngraph','didyngraph')
-       def sp_np_function():
-           pass
-    """
-    @decorator
-    def _not_implemented_for(f, *args, **kwargs):
-
-        terms= {'dyngraph': None,
-                'didyngraph': None,
-                }
-        match = True
-        try:
-            for t in graph_types:
-                match = match and terms[t]
-        except KeyError:
-            raise KeyError('use one or more of ',
-                           'dyngraph, didyngraph')
-        if match:
-            raise nx.NetworkXNotImplemented('not implemented for %s type'%
-                                            ' '.join(graph_types))
-        else:
-            return f(*args,**kwargs)
-    return _not_implemented_for
 
 
 def not_implemented():
@@ -108,7 +53,7 @@ def _open_bz2(path, mode):
 
 # To handle new extensions, define a function accepting a `path` and `mode`.
 # Then add the extension to _dispatch_dict.
-_dispatch_dict = defaultdict(lambda : open)
+_dispatch_dict = defaultdict(lambda: open)
 _dispatch_dict['.gz'] = _open_gz
 _dispatch_dict['.bz2'] = _open_bz2
 _dispatch_dict['.gzip'] = _open_gz
