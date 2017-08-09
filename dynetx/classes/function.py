@@ -644,16 +644,16 @@ def non_interactions(graph, t=None):
         non_edges : iterator
             Iterator of edges that are not in the graph.
         """
-    if graph.is_directed():
-        for u in graph:
-            for v in non_neighbors(graph, u, t):
-                yield (u, v)
-    else:
-        nodes = set(graph)
-        while nodes:
-            u = nodes.pop()
-            for v in nodes - set(graph[u]):
-                yield (u, v)
+    # if graph.is_directed():
+    #    for u in graph:
+    #        for v in non_neighbors(graph, u, t):
+    #            yield (u, v)
+    #else:
+    nodes = set(graph)
+    while nodes:
+        u = nodes.pop()
+        for v in nodes - set(graph[u]):
+            yield (u, v)
 
 
 def is_empty(G):

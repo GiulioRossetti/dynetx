@@ -76,9 +76,9 @@ class FunctionTestCase(unittest.TestCase):
             dn.set_node_attributes(g, "test1", name="test")
         except:
             pass
-        dn.set_node_attributes(g, values={n: {"a": 3} for n in g.nodes()}, name="test")
+        dn.set_node_attributes(g, values={n: {"a": 3} for n in g.nodes()})
         try:
-            dn.set_node_attributes(g, values={9000: {"a": 3}}, name="test")
+            dn.set_node_attributes(g, values={9000: {"a": 3}})
         except:
             pass
 
@@ -98,8 +98,7 @@ class FunctionTestCase(unittest.TestCase):
         h = g.to_directed()
         dn.all_neighbors(h, 1)
 
-        dn.non_interactions(g)
-        dn.non_interactions(h)
+        self.assertEqual(len(list(dn.non_interactions(g))), 13)
 
 if __name__ == '__main__':
     unittest.main()
