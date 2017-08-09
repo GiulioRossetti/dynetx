@@ -68,18 +68,38 @@ class FunctionTestCase(unittest.TestCase):
         dn.inter_event_time_distribution(g, 1)
         dn.inter_event_time_distribution(g, 1, 2)
         dn.set_node_attributes(g, values={n: 0 for n in g.nodes()}, name="test")
-        dn.get_node_attributes(g, name="test")
         try:
-            dn.set_edge_attributes()
+            dn.set_node_attributes(g, values={90000: 0}, name="test")
         except:
             pass
         try:
-            dn.get_edge_attributes()
+            dn.set_node_attributes(g, "test1", name="test")
+        except:
+            pass
+        dn.set_node_attributes(g, values={n: {"a": 3} for n in g.nodes()}, name="test")
+        try:
+            dn.set_node_attributes(g, values={9000: {"a": 3}}, name="test")
+        except:
+            pass
+
+        dn.get_node_attributes(g, name="test")
+        try:
+            dn.set_edge_attributes(g, 3, "dog")
+        except:
+            pass
+        try:
+            dn.get_edge_attributes(g, "test")
         except:
             pass
 
         dn.freeze(g)
         self.assertEqual(dn.is_frozen(g), True)
+
+        h = g.to_directed()
+        dn.all_neighbors(h, 1)
+
+        dn.non_interactions(g)
+        dn.non_interactions(h)
 
 if __name__ == '__main__':
     unittest.main()
