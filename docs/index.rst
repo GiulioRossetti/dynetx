@@ -5,7 +5,17 @@
 
 DyNetx - Dynamic Network library
 ================================
+.. image:: https://badge.fury.io/py/dynetx.svg
+    :target: https://badge.fury.io/py/dynetx.svg
 
+.. image:: https://secure.travis-ci.org/GiulioRossetti/dynetx.png
+    :target: http://travis-ci.org/GiulioRossetti/dynetx
+
+.. image:: https://coveralls.io/repos/GiulioRossetti/dynetx/badge.png?branch=master
+    :target: https://coveralls.io/r/GiulioRossetti/dynetx?branch=master
+
+.. image:: https://landscape.io/github/GiulioRossetti/dynetx/master/landscape.png
+   :target: https://landscape.io/github/GiulioRossetti/dynetx/master
 
 DyNetx is a Python software package that extends ``networkx`` with dynamic network models and algorithms.
 
