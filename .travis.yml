@@ -13,6 +13,5 @@ install:
 # command to run tests
 script:
   - py.test --cov=./
-
 after_success:
   - coveralls

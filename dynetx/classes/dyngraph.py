@@ -415,7 +415,7 @@ class DynGraph(nx.Graph):
 
             if max_end == app[-1][0] and t[0] == app[-1][0] + 1:
 
-                app[-1] = [app[-1][0], t[0]]
+                app[-1] = [app[-1][0], t[1]]
                 if app[-1][0] + 1 in self.time_to_edge:
                     # @todo: costly, change
                     self.time_to_edge[app[-1][0] + 1].remove((u, v, "+"))
@@ -432,6 +432,18 @@ class DynGraph(nx.Graph):
                         self.time_to_edge[max_end + 1].remove((u, v, "-"))
                         self.time_to_edge[t[0]].remove((u, v, "+"))
 
+                elif max_end == t[0]-1:
+                    if max_end + 1 in self.time_to_edge:
+                        # @todo: costly, change
+                        self.time_to_edge[max_end + 1].remove((u, v, "+"))
+                        if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
+                            self.time_to_edge[max_end+1].remove((u, v, '-'))
+                        if t[1]+1 in self.time_to_edge:
+                            self.time_to_edge[t[1]+1].append((u, v, "-"))
+                        else:
+                            self.time_to_edge[t[1]+1] = [(u, v, "-")]
+
+                    app[-1][1] = t[1]
                 else:
                     app.append(t)
         else:
@@ -733,7 +745,7 @@ class DynGraph(nx.Graph):
 
         if t is None:
             for n, nbrs in nodes_nbrs:
-                deg = sum([len(self.adj[n][v]['t']) for v in nbrs.keys()])
+                deg = len(self.adj[n])
                 yield (n, deg)
         else:
             for n, nbrs in nodes_nbrs:

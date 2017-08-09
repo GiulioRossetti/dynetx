@@ -21,7 +21,7 @@ Sequence of **Interaction** events (u, v, +/-, t):
 >>> 1 2 - 3
 """
 
-from dynetx.utils import open_file, make_str, clean_timeslot
+from dynetx.utils import open_file, make_str, compact_timeslot
 from dynetx import DynGraph
 
 __author__ = 'Giulio Rossetti'
@@ -129,19 +129,18 @@ def parse_interactions(lines, comments='#', delimiter=None, create_using=None, n
                 s = timestamptype(s)
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (s, nodetype))
+
+        if keys is not None:
+            s = keys[s]
+
         if op == '+':
-            if keys is not None:
-                G.add_interaction(u, v, t=keys[s])
-            else:
-                G.add_interaction(u, v, t=s)
+            G.add_interaction(u, v, t=s)
         else:
             timestamps = G.edge[u][v]['t']
-            if len(timestamps) > 0 and timestamps[-1] < s:
-                for t in range(timestamps[-1], s):
-                    if keys is not None:
-                        G.add_interaction(u, v, t=keys[t])
-                    else:
-                        G.add_interaction(u, v, t=t)
+            if len(timestamps) > 0 and timestamps[-1][1] < s:
+                for t in range(timestamps[-1][1], s):
+                    G.add_interaction(u, v, t=t)
+
     return G
 
 
@@ -152,15 +151,15 @@ def generate_snapshots(G, delimiter=' '):
             raise NotImplemented
         for t in d['t']:
             e = [u, v, t[0]]
-            if t[1] is not None or t[0] != t[1]:
-                for s in xrange(t[0], t[1]):
-                    e = [u, v, t]
-
-            try:
-                e.extend(d[k] for k in d if k != "t")
-            except KeyError:
-                pass
-            yield delimiter.join(map(make_str, e))
+            if t[1] is not None:
+                if t[0] != t[1]:
+                    for s in xrange(t[0], t[1]+1):
+                        e = [u, v, s]
+                        yield delimiter.join(map(make_str, e))
+                else:
+                    yield delimiter.join(map(make_str, e))
+            else:
+                yield delimiter.join(map(make_str, e))
 
 
 @open_file(1, mode='wb')
@@ -227,15 +226,16 @@ def parse_snapshots(lines, comments='#', delimiter=None, create_using=None, node
         if timestamptype is not None:
             try:
                 t = timestamptype(t)
+                if e is not None:
+                    e = timestamptype(e)
             except:
                 raise TypeError("Failed to convert timestamp %s to type %s." % (t, nodetype))
+
         if keys is not None:
+            t = keys[t]
             if e is not None:
-                G.add_interaction(u, v, t=keys[t], e=keys[e])
-            else:
-                G.add_interaction(u, v, t=keys[t], e=e)
-        else:
-            G.add_interaction(u, v, t=t, e=e)
+                e = keys[e]
+        G.add_interaction(u, v, t=t, e=e)
     return G
 
 
@@ -276,6 +276,6 @@ def read_ids(path, delimiter=None, timestamptype=None):
     f.flush()
     f.close()
 
-    ids = clean_timeslot(ids.keys())
+    ids = compact_timeslot(ids.keys())
     return ids
 

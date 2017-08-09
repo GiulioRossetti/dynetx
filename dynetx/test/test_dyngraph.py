@@ -3,7 +3,7 @@ import unittest
 import dynetx as dn
 
 
-class MyTestCase(unittest.TestCase):
+class DynGraphTestCase(unittest.TestCase):
 
     def test_dyngraph_add_interaction(self):
         g = dn.DynGraph()
