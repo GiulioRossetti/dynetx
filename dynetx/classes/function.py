@@ -212,7 +212,7 @@ def number_of_nodes(G, t=None):
     return G.number_of_nodes(t)
 
 
-def number_of_interactions(G, t=None):
+def number_of_interactions(G, u=None, v=None, t=None):
     """Return the number of edges between two nodes at time t.
 
         Parameters
@@ -236,7 +236,7 @@ def number_of_interactions(G, t=None):
             >>> G.add_path([0,1,2,3], t=0)
             >>> dn.number_of_interactions(G, t=0)
             """
-    return G.number_of_interactions(t)
+    return G.number_of_interactions(u, v, t)
 
 
 def density(G, t=None):
@@ -274,15 +274,16 @@ def density(G, t=None):
     """
     n = number_of_nodes(G, t)
     m = number_of_interactions(G, t)
-    if m == 0 or n <= 1:
+    if m == 0 or m is None or n <= 1:
         return 0
+
     d = m / (n * (n - 1))
     if not G.is_directed():
         d *= 2
     return d
 
 
-def degree_histogram(G, t):
+def degree_histogram(G, t=None):
     """Return a list of the frequency of each degree value.
 
         Parameters
@@ -307,7 +308,7 @@ def degree_histogram(G, t):
         Note: the bins are width one, hence len(list) can be large
         (Order(number_of_edges))
         """
-    counts = Counter(d for n, d in G.degree(t))
+    counts = Counter(d for n, d in G.degree(t=t).items())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 
@@ -407,7 +408,7 @@ def add_star(G, nodes, t, **attr):
     nlist = iter(nodes)
     v = next(nlist)
     edges = ((v, n) for n in nlist)
-    G.add_edges_from(edges, t, **attr)
+    G.add_interactions_from(edges, t, **attr)
 
 
 def add_path(G, nodes, t, **attr):
@@ -435,7 +436,7 @@ def add_path(G, nodes, t, **attr):
             """
     nlist = list(nodes)
     edges = zip(nlist[:-1], nlist[1:])
-    G.add_edges_from(edges, t, **attr)
+    G.add_interactions_from(edges, t, **attr)
 
 
 def add_cycle(G, nodes, t, **attr):
@@ -464,7 +465,7 @@ def add_cycle(G, nodes, t, **attr):
             """
     nlist = list(nodes)
     edges = zip(nlist, nlist[1:] + [nlist[0]])
-    G.add_edges_from(edges, t, **attr)
+    G.add_interactions_from(edges, t, **attr)
 
 
 def subgraph(G, nbunch):
@@ -676,7 +677,7 @@ def is_empty(G):
         nodes is known as the null graph. This is an O(n) operation where n is the
         number of nodes in the graph.
         """
-    return not any(G._adj.values())
+    return not any(G.adj.values())
 
 
 def time_slice(G, t_from, t_to=None):
@@ -821,4 +822,4 @@ def inter_event_time_distribution(G, u=None, v=None):
      nd : dictionary
          A dictionary from inter event time to number of occurrences
     """
-    return G.interactions_per_snapshots(u, v)
+    return G.inter_event_time_distribution(u, v)
