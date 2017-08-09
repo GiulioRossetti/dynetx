@@ -12,6 +12,6 @@ install:
   
 # command to run tests
 script:
-  - py.test --cov=./
+  - py.test --cov=./ --cov-config=.coveragerc
 after_success:
   - coveralls

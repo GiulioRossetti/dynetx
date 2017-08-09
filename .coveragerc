@@ -1,0 +1,5 @@
+[run]
+omit =
+ setup.py
+ dynetx/utils/*
+ dynetx/test/*
