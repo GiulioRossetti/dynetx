@@ -13,6 +13,7 @@ install:
 # command to run tests
 script:
   - py.test
+  - coverage run --source dynetx setup.py test
 
 after_success:
   - coveralls
