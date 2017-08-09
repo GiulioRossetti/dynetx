@@ -5,6 +5,7 @@ Dynamic Network analysis library.
 ![DyNetx logo](http://dynetx.readthedocs.io/en/latest/_static/dynetx.png)
 
 [![Build Status](https://travis-ci.org/GiulioRossetti/dynetx.svg?branch=master)](https://travis-ci.org/GiulioRossetti/dynetx)
+[![Coverage Status](https://coveralls.io/repos/github/GiulioRossetti/dynetx/badge.svg?branch=master)](https://coveralls.io/github/GiulioRossetti/dynetx?branch=master)
 
 DyNetx provides implementations of dynamic networks in python (built upon [networkx](http://networkx.github.io)).
 
