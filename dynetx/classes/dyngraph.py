@@ -70,69 +70,19 @@ class DynGraph(nx.Graph):
 
     Add one edge,
 
-    >>> G.add_edge(1, 2, t=0)
+    >>> G.add_interaction(1, 2, t=0)
 
-    a list of edges,
+    a list of edges
 
-    >>> G.add_edges_from([(3, 2), (1,3)], t=1)
-
-    or a collection of edges,
-
-    >>> G.add_edges_from(H.edges(), t=2)
+    >>> G.add_interactions_from([(3, 2), (1,3)], t=1)
 
     If some edges connect nodes not yet in the graph, the nodes
     are added automatically.
 
-    **Attributes:**
+    To traverse all interactions of a graph a time t use the interactions(t) method.
 
-    Each graph and node can hold key/value attribute pairs
-    in an associated attribute dictionary (the keys must be hashable).
-    By default these are empty, but can be added or changed using
-    add_edge, add_node or direct manipulation of the attribute
-    dictionaries named graph, node and edge respectively.
-
-    >>> G = dn.DynGraph(day="Friday")
-    >>> G.graph
-    {'day': 'Friday'}
-
-    Add node attributes using add_node(), add_nodes_from() or G.node
-
-    >>> G.add_node(1, name='Pippo')
-    >>> G.add_nodes_from([3], name='Pippo')
-    >>> G.node[1]
-    {'time': 'Pippo'}
-    >>> G.node[1]['room'] = 714
-    >>> del G.node[1]['room'] # remove attribute
-    >>> G.nodes(data=True)
-    [(1, {'name': 'Pippo'}), (3, {'name': 'Pippo'})]
-
-    Warning: adding a node to G.node does not add it to the graph.
-
-    **Shortcuts:**
-
-    Many common graph features allow python syntax to speed reporting.
-
-    >>> 1 in G     # check if node in graph
-    True
-    >>> [n for n in G if n<3]   # iterate through nodes
-    [1, 2]
-    >>> len(G)  # number of nodes in graph
-    5
-
-    To traverse all edges of a graph use the edges() method.
-
-
-    >>> G.edges(t=1)
+    >>> G.interactions(t=1)
     [(3, 2), (1, 3)]
-
-    **Reporting:**
-
-    Simple graph information is obtained using methods.
-    Iterator versions of many reporting methods exist for efficiency.
-    Methods exist for reporting nodes(), edges(t=None), neighbors(t=None) and degree(t=None)
-    as well as the number of nodes and edges.
-
-    For details on these and other miscellaneous methods, see below.
     """
 
     def __init__(self, data=None, **attr):
@@ -161,13 +111,6 @@ class DynGraph(nx.Graph):
         >>> G = dn.DynGraph(name='my graph')
         >>> e = [(1,2),(2,3),(3,4)] # list of edges
         >>> G = dn.DynGraph(e)
-
-        Arbitrary graph attribute pairs (key=value) may be assigned
-
-        >>> G=dn.DynGraph(e, day="Friday")
-        >>> G.graph
-        {'day': 'Friday'}
-
         """
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = {}
@@ -364,14 +307,12 @@ class DynGraph(nx.Graph):
         The following all add the edge e=(1,2, 0) to graph G:
 
         >>> G = dn.DynGraph()
-        >>> e = (1,2, 0)
-        >>> G.add_edge(1, 2, 0)           # explicit two-node form
-        >>> G.add_edge(*e)             # single edge as tuple of two nodes
-        >>> G.add_edges_from( [(1,2)], t=0 ) # add edges from iterable container
+        >>> G.add_interaction(1, 2, 0)           # explicit two-node form
+        >>> G.add_interaction( [(1,2)], t=0 ) # add edges from iterable container
 
         Specify the vanishing of the edge
 
-        >>>> G.add_edge(1, 3, t=1, e=10)
+        >>>> G.add_interaction(1, 3, t=1, e=10)
 
         will produce an edge present in snapshots [0, 9]
         """

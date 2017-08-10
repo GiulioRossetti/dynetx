@@ -6,6 +6,23 @@ import os
 
 class ReadWriteTestCase(unittest.TestCase):
 
+    def test_snapshots_interactions(self):
+        g = dn.DynGraph()
+        g.add_interaction(1, 2, 2)
+        g.add_interaction(1, 2, 2, e=6)
+        g.add_interaction(1, 2, 7, e=11)
+        g.add_interaction(1, 2, 8, e=15)
+        g.add_interaction(1, 2, 18)
+        g.add_interaction(1, 2, 19)
+        dn.write_snapshots(g, "test.txt", delimiter=" ")
+        h = dn.read_snapshots("test.txt", nodetype=int, timestamptype=int)
+        self.assertEqual(g.number_of_interactions(), h.number_of_interactions())
+        self.assertEqual(list(g.stream_interactions()), list(h.stream_interactions()))
+        dn.write_interactions(h, "test.txt", delimiter=" ")
+        h = dn.read_interactions("test.txt", nodetype=int, timestamptype=int, keys=True)
+        dn.write_snapshots(h, "test.txt", delimiter=" ")
+        os.remove("test.txt")
+
     def test_snapshots(self):
         g = dn.DynGraph()
         g.add_interaction(1, 2, 2)

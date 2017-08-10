@@ -336,14 +336,8 @@ def freeze(G):
 
         Notes
         -----
-        To "unfreeze" a graph you must make a copy by creating a new graph object:
+        To "unfreeze" a graph you must make a copy by creating a new graph object.
 
-        >>> graph = nx.path_graph(4)
-        >>> frozen_graph = nx.freeze(graph)
-        >>> unfrozen_graph = nx.Graph(frozen_graph)
-        >>> nx.is_frozen(unfrozen_graph)
-
-        False
         See Also
         --------
         is_frozen
