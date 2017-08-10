@@ -7,6 +7,7 @@ Self-loops are allowed.
 """
 
 import networkx as nx
+from collections import defaultdict
 from dynetx.utils import not_implemented
 
 __author__ = 'Giulio Rossetti'
@@ -113,7 +114,7 @@ class DynGraph(nx.Graph):
         >>> G = dn.DynGraph(e)
         """
         super(self.__class__, self).__init__(data, **attr)
-        self.time_to_edge = {}
+        self.time_to_edge = defaultdict(int)
         self.snapshots = {}
 
     def nodes_iter(self, t=None, data=False):
@@ -333,19 +334,18 @@ class DynGraph(nx.Graph):
         for idt in [t[0]]:
 
             if idt not in self.time_to_edge:
-                self.time_to_edge[idt] = [(u, v, "+")]
+                self.time_to_edge[idt] = {(u, v, "+"): None}
             else:
-                # @todo: costly, change
                 if (u, v, "+") not in self.time_to_edge[idt]:
-                    self.time_to_edge[idt].append((u, v, "+"))
+                    self.time_to_edge[idt][(u, v, "+")] = None
 
         if e is not None:
 
             t[1] = e - 1
             if e not in self.time_to_edge:
-                self.time_to_edge[e] = [(u, v, "-")]
+                self.time_to_edge[e] = {(u, v, "-"): None}
             else:
-                self.time_to_edge[e].append((u, v, "-"))
+                self.time_to_edge[e][(u, v, "-")] = None
 
         # add the edge
         datadict = self.adj[u].get(v, self.edge_attr_dict_factory())
@@ -358,8 +358,7 @@ class DynGraph(nx.Graph):
 
                 app[-1] = [app[-1][0], t[1]]
                 if app[-1][0] + 1 in self.time_to_edge:
-                    # @todo: costly, change
-                    self.time_to_edge[app[-1][0] + 1].remove((u, v, "+"))
+                    del self.time_to_edge[app[-1][0] + 1][(u, v, "+")]
 
             else:
                 if t[0] < app[-1][0]:
@@ -369,20 +368,18 @@ class DynGraph(nx.Graph):
                 if t[0] <= max_end < t[1]:
                     app[-1][1] = t[1]
                     if max_end + 1 in self.time_to_edge:
-                        # @todo: costly, change
-                        self.time_to_edge[max_end + 1].remove((u, v, "-"))
-                        self.time_to_edge[t[0]].remove((u, v, "+"))
+                        del self.time_to_edge[max_end + 1][(u, v, "-")]
+                        del self.time_to_edge[t[0]][(u, v, "+")]
 
                 elif max_end == t[0]-1:
                     if max_end + 1 in self.time_to_edge:
-                        # @todo: costly, change
-                        self.time_to_edge[max_end + 1].remove((u, v, "+"))
+                        del self.time_to_edge[max_end + 1][(u, v, "+")]
                         if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
-                            self.time_to_edge[max_end+1].remove((u, v, '-'))
+                            del self.time_to_edge[max_end+1][(u, v, '-')]
                         if t[1]+1 in self.time_to_edge:
-                            self.time_to_edge[t[1]+1].append((u, v, "-"))
+                            self.time_to_edge[t[1]+1][(u, v, "-")] = None
                         else:
-                            self.time_to_edge[t[1]+1] = [(u, v, "-")]
+                            self.time_to_edge[t[1]+1] = {(u, v, "-"): None}
 
                     app[-1][1] = t[1]
                 else:
