@@ -256,6 +256,24 @@ class DynGraphTestCase(unittest.TestCase):
                 (1, 5, '-', 3), (1, 2, '-', 6), (1, 2, '+', 7), (1, 2, '-', 15), (1, 2, '+', 18)]
         self.assertEquals(sorted(sres), sorted(cres))
 
+    def test_accumulative_growth(self):
+        g = dn.DynGraph(edge_removal=False)
+        g.add_interaction(1, 2, 2)
+        g.add_interaction(1, 2, 2, e=6)
+        g.add_interaction(1, 2, 7, e=11)
+        g.add_interaction(1, 2, 8, e=15)
+        g.add_interaction(1, 2, 18)
+        g.add_interaction(1, 2, 19)
+        g.add_interactions_from([(1, 3), (1, 5)], t=2, e=3)
+        sres = list(g.stream_interactions())
+        cres = [(1, 2, '+', 2), (1, 5, '+', 2), (1, 3, '+', 2)]
+        self.assertEquals(sorted(sres), sorted(cres))
+        self.assertEqual(g.has_interaction(1, 2, 18), True)
+        self.assertEqual(g.has_interaction(1, 2, 40), False)
+        try:
+            g.add_interaction(2, 1, 7)
+        except:
+            pass
 
 if __name__ == '__main__':
     unittest.main()

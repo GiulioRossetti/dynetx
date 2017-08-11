@@ -1,7 +1,7 @@
 """Base class for undirected dynamic graphs.
 
 The DynGraph class allows any hashable object as a node.
-Of each edge needs be specified the set of timestamps of its presence.
+Of each interaction needs be specified the set of timestamps of its presence.
 
 Self-loops are allowed.
 """
@@ -19,9 +19,9 @@ class DynGraph(nx.Graph):
     """
     Base class for undirected dynamic graphs.
 
-    A DynGraph stores nodes and timestamped edges.
+    A DynGraph stores nodes and timestamped interaction.
 
-    DynGraph hold undirected edges.  Self loops are allowed.
+    DynGraph hold undirected interaction.  Self loops are allowed.
 
     Nodes can be arbitrary (hashable) Python objects with optional
     key/value attributes.
@@ -30,7 +30,7 @@ class DynGraph(nx.Graph):
     ----------
     data : input graph
         Data to initialize graph.  If data=None (default) an empty
-        graph is created.  The data can be an edge list, or any
+        graph is created.  The data can be an interaction list, or any
         NetworkX graph object.
 
     attr : keyword arguments, optional (default= no attributes)
@@ -39,7 +39,7 @@ class DynGraph(nx.Graph):
     Examples
     --------
     Create an empty graph structure (a "null graph") with no nodes and
-    no edges.
+    no interactions.
 
     >>> G = dn.DynGraph()
 
@@ -67,17 +67,17 @@ class DynGraph(nx.Graph):
 
     **Edges:**
 
-    G can also be grown by adding edges and specifying their timestamp.
+    G can also be grown by adding interaction and specifying their timestamp.
 
-    Add one edge,
+    Add one interaction,
 
     >>> G.add_interaction(1, 2, t=0)
 
-    a list of edges
+    a list of interaction
 
     >>> G.add_interactions_from([(3, 2), (1,3)], t=1)
 
-    If some edges connect nodes not yet in the graph, the nodes
+    If some interaction connect nodes not yet in the graph, the nodes
     are added automatically.
 
     To traverse all interactions of a graph a time t use the interactions(t) method.
@@ -86,36 +86,31 @@ class DynGraph(nx.Graph):
     [(3, 2), (1, 3)]
     """
 
-    def __init__(self, data=None, **attr):
-        """Initialize a graph with edges, name, graph attributes.
+    def __init__(self, data=None, edge_removal=True, **attr):
+        """Initialize a graph with interaction, name, graph attributes.
 
         Parameters
         ----------
         data : input graph
             Data to initialize graph.  If data=None (default) an empty
-            graph is created.  The data can be an edge list, or any
+            graph is created.  The data can be an interaction list, or any
             NetworkX/DyNetx graph object.  If the corresponding optional Python
             packages are installed the data can also be a NumPy matrix
             or 2d ndarray, a SciPy sparse matrix, or a PyGraphviz graph.
-        name : string, optional (default='')
-            An optional name for the graph.
+        edge_removal : bool, optional (default=True)
+            Define if a dynamic graph allows edge removal or not.
         attr : keyword arguments, optional (default= no attributes)
             Attributes to add to graph as key=value pairs.
 
-        See Also
-        --------
-        convert
-
         Examples
         --------
-        >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> G = dn.DynGraph(name='my graph')
-        >>> e = [(1,2),(2,3),(3,4)] # list of edges
-        >>> G = dn.DynGraph(e)
+        >>> G = dn.DynGraph()
+        >>> G = dn.DynGraph(edge_removal=True)
         """
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = defaultdict(int)
         self.snapshots = {}
+        self.edge_removal = edge_removal
 
     def nodes_iter(self, t=None, data=False):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
@@ -176,7 +171,7 @@ class DynGraph(nx.Graph):
         return list(self.nodes_iter(t=t, data=data))
 
     def interactions(self, nbunch=None, t=None):
-        """Return the list of edges present in a given snapshot.
+        """Return the list of interaction present in a given snapshot.
 
         Edges are returned as tuples
         in the order (node, neighbor).
@@ -191,18 +186,18 @@ class DynGraph(nx.Graph):
 
         Returns
         --------
-        edge_list: list of edge tuples
-            Edges that are adjacent to any node in nbunch, or a list
-            of all edges if nbunch is not specified.
+        interaction_list: list of interaction tuples
+            Interactions that are adjacent to any node in nbunch, or a list
+            of all interactions if nbunch is not specified.
 
         See Also
         --------
-        edges_iter : return an iterator over the edges
+        edges_iter : return an iterator over the interactions
 
         Notes
         -----
         Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-edges.
+        For directed graphs this returns the out-interaction.
 
         Examples
         --------
@@ -220,14 +215,19 @@ class DynGraph(nx.Graph):
 
     def __presence_test(self, u, v, t):
         spans = self.adj[u][v]['t']
-        if spans[0][0] <= t <= spans[-1][1]:
-            for s in spans:
-                if t in range(s[0], s[1]+1):
-                    return True
+        if self.edge_removal:
+            if spans[0][0] <= t <= spans[-1][1]:
+                for s in spans:
+                    if t in range(s[0], s[1]+1):
+                        return True
+        else:
+            if spans[0][0] <= t <= max(self.temporal_snapshots_ids()):
+                return True
+
         return False
 
     def interactions_iter(self, nbunch=None, t=None):
-        """Return an iterator over the edges present in a given snapshot.
+        """Return an iterator over the interaction present in a given snapshot.
 
         Edges are returned as tuples
         in the order (node, neighbor).
@@ -243,25 +243,25 @@ class DynGraph(nx.Graph):
         Returns
         -------
         edge_iter : iterator
-            An iterator of (u,v) tuples of edges.
+            An iterator of (u,v) tuples of interaction.
 
         See Also
         --------
-        edges : return a list of edges
+        interaction : return a list of interaction
 
         Notes
         -----
         Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-edges.
+        For directed graphs this returns the out-interaction.
 
         Examples
         --------
-        >>> G = dn.DynGraph()   # or MultiGraph, etc
+        >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2], 0)
-        >>> G.add_edge(2,3,1)
-        >>> [e for e in G.edges_iter(t=0)]
+        >>> G.add_interaction(2,3,1)
+        >>> [e for e in G.interactions_iter(t=0)]
         [(0, 1), (1, 2)]
-        >>> list(G.edges_iter())
+        >>> list(G.interactions_iter())
         [(0, 1), (1, 2), (2, 3)]
         """
         seen = {}  # helper dict to keep track of multiply stored interactions
@@ -282,7 +282,7 @@ class DynGraph(nx.Graph):
         del seen
 
     def add_interaction(self, u, v, t=None, e=None):
-        """Add an edge between u and v at time t vanishing (optional) at time e.
+        """Add an interaction between u and v at time t vanishing (optional) at time e.
 
         The nodes u and v will be automatically added if they are
         not already in the graph.
@@ -297,25 +297,25 @@ class DynGraph(nx.Graph):
 
         See Also
         --------
-        add_edges_from : add a collection of edges at time t
+        add_edges_from : add a collection of interaction at time t
 
         Notes
         -----
-        Adding an edge that already exists but with different snapshot id updates the edge data.
+        Adding an interaction that already exists but with different snapshot id updates the interaction data.
 
         Examples
         --------
-        The following all add the edge e=(1,2, 0) to graph G:
+        The following all add the interaction e=(1,2, 0) to graph G:
 
         >>> G = dn.DynGraph()
         >>> G.add_interaction(1, 2, 0)           # explicit two-node form
-        >>> G.add_interaction( [(1,2)], t=0 ) # add edges from iterable container
+        >>> G.add_interaction( [(1,2)], t=0 ) # add interaction from iterable container
 
-        Specify the vanishing of the edge
+        Specify the vanishing of the interaction
 
         >>>> G.add_interaction(1, 3, t=1, e=10)
 
-        will produce an edge present in snapshots [0, 9]
+        will produce an interaction present in snapshots [0, 9]
         """
         if t is None:
             raise nx.NetworkXError(
@@ -332,14 +332,16 @@ class DynGraph(nx.Graph):
             t = [t, t]
 
         for idt in [t[0]]:
-
-            if idt not in self.time_to_edge:
-                self.time_to_edge[idt] = {(u, v, "+"): None}
+            if self.has_edge(u, v) and not self.edge_removal:
+                continue
             else:
-                if (u, v, "+") not in self.time_to_edge[idt]:
-                    self.time_to_edge[idt][(u, v, "+")] = None
+                if idt not in self.time_to_edge:
+                    self.time_to_edge[idt] = {(u, v, "+"): None}
+                else:
+                    if (u, v, "+") not in self.time_to_edge[idt]:
+                        self.time_to_edge[idt][(u, v, "+")] = None
 
-        if e is not None:
+        if e is not None and self.edge_removal:
 
             t[1] = e - 1
             if e not in self.time_to_edge:
@@ -347,7 +349,7 @@ class DynGraph(nx.Graph):
             else:
                 self.time_to_edge[e][(u, v, "-")] = None
 
-        # add the edge
+        # add the interaction
         datadict = self.adj[u].get(v, self.edge_attr_dict_factory())
 
         if 't' in datadict:
@@ -368,18 +370,20 @@ class DynGraph(nx.Graph):
                 if t[0] <= max_end < t[1]:
                     app[-1][1] = t[1]
                     if max_end + 1 in self.time_to_edge:
-                        del self.time_to_edge[max_end + 1][(u, v, "-")]
+                        if self.edge_removal:
+                            del self.time_to_edge[max_end + 1][(u, v, "-")]
                         del self.time_to_edge[t[0]][(u, v, "+")]
 
                 elif max_end == t[0]-1:
                     if max_end + 1 in self.time_to_edge:
                         del self.time_to_edge[max_end + 1][(u, v, "+")]
-                        if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
-                            del self.time_to_edge[max_end+1][(u, v, '-')]
-                        if t[1]+1 in self.time_to_edge:
-                            self.time_to_edge[t[1]+1][(u, v, "-")] = None
-                        else:
-                            self.time_to_edge[t[1]+1] = {(u, v, "-"): None}
+                        if self.edge_removal:
+                            if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
+                                del self.time_to_edge[max_end+1][(u, v, '-')]
+                            if t[1]+1 in self.time_to_edge:
+                                self.time_to_edge[t[1]+1][(u, v, "-")] = None
+                            else:
+                                self.time_to_edge[t[1]+1] = {(u, v, "-"): None}
 
                     app[-1][1] = t[1]
                 else:
@@ -406,25 +410,21 @@ class DynGraph(nx.Graph):
         self.adj[v][u] = datadict
 
     def add_interactions_from(self, ebunch, t=None, e=None):
-        """Add all the edges in ebunch at time t.
+        """Add all the interaction in ebunch at time t.
 
         Parameters
         ----------
-        ebunch : container of edges
-            Each edge given in the container will be added to the
-            graph. The edges must be given as as 2-tuples (u,v) or
-            3-tuples (u,v,d) where d is a dictionary containing edge
+        ebunch : container of interaction
+            Each interaction given in the container will be added to the
+            graph. The interaction must be given as as 2-tuples (u,v) or
+            3-tuples (u,v,d) where d is a dictionary containing interaction
             data.
         t : appearance snapshot id, mandatory
         e : vanishing snapshot id, optional
 
         See Also
         --------
-        add_edge : add a single edge
-
-        Notes
-        -----
-        Adding the same edge twice has no effect.
+        add_edge : add a single interaction
 
         Examples
         --------
@@ -456,13 +456,13 @@ class DynGraph(nx.Graph):
         pass
 
     def number_of_interactions(self, u=None, v=None, t=None):
-        """Return the number of edges between two nodes at time t.
+        """Return the number of interaction between two nodes at time t.
 
         Parameters
         ----------
-        u, v : nodes, optional (default=all edges)
-            If u and v are specified, return the number of edges between
-            u and v. Otherwise return the total number of all edges.
+        u, v : nodes, optional (default=all interaction)
+            If u and v are specified, return the number of interaction between
+            u and v. Otherwise return the total number of all interaction.
         t : snapshot id (default=None)
             If None will be returned the number of edges on the flattened graph.
 
@@ -470,8 +470,8 @@ class DynGraph(nx.Graph):
         Returns
         -------
         nedges : int
-            The number of edges in the graph.  If nodes u and v are specified
-            return the number of edges between those nodes. If a single node is specified return None.
+            The number of interaction in the graph.  If nodes u and v are specified
+            return the number of interaction between those nodes. If a single node is specified return None.
 
         See Also
         --------
@@ -508,7 +508,7 @@ class DynGraph(nx.Graph):
                         return 0
 
     def has_interaction(self, u, v, t=None):
-        """Return True if the edge (u,v) is in the graph at time t.
+        """Return True if the interaction (u,v) is in the graph at time t.
 
         Parameters
         ----------
@@ -516,17 +516,17 @@ class DynGraph(nx.Graph):
             Nodes can be, for example, strings or numbers.
             Nodes must be hashable (and not None) Python objects.
         t : snapshot id (default=None)
-            If None will be returned the presence of the edge on the flattened graph.
+            If None will be returned the presence of the interaction on the flattened graph.
 
 
         Returns
         -------
         edge_ind : bool
-            True if edge is in the graph, False otherwise.
+            True if interaction is in the graph, False otherwise.
 
         Examples
         --------
-        Can be called either using two nodes u,v or edge tuple (u,v)
+        Can be called either using two nodes u,v or interaction tuple (u,v)
 
         >>> G = nx.Graph()
         >>> G.add_path([0,1,2,3], t=0)
@@ -609,7 +609,7 @@ class DynGraph(nx.Graph):
     def degree(self, nbunch=None, t=None):
         """Return the degree of a node or nodes at time t.
 
-        The node degree is the number of edges adjacent to that node.
+        The node degree is the number of interaction adjacent to that node in a given time frame.
 
         Parameters
         ----------
@@ -646,7 +646,7 @@ class DynGraph(nx.Graph):
     def degree_iter(self, nbunch=None, t=None):
         """Return an iterator for (node, degree) at time t.
 
-        The node degree is the number of edges adjacent to the node.
+        The node degree is the number of edges adjacent to the node in a given timeframe.
 
         Parameters
         ----------
@@ -705,7 +705,7 @@ class DynGraph(nx.Graph):
         Returns
         -------
         nedges : int
-            The number of edges or sum of edge weights in the graph.
+            The number of edges
 
         See Also
         --------
@@ -836,8 +836,8 @@ class DynGraph(nx.Graph):
         """
         nlist = list(nodes)
         v = nlist[0]
-        edges = ((v, n) for n in nlist[1:])
-        self.add_interactions_from(edges, t)
+        interaction = ((v, n) for n in nlist[1:])
+        self.add_interactions_from(interaction, t)
 
     def add_path(self, nodes, t=None):
         """Add a path at time t.
@@ -858,8 +858,8 @@ class DynGraph(nx.Graph):
         >>> G.add_path([0,1,2,3], t=0)
         """
         nlist = list(nodes)
-        edges = zip(nlist[:-1], nlist[1:])
-        self.add_interactions_from(edges, t)
+        interaction = zip(nlist[:-1], nlist[1:])
+        self.add_interactions_from(interaction, t)
 
     def add_cycle(self, nodes, t=None):
         """Add a cycle at time t.
@@ -880,8 +880,8 @@ class DynGraph(nx.Graph):
         >>> G.add_cycle([0,1,2,3], t=0)
         """
         nlist = list(nodes)
-        edges = zip(nlist, nlist[1:] + [nlist[0]])
-        self.add_interactions_from(edges, t)
+        interaction = zip(nlist, nlist[1:] + [nlist[0]])
+        self.add_interactions_from(interaction, t)
 
     def stream_interactions(self):
         """Generate a temporal ordered stream of interactions.
@@ -906,9 +906,7 @@ class DynGraph(nx.Graph):
                 yield (e[0], e[1], e[2], t)
 
     def time_slice(self, t_from, t_to=None):
-        """Return an iterator for (node, degree) at time t.
-
-            The node degree is the number of edges adjacent to the node.
+        """Return an new graph containing nodes and interactions present in [t_from, t_to].
 
             Parameters
             ----------
@@ -1074,7 +1072,7 @@ class DynGraph(nx.Graph):
                         delta = ext
                         flag = True
         else:
-            # edge inter event
+            # interaction inter event
             evt = self.adj[u][v]['t']
             delta = []
 
