@@ -36,6 +36,9 @@ class DynGraph(nx.Graph):
     attr : keyword arguments, optional (default= no attributes)
         Attributes to add to graph as key=value pairs.
 
+    edge_removal : bool, optional (default=True)
+        Specify if the dynamic graph instance should allows edge removal or not.
+
     Examples
     --------
     Create an empty graph structure (a "null graph") with no nodes and
@@ -98,7 +101,7 @@ class DynGraph(nx.Graph):
             packages are installed the data can also be a NumPy matrix
             or 2d ndarray, a SciPy sparse matrix, or a PyGraphviz graph.
         edge_removal : bool, optional (default=True)
-            Define if a dynamic graph allows edge removal or not.
+            Specify if the dynamic graph instance should allows edge removal or not.
         attr : keyword arguments, optional (default= no attributes)
             Attributes to add to graph as key=value pairs.
 

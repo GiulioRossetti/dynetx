@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 import unittest
 import dynetx as dn
-import past.builtins
-import networkx as nx
 
 
 class DynGraphTestCase(unittest.TestCase):
