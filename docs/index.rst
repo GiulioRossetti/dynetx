@@ -8,21 +8,25 @@ DyNetx - Dynamic Network library
 .. image:: https://badge.fury.io/py/dynetx.svg
     :target: https://badge.fury.io/py/dynetx.svg
 
+.. image:: https://img.shields.io/pypi/pyversions/dynetx.svg
+   :target: https://badge.fury.io/py/dynetx
+
 .. image:: https://secure.travis-ci.org/GiulioRossetti/dynetx.png
     :target: http://travis-ci.org/GiulioRossetti/dynetx
 
 .. image:: https://coveralls.io/repos/GiulioRossetti/dynetx/badge.png?branch=master
     :target: https://coveralls.io/r/GiulioRossetti/dynetx?branch=master
 
-.. image:: https://landscape.io/github/GiulioRossetti/dynetx/master/landscape.png
-   :target: https://landscape.io/github/GiulioRossetti/dynetx/master
+.. image:: https://bettercodehub.com/edge/badge/GiulioRossetti/dynetx?branch=master
+   :target: https://bettercodehub.com/
+
 
 DyNetx is a Python software package that extends ``networkx`` with dynamic network models and algorithms.
 
-=========== ============== =================== ==================  ==========  ===============
-**Release**    **Date**    **Python Versions**   **Main Author**   **GitHub**     **pypl**
-   0.1.1    August 8, 2017       2.7.x/3.x     `Giulio Rossetti`_  `Source`_   `Distribution`_
-=========== ============== =================== ==================  ==========  ===============
+============== =================== ==================  ==========  ===============
+   **Date**    **Python Versions**   **Main Author**   **GitHub**     **pypl**
+August 8, 2017       2.7.x/3.x     `Giulio Rossetti`_  `Source`_   `Distribution`_
+============== =================== ==================  ==========  ===============
 
 
 Contents:
