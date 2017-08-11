@@ -23,6 +23,7 @@ Sequence of **Interaction** events (u, v, +/-, t):
 
 from dynetx.utils import open_file, make_str, compact_timeslot
 from dynetx import DynGraph
+import past.builtins
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"
@@ -146,7 +147,7 @@ def generate_snapshots(G, delimiter=' '):
             e = [u, v, t[0]]
             if t[1] is not None:
                 if t[0] != t[1]:
-                    for s in xrange(t[0], t[1]+1):
+                    for s in past.builtins.xrange(t[0], t[1]+1):
                         e = [u, v, s]
                         yield delimiter.join(map(make_str, e))
                 else:

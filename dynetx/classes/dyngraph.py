@@ -807,7 +807,7 @@ class DynGraph(nx.Graph):
             except TypeError:
                 return False
         else:
-            deg = self.degree([n], t).values()
+            deg = list(self.degree([n], t).values())
             if len(deg) > 0:
                 return deg[0] > 0
             else:
@@ -937,17 +937,17 @@ class DynGraph(nx.Graph):
         H = self.__class__()
 
         if t_to is not None:
-            if t_to == t_from:
-                t_to = None
-            elif t_to < t_from:
+            if t_to < t_from:
                 raise ValueError("Invalid range: t_to must be grater that t_from")
+        else:
+            t_to = t_from
 
         for u, v, ts in self.interactions_iter():
             t_to_cp = t_to
             t_from_cp = t_from
 
             for r in ts['t']:
-                if t_to is not None and t_to < r[0]:
+                if t_to < r[0]:
                     break
 
                 if t_from < r[0] < t_to or t_to >= r[1]:
