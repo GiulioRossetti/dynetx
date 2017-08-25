@@ -153,6 +153,51 @@ class DynDiGraphTestCase(unittest.TestCase):
         self.assertEqual(g.has_interaction(0, 1, 6), False)
         self.assertEqual(g.has_interaction(0, 1, 9), False)
 
+    def test_in_out_interactions(self):
+        g = dn.DynDiGraph()
+        g.add_interaction(0, 1, 5)
+        g.add_interaction(1, 2, 5)
+        g.add_interaction(2, 3, 5)
+        g.add_interaction(3, 4, 5)
+        g.add_interaction(4, 5, 6)
+        g.add_interaction(5, 6, 6)
+        g.add_interaction(6, 7, 6)
+        g.add_interaction(7, 8, 6)
+
+        sr = g.in_interactions()
+        self.assertEqual(sr, [(0, 1, {'t': [[5, 5]]}), (1, 2, {'t': [[5, 5]]}), (2, 3, {'t': [[5, 5]]}),
+                              (3, 4, {'t': [[5, 5]]}), (4, 5, {'t': [[6, 6]]}), (5, 6, {'t': [[6, 6]]}),
+                              (6, 7, {'t': [[6, 6]]}), (7, 8, {'t': [[6, 6]]})])
+
+        sr = g.in_interactions([0, 1])
+        self.assertEqual(sr, [(0, 1, {'t': [[5, 5]]})])
+
+        sr = g.in_interactions([9, 10])
+        self.assertEqual(sr, [])
+
+        sr = g.in_interactions([0, 1], 5)
+        self.assertEqual(sr, [(0, 1, {'t': [5]})])
+
+        sr = g.in_interactions([0, 1], 7)
+        self.assertEqual(sr, [])
+
+        sr = g.out_interactions()
+        self.assertEqual(sr, [(0, 1, {'t': [[5, 5]]}), (1, 2, {'t': [[5, 5]]}), (2, 3, {'t': [[5, 5]]}),
+                              (3, 4, {'t': [[5, 5]]}), (4, 5, {'t': [[6, 6]]}), (5, 6, {'t': [[6, 6]]}),
+                              (6, 7, {'t': [[6, 6]]}), (7, 8, {'t': [[6, 6]]})])
+
+        sr = g.out_interactions([0])
+        self.assertEqual(sr, [(0, 1, {'t': [[5, 5]]})])
+
+        sr = g.out_interactions([9, 10])
+        self.assertEqual(sr, [])
+
+        sr = g.out_interactions([0, 1], 5)
+        self.assertEqual(sr, [(0, 1, {'t': [5]}), (1, 2, {'t': [5]})])
+
+        sr = g.out_interactions([0, 1], 7)
+        self.assertEqual(sr, [])
+
     def test_neighbors(self):
         g = dn.DynDiGraph()
         g.add_interaction(0, 1, 5)

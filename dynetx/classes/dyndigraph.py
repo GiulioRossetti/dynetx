@@ -250,6 +250,8 @@ class DynDiGraph(nx.DiGraph):
         return list(self.interactions_iter(nbunch, t))
 
     def __presence_test(self, u, v, t):
+        if v not in self.succ[u]:
+            return False
         spans = self.succ[u][v]['t']
         if self.edge_removal:
             if spans[0][0] <= t <= spans[-1][1]:
@@ -564,42 +566,35 @@ class DynDiGraph(nx.DiGraph):
             self.add_interaction(ed[0], ed[1], t, e)
 
     def in_interactions_iter(self, nbunch=None, t=None):
-        seen = {}  # helper dict to keep track of multiply stored interactions
         if nbunch is None:
             nodes_nbrs_pred = self.pred.items()
         else:
             nodes_nbrs_pred = [(n, self.pred[n]) for n in self.nbunch_iter(nbunch)]
 
         for n, nbrs in nodes_nbrs_pred:
+
             for nbr in nbrs:
                 if t is not None:
-                    if nbr not in seen and self.__presence_test(nbr, n, t):
+                    if self.__presence_test(nbr, n, t):
                         yield (nbr, n, {"t": [t]})
                 else:
-                    if nbr not in seen:
+                    if nbr in self.pred[n]:
                         yield (nbr, n, self.pred[n][nbr])
-                seen[n] = 1
-
-        del seen
 
     def out_interactions_iter(self, nbunch=None, t=None):
-        seen = {}  # helper dict to keep track of multiply stored interactions
         if nbunch is None:
             nodes_nbrs_succ = self.succ.items()
         else:
-            nodes_nbrs_succ = [(n, self.pred[n]) for n in self.nbunch_iter(nbunch)]
+            nodes_nbrs_succ = [(n, self.succ[n]) for n in self.nbunch_iter(nbunch)]
 
         for n, nbrs in nodes_nbrs_succ:
             for nbr in nbrs:
                 if t is not None:
-                    if nbr not in seen and self.__presence_test(n, nbr, t):
+                    if self.__presence_test(n, nbr, t):
                         yield (n, nbr, {"t": [t]})
                 else:
-                    if nbr not in seen:
+                    if nbr in self.succ[n]:
                         yield (n, nbr, self.succ[n][nbr])
-                seen[n] = 1
-
-        del seen
 
     def in_interactions(self, nbunch=None, t=None):
         """Return the list of interaction present in a given snapshot.

@@ -207,5 +207,7 @@ class FunctionTestCase(unittest.TestCase):
 
         self.assertEqual(len(list(dn.non_interactions(g))), 13)
 
+        g.to_undirected(reciprocal=True)
+
 if __name__ == '__main__':
     unittest.main()
