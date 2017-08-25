@@ -37,6 +37,20 @@ class ReadWriteTestCase(unittest.TestCase):
         self.assertEqual(list(g.stream_interactions()), list(h.stream_interactions()))
         os.remove("test.txt")
 
+    def test_snapshots_directed(self):
+        g = dn.DynGraph()
+        g.add_interaction(1, 2, 2)
+        g.add_interaction(1, 2, 2, e=6)
+        g.add_interaction(1, 2, 7, e=11)
+        g.add_interaction(1, 2, 8, e=15)
+        g.add_interaction(1, 2, 18)
+        g.add_interaction(1, 2, 19)
+        dn.write_snapshots(g, "test.txt", delimiter=" ")
+        h = dn.read_snapshots("test.txt", directed=True, nodetype=int, timestamptype=int)
+        self.assertEqual(g.number_of_interactions(), h.number_of_interactions())
+        self.assertEqual(list(g.stream_interactions()), list(h.stream_interactions()))
+        os.remove("test.txt")
+
     def test_interaction_graph(self):
         g = dn.DynGraph()
         g.add_interaction(1, 2, 2)
@@ -47,6 +61,20 @@ class ReadWriteTestCase(unittest.TestCase):
         g.add_interaction(1, 2, 19)
         dn.write_interactions(g, "test2.txt", delimiter=" ")
         h = dn.read_interactions("test2.txt", nodetype=int, timestamptype=int)
+        self.assertEqual(list(g.stream_interactions()), list(h.stream_interactions()))
+        self.assertEqual(g.number_of_interactions(), h.number_of_interactions())
+        os.remove("test2.txt")
+
+    def test_interaction_graph_directed(self):
+        g = dn.DynGraph()
+        g.add_interaction(1, 2, 2)
+        g.add_interaction(1, 2, 2, e=6)
+        g.add_interaction(1, 2, 7, e=11)
+        g.add_interaction(1, 2, 8, e=15)
+        g.add_interaction(1, 2, 18)
+        g.add_interaction(1, 2, 19)
+        dn.write_interactions(g, "test2.txt", delimiter=" ")
+        h = dn.read_interactions("test2.txt", directed=True, nodetype=int, timestamptype=int)
         self.assertEqual(list(g.stream_interactions()), list(h.stream_interactions()))
         self.assertEqual(g.number_of_interactions(), h.number_of_interactions())
         os.remove("test2.txt")

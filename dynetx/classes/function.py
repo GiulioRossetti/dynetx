@@ -590,7 +590,7 @@ def all_neighbors(graph, node, t=None):
             Iterator of neighbors
     """
     if graph.is_directed():
-        values = chain(graph.predecessors(node), graph.successors(node))
+        values = chain(graph.predecessors(node, t=t), graph.successors(node, t=t))
     else:
         values = graph.neighbors(node, t=t)
     return values
@@ -616,7 +616,12 @@ def non_neighbors(graph, node, t=None):
         non_neighbors : iterator
             Iterator of nodes in the graph that are not neighbors of the node.
         """
-    nbors = set(neighbors(graph, node, t=t)) | {node}
+    if graph.is_directed():
+        values = chain(graph.predecessors(node, t=t), graph.successors(node, t=t))
+    else:
+        values = graph.neighbors(node, t=t)
+
+    nbors = set(values) | {node}
     return (nnode for nnode in graph if nnode not in nbors)
 
 
