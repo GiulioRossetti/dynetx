@@ -1492,26 +1492,30 @@ class DynDiGraph(nx.DiGraph):
         H.add_nodes_from(self)
 
         if reciprocal is True:
-            for it in self.interactions_iter():
-                try:
-                    outc = self.succ[it[0]][it[1]]['t']
-                    intc = self.pred[it[0]][it[1]]['t']
-                    for o in outc:
-                        r = set(range(o[0], o[1]))
-                        for i in intc:
-                            r2 = set(range(i[0], i[1]))
-                            inter = r & r2
-                            if len(inter) > 0:
-                                H.add_interaction(it[0], it[1], t=inter[0], e=inter[-1])
-                                break
-                except:
-                    pass
+            for u in self.node:
+                for v in self.node:
+                    if u >= v:
+                        try:
+                            outc = self.succ[u][v]['t']
+                            intc = self.pred[u][v]['t']
+                            for o in outc:
+                                r = set(range(o[0], o[1]+1))
+                                for i in intc:
+                                    r2 = set(range(i[0], i[1]+1))
+                                    inter = list(r & r2)
+                                    if len(inter) == 1:
+                                        H.add_interaction(u, v, t=inter[0])
+                                    elif len(inter) > 1:
+                                        H.add_interaction(u, v, t=inter[0], e=inter[-1])
+
+                        except:
+                            pass
 
         else:
             for it in self.interactions_iter():
                 for t in it[2]['t']:
                     H.add_interaction(it[0], it[1], t=t[0], e=t[1])
 
-        H.graph=deepcopy(self.graph)
-        H.node=deepcopy(self.node)
+        H.graph = deepcopy(self.graph)
+        H.node = deepcopy(self.node)
         return H

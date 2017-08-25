@@ -202,12 +202,31 @@ class FunctionTestCase(unittest.TestCase):
         dn.freeze(g)
         self.assertEqual(dn.is_frozen(g), True)
 
+        self.assertEqual(len(g.interactions()), 8)
+
         h = g.to_undirected()
+        self.assertEqual(len(h.interactions()), 8)
         dn.all_neighbors(h, 1)
 
         self.assertEqual(len(list(dn.non_interactions(g))), 13)
 
-        g.to_undirected(reciprocal=True)
+        h = g.to_undirected(reciprocal=True)
+        self.assertEqual(h.number_of_interactions(), 0)
+
+        g.add_interaction(2, 1, 50)
+        h = g.to_undirected(reciprocal=True)
+        self.assertEqual(h.number_of_interactions(), 1)
+
+        g.add_interaction(10, 11, 3, e=7)
+        g.add_interaction(11, 10, 3, e=7)
+        h = g.to_undirected(reciprocal=True)
+        self.assertEqual(h.number_of_interactions(), 2)
+
+        g.add_interaction(12, 14, 3, e=5)
+        g.add_interaction(14, 12, 4, e=14)
+
+        h = g.to_undirected(reciprocal=True)
+        self.assertEqual(h.number_of_interactions(), 3)
 
 if __name__ == '__main__':
     unittest.main()
