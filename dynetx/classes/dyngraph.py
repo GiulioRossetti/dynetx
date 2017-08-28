@@ -40,6 +40,10 @@ class DynGraph(nx.Graph):
     edge_removal : bool, optional (default=True)
         Specify if the dynamic graph instance should allows edge removal or not.
 
+    See Also
+    --------
+    DynDiGraph
+
     Examples
     --------
     Create an empty graph structure (a "null graph") with no nodes and
@@ -442,22 +446,6 @@ class DynGraph(nx.Graph):
         # process ebunch
         for ed in ebunch:
             self.add_interaction(ed[0], ed[1], t, e)
-
-    @not_implemented()
-    def remove_edge(self, u, v):
-        pass
-
-    @not_implemented()
-    def remove_edges_from(self, ebunch):
-        pass
-
-    @not_implemented()
-    def remove_node(self, u):
-        pass
-
-    @not_implemented()
-    def remove_nodes_from(self, nbunch):
-        pass
 
     def number_of_interactions(self, u=None, v=None, t=None):
         """Return the number of interaction between two nodes at time t.
@@ -1037,7 +1025,7 @@ class DynGraph(nx.Graph):
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([0,4,5,6], t=1)
             >>> G.add_path([7,1,2,3], t=2)
-            >>> G.temporal_snapshots()
+            >>> G.temporal_snapshots_ids()
             [0, 1, 2]
         """
         return sorted(self.snapshots.keys())
@@ -1152,3 +1140,31 @@ class DynGraph(nx.Graph):
                     dist[e] += 1
 
         return dist
+
+    @not_implemented()
+    def remove_edge(self, u, v):
+        pass
+
+    @not_implemented()
+    def remove_edges_from(self, ebunch):
+        pass
+
+    @not_implemented()
+    def remove_node(self, u):
+        pass
+
+    @not_implemented()
+    def remove_nodes_from(self, nbunch):
+        pass
+
+    @not_implemented()
+    def add_edge(self, u, v, attr_dict=None, **attr):
+        pass
+
+    @not_implemented()
+    def add_edges_from(self, ebunch, attr_dict=None, **attr):
+        pass
+
+    @not_implemented()
+    def edges_iter(self, nbunch=None, data=False, default=None):
+        pass

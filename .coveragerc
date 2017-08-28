@@ -3,3 +3,8 @@ omit =
  setup.py
  dynetx/utils/*
  dynetx/test/*
+
+[report]
+exclude_lines =
+	pragma: no cover
+	pass
