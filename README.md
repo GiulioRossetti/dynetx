@@ -11,7 +11,7 @@
 ![DyNetx logo](http://dynetx.readthedocs.io/en/latest/_static/dynetx.png)
 
 
-DyNetx provides implementations of dynamic networks in python (built upon [networkx](http://networkx.github.io)).
+DyNetx provides implementations of dynamic networks in python (it is built upon [networkx](http://networkx.github.io)).
 
 
 The project documentation can be found on [ReadTheDocs](http://dynetx.readthedocs.io).
