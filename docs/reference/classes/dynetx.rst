@@ -49,6 +49,7 @@ Information about graph structure
 	DynGraph.order
 	DynGraph.has_node
 	DynGraph.number_of_nodes
+	DynGraph.to_directed
 
 
 Dynamic Representation: Access Snapshots and Iterations

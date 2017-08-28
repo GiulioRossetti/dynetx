@@ -9,6 +9,7 @@ Self-loops are allowed.
 import networkx as nx
 from collections import defaultdict
 from dynetx.utils import not_implemented
+from copy import deepcopy
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"
@@ -38,6 +39,10 @@ class DynGraph(nx.Graph):
 
     edge_removal : bool, optional (default=True)
         Specify if the dynamic graph instance should allows edge removal or not.
+
+    See Also
+    --------
+    DynDiGraph
 
     Examples
     --------
@@ -441,22 +446,6 @@ class DynGraph(nx.Graph):
         # process ebunch
         for ed in ebunch:
             self.add_interaction(ed[0], ed[1], t, e)
-
-    @not_implemented()
-    def remove_edge(self, u, v):
-        pass
-
-    @not_implemented()
-    def remove_edges_from(self, ebunch):
-        pass
-
-    @not_implemented()
-    def remove_node(self, u):
-        pass
-
-    @not_implemented()
-    def remove_nodes_from(self, nbunch):
-        pass
 
     def number_of_interactions(self, u=None, v=None, t=None):
         """Return the number of interaction between two nodes at time t.
@@ -886,6 +875,60 @@ class DynGraph(nx.Graph):
         interaction = zip(nlist, nlist[1:] + [nlist[0]])
         self.add_interactions_from(interaction, t)
 
+    def to_directed(self):
+        """Return a directed representation of the graph.
+
+        Returns
+        -------
+        G : DynDiGraph
+            A dynamic directed graph with the same name, same nodes, and with
+            each edge (u,v,data) replaced by two directed edges
+            (u,v,data) and (v,u,data).
+
+        Notes
+        -----
+        This returns a "deepcopy" of the edge, node, and
+        graph attributes which attempts to completely copy
+        all of the data and references.
+
+        This is in contrast to the similar D=DynDiGraph(G) which returns a
+        shallow copy of the data.
+
+        See the Python copy module for more information on shallow
+        and deep copies, http://docs.python.org/library/copy.html.
+
+        Warning: If you have subclassed Graph to use dict-like objects in the
+        data structure, those changes do not transfer to the DynDiGraph
+        created by this method.
+
+        Examples
+        --------
+        >>> G = dn.DynGraph()   # or MultiGraph, etc
+        >>> G.add_path([0,1])
+        >>> H = G.to_directed()
+        >>> H.edges()
+        [(0, 1), (1, 0)]
+
+        If already directed, return a (deep) copy
+
+        >>> G = dn.DynDiGraph()   # or MultiDiGraph, etc
+        >>> G.add_path([0,1])
+        >>> H = G.to_directed()
+        >>> H.edges()
+        [(0, 1)]
+        """
+        from .dyndigraph import DynDiGraph
+        G = DynDiGraph()
+        G.name = self.name
+        G.add_nodes_from(self)
+        for it in self.interactions_iter():
+            for t in it[2]['t']:
+                G.add_interaction(it[0], it[1], t=t[0], e=t[1])
+
+        G.graph = deepcopy(self.graph)
+        G.node = deepcopy(self.node)
+        return G
+
     def stream_interactions(self):
         """Generate a temporal ordered stream of interactions.
 
@@ -982,7 +1025,7 @@ class DynGraph(nx.Graph):
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([0,4,5,6], t=1)
             >>> G.add_path([7,1,2,3], t=2)
-            >>> G.temporal_snapshots()
+            >>> G.temporal_snapshots_ids()
             [0, 1, 2]
         """
         return sorted(self.snapshots.keys())
@@ -1080,8 +1123,11 @@ class DynGraph(nx.Graph):
             delta = []
 
             for i in evt:
-                for j in [0, 1]:
-                    delta.append(i[j])
+                if i[0] != i[1]:
+                    for j in [0, 1]:
+                        delta.append(i[j])
+                else:
+                    delta.append(i[0])
 
             if len(delta) == 2 and delta[0] == delta[1]:
                 return {}
@@ -1094,3 +1140,31 @@ class DynGraph(nx.Graph):
                     dist[e] += 1
 
         return dist
+
+    @not_implemented()
+    def remove_edge(self, u, v):
+        pass
+
+    @not_implemented()
+    def remove_edges_from(self, ebunch):
+        pass
+
+    @not_implemented()
+    def remove_node(self, u):
+        pass
+
+    @not_implemented()
+    def remove_nodes_from(self, nbunch):
+        pass
+
+    @not_implemented()
+    def add_edge(self, u, v, attr_dict=None, **attr):
+        pass
+
+    @not_implemented()
+    def add_edges_from(self, ebunch, attr_dict=None, **attr):
+        pass
+
+    @not_implemented()
+    def edges_iter(self, nbunch=None, data=False, default=None):
+        pass

@@ -23,6 +23,7 @@ Sequence of **Interaction** events (u, v, +/-, t):
 
 from dynetx.utils import open_file, make_str, compact_timeslot
 from dynetx import DynGraph
+from dynetx import DynDiGraph
 import past.builtins
 
 __author__ = 'Giulio Rossetti'
@@ -67,7 +68,7 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
 
 
 @open_file(0, mode='rb')
-def read_interactions(path, comments="#", delimiter=None,
+def read_interactions(path, comments="#", directed=False, delimiter=None,
                   nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
     """Read a DyNetx graph from interaction list format.
 
@@ -86,12 +87,15 @@ def read_interactions(path, comments="#", delimiter=None,
     if keys:
         ids = read_ids(path.name, delimiter=delimiter, timestamptype=timestamptype)
 
-    return parse_interactions(lines, comments=comments, delimiter=delimiter, nodetype=nodetype,
+    return parse_interactions(lines, comments=comments, directed=directed, delimiter=delimiter, nodetype=nodetype,
                              timestamptype=timestamptype, keys=ids)
 
 
-def parse_interactions(lines, comments='#', delimiter=None, nodetype=None, timestamptype=None, keys=None):
-    G = DynGraph()
+def parse_interactions(lines, comments='#', directed=False, delimiter=None, nodetype=None, timestamptype=None, keys=None):
+    if not directed:
+        G = DynGraph()
+    else:
+        G = DynDiGraph()
 
     for line in lines:
 
@@ -178,9 +182,12 @@ def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
         path.write(line.encode(encoding))
 
 
-def parse_snapshots(lines, comments='#', delimiter=None,  nodetype=None, timestamptype=None, keys=None):
+def parse_snapshots(lines, comments='#', directed=False, delimiter=None,  nodetype=None, timestamptype=None, keys=None):
 
-    G = DynGraph()
+    if not directed:
+        G = DynGraph()
+    else:
+        G = DynDiGraph()
 
     for line in lines:
         p = line.find(comments)
@@ -227,7 +234,7 @@ def parse_snapshots(lines, comments='#', delimiter=None,  nodetype=None, timesta
 
 
 @open_file(0, mode='rb')
-def read_snapshots(path, comments="#", delimiter=None,
+def read_snapshots(path, comments="#", directed=False, delimiter=None,
                    nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
     """Read a DyNetx graph from snapshot graph list format.
 
@@ -246,7 +253,7 @@ def read_snapshots(path, comments="#", delimiter=None,
     if keys:
         ids = read_ids(path.name, delimiter=delimiter, timestamptype=timestamptype)
 
-    return parse_snapshots(lines, comments=comments, delimiter=delimiter,  nodetype=nodetype,
+    return parse_snapshots(lines, comments=comments, directed=directed, delimiter=delimiter,  nodetype=nodetype,
                            timestamptype=timestamptype, keys=ids)
 
 

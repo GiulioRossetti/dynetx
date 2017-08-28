@@ -24,4 +24,5 @@ Basic graph types
    :maxdepth: 2
 
    dynetx.rst
+   dydinetx.rst
 
