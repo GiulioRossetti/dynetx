@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import unittest
 import dynetx as dn
+from dynetx.readwrite import json_graph
 import os
 
 
@@ -106,6 +107,31 @@ class ReadWriteTestCase(unittest.TestCase):
         # self.assertEqual(list(g.stream_interactions()), list(h.stream_interactions()))
         self.assertEqual(g.number_of_interactions(), h.number_of_interactions())
         os.remove("test4.txt")
+
+    def test_json_directed(self):
+        g = dn.DynDiGraph()
+        g.add_interaction(1, 2, 2)
+        g.add_interaction(2, 1, 2)
+        g.add_interaction(1, 2, 2, e=6)
+        g.add_interaction(1, 2, 7, e=11)
+        g.add_interaction(1, 2, 8, e=15)
+        g.add_interaction(1, 2, 18)
+        g.add_interaction(1, 2, 19)
+        data = json_graph.node_link_data(g)
+        H = json_graph.node_link_graph(data)
+        self.assertIsInstance(H, dn.DynDiGraph)
+
+    def test_json_undirected(self):
+        g = dn.DynGraph()
+        g.add_interaction(1, 2, 2)
+        g.add_interaction(1, 2, 2, e=6)
+        g.add_interaction(1, 2, 7, e=11)
+        g.add_interaction(1, 2, 8, e=15)
+        g.add_interaction(1, 2, 18)
+        g.add_interaction(1, 2, 19)
+        data = json_graph.node_link_data(g)
+        H = json_graph.node_link_graph(data)
+        self.assertIsInstance(H, dn.DynGraph)
 
 
 

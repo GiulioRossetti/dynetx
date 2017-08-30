@@ -3,10 +3,6 @@ from __future__ import division
 from dynetx.utils import not_implemented
 from collections import Counter
 from itertools import chain
-try:
-    from itertools import zip_longest
-except ImportError:
-    from itertools import izip_longest as zip_longest
 
 import networkx as nx
 
