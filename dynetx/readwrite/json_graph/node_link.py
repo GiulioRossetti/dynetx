@@ -46,7 +46,7 @@ def node_link_data(G, attrs=_attrs):
 
     See Also
     --------
-    node_link_graph, adjacency_data, tree_data
+    node_link_graph
     """
     id_ = attrs['id']
 
@@ -92,14 +92,9 @@ def node_link_graph(data, directed=False, attrs=_attrs):
     >>> data = json_graph.node_link_data(G)
     >>> H = json_graph.node_link_graph(data)
 
-    Notes
-    -----
-    The default value of attrs will be changed in a future release of NetworkX.
-
-
     See Also
     --------
-    node_link_data, adjacency_data, tree_data
+    node_link_data
     """
 
     directed = data.get('directed', directed)
