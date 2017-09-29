@@ -52,8 +52,8 @@ Information about graph structure
 	DynGraph.to_directed
 
 
-Dynamic Representation: Access Snapshots and Iterations
--------------------------------------------------------
+Dynamic Representation: Access Snapshots and Interactions
+---------------------------------------------------------
 
 .. autosummary::
 	:toctree: generated/
