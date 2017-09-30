@@ -134,6 +134,5 @@ class ReadWriteTestCase(unittest.TestCase):
         self.assertIsInstance(H, dn.DynGraph)
 
 
-
 if __name__ == '__main__':
     unittest.main()

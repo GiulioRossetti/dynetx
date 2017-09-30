@@ -147,7 +147,7 @@ class DynGraph(nx.Graph):
         """
         if t is not None:
             return iter([n for n in self.degree(t=t).values() if n > 0])
-        return iter(self.node)
+        return iter(self._node)
 
     def nodes(self, t=None, data=False):
         """Return a list of the nodes in the graph at a given snapshot.
@@ -222,7 +222,7 @@ class DynGraph(nx.Graph):
         return list(self.interactions_iter(nbunch, t))
 
     def __presence_test(self, u, v, t):
-        spans = self.adj[u][v]['t']
+        spans = self._adj[u][v]['t']
         if self.edge_removal:
             if spans[0][0] <= t <= spans[-1][1]:
                 for s in spans:
@@ -274,9 +274,9 @@ class DynGraph(nx.Graph):
         """
         seen = {}  # helper dict to keep track of multiply stored interactions
         if nbunch is None:
-            nodes_nbrs = self.adj.items()
+            nodes_nbrs = self._adj.items()
         else:
-            nodes_nbrs = ((n, self.adj[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self._adj[n]) for n in self.nbunch_iter(nbunch))
 
         for n, nbrs in nodes_nbrs:
             for nbr in nbrs:
@@ -285,7 +285,7 @@ class DynGraph(nx.Graph):
                         yield (n, nbr, {"t": [t]})
                 else:
                     if nbr not in seen:
-                        yield (n, nbr, self.adj[n][nbr])
+                        yield (n, nbr, self._adj[n][nbr])
                 seen[n] = 1
         del seen
 
@@ -329,12 +329,12 @@ class DynGraph(nx.Graph):
             raise nx.NetworkXError(
                 "The t argument must be specified.")
 
-        if u not in self.node:
-            self.adj[u] = self.adjlist_dict_factory()
-            self.node[u] = {}
-        if v not in self.node:
-            self.adj[v] = self.adjlist_dict_factory()
-            self.node[v] = {}
+        if u not in self._node:
+            self._adj[u] = self.adjlist_inner_dict_factory()
+            self._node[u] = {}
+        if v not in self._node:
+            self._adj[v] = self.adjlist_inner_dict_factory()
+            self._node[v] = {}
 
         if type(t) != list:
             t = [t, t]
@@ -358,7 +358,7 @@ class DynGraph(nx.Graph):
                 self.time_to_edge[e][(u, v, "-")] = None
 
         # add the interaction
-        datadict = self.adj[u].get(v, self.edge_attr_dict_factory())
+        datadict = self._adj[u].get(v, self.edge_attr_dict_factory())
 
         if 't' in datadict:
             app = datadict['t']
@@ -414,8 +414,8 @@ class DynGraph(nx.Graph):
                     else:
                         self.snapshots[idt] += 1
 
-        self.adj[u][v] = datadict
-        self.adj[v][u] = datadict
+        self._adj[u][v] = datadict
+        self._adj[v][u] = datadict
 
     def add_interactions_from(self, ebunch, t=None, e=None):
         """Add all the interaction in ebunch at time t.
@@ -485,7 +485,7 @@ class DynGraph(nx.Graph):
             if u is None:
                 return int(self.size())
             elif u is not None and v is not None:
-                if v in self.adj[u]:
+                if v in self._adj[u]:
                     return 1
                 else:
                     return 0
@@ -493,7 +493,7 @@ class DynGraph(nx.Graph):
             if u is None:
                 return int(self.size(t))
             elif u is not None and v is not None:
-                if v in self.adj[u]:
+                if v in self._adj[u]:
                     if self.__presence_test(u, v, t):
                         return 1
                     else:
@@ -529,9 +529,9 @@ class DynGraph(nx.Graph):
         """
         try:
             if t is None:
-                return v in self.adj[u]
+                return v in self._adj[u]
             else:
-                return v in self.adj[u] and self.__presence_test(u, v, t)
+                return v in self._adj[u] and self.__presence_test(u, v, t)
         except KeyError:
             return False
 
@@ -567,9 +567,9 @@ class DynGraph(nx.Graph):
         """
         try:
             if t is None:
-                return list(self.adj[n])
+                return list(self._adj[n])
             else:
-                return [i for i in self.adj[n] if self.__presence_test(n, i, t)]
+                return [i for i in self._adj[n] if self.__presence_test(n, i, t)]
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -592,9 +592,9 @@ class DynGraph(nx.Graph):
         """
         try:
             if t is None:
-                return iter(self.adj[n])
+                return iter(self._adj[n])
             else:
-                return iter([i for i in self.adj[n] if self.__presence_test(n, i, t)])
+                return iter([i for i in self._adj[n] if self.__presence_test(n, i, t)])
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -669,13 +669,13 @@ class DynGraph(nx.Graph):
         [(0, 1), (1, 2)]
         """
         if nbunch is None:
-            nodes_nbrs = self.adj.items()
+            nodes_nbrs = self._adj.items()
         else:
-            nodes_nbrs = ((n, self.adj[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self._adj[n]) for n in self.nbunch_iter(nbunch))
 
         if t is None:
             for n, nbrs in nodes_nbrs:
-                deg = len(self.adj[n])
+                deg = len(self._adj[n])
                 yield (n, deg)
         else:
             for n, nbrs in nodes_nbrs:
@@ -739,7 +739,7 @@ class DynGraph(nx.Graph):
         3
         """
         if t is None:
-            return len(self.node)
+            return len(self._node)
         else:
             nds = sum([1 for n in self.degree(t=t).values() if n > 0])
             return nds
@@ -795,7 +795,7 @@ class DynGraph(nx.Graph):
         """
         if t is None:
             try:
-                return n in self.node
+                return n in self._node
             except TypeError:
                 return False
         else:
@@ -926,7 +926,7 @@ class DynGraph(nx.Graph):
                 G.add_interaction(it[0], it[1], t=t[0], e=t[1])
 
         G.graph = deepcopy(self.graph)
-        G.node = deepcopy(self.node)
+        G._node = deepcopy(self._node)
         return G
 
     def stream_interactions(self):
@@ -1119,7 +1119,7 @@ class DynGraph(nx.Graph):
                         flag = True
         else:
             # interaction inter event
-            evt = self.adj[u][v]['t']
+            evt = self._adj[u][v]['t']
             delta = []
 
             for i in evt:
