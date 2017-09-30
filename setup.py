@@ -9,7 +9,7 @@ __email__ = "giulio.rossetti@gmail.com"
 #    long_description = f.read()
 
 setup(name='dynetx',
-      version='0.1.6',
+      version='0.2.0',
       license='GNU General Public License v3 or later (GPLv3+)',
       description='Dynamic Network library',
       url='https://github.com/GiulioRossetti/dynetx',
