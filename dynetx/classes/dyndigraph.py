@@ -142,7 +142,7 @@ class DynDiGraph(nx.DiGraph):
         """
         if t is not None:
             return iter([n for n in self.degree(t=t).values() if n > 0])
-        return iter(self.node)
+        return iter(self._node)
 
     def nodes(self, t=None, data=False):
         """Return a list of the nodes in the graph at a given snapshot.
@@ -191,7 +191,7 @@ class DynDiGraph(nx.DiGraph):
         """
         if t is None:
             try:
-                return n in self.node
+                return n in self._node
             except TypeError:
                 return False
         else:
@@ -245,9 +245,9 @@ class DynDiGraph(nx.DiGraph):
         return list(self.interactions_iter(nbunch, t))
 
     def __presence_test(self, u, v, t):
-        if v not in self.succ[u]:
+        if v not in self._succ[u]:
             return False
-        spans = self.succ[u][v]['t']
+        spans = self._succ[u][v]['t']
         if self.edge_removal:
             if spans[0][0] <= t <= spans[-1][1]:
                 for s in spans:
@@ -285,7 +285,7 @@ class DynDiGraph(nx.DiGraph):
         2
         """
         if t is None:
-            return len(self.node)
+            return len(self._node)
         else:
             nds = sum([1 for n in self.degree(t=t).values() if n > 0])
             return nds
@@ -325,9 +325,9 @@ class DynDiGraph(nx.DiGraph):
             """
 
         if nbunch is None:
-            nodes_nbrs = ((n, succs, self.pred[n]) for n, succs in self.succ.items())
+            nodes_nbrs = ((n, succs, self._pred[n]) for n, succs in self._succ.items())
         else:
-            nodes_nbrs = ((n, self.succ[n], self.pred[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self._succ[n], self._pred[n]) for n in self.nbunch_iter(nbunch))
 
         if t is None:
             for n, succ, pred in nodes_nbrs:
@@ -415,9 +415,9 @@ class DynDiGraph(nx.DiGraph):
         """
         seen = {}  # helper dict to keep track of multiply stored interactions
         if nbunch is None:
-            nodes_nbrs_succ = self.succ.items()
+            nodes_nbrs_succ = self._succ.items()
         else:
-            nodes_nbrs_succ = [(n, self.succ[n]) for n in self.nbunch_iter(nbunch)]
+            nodes_nbrs_succ = [(n, self._succ[n]) for n in self.nbunch_iter(nbunch)]
 
         for n, nbrs in nodes_nbrs_succ:
             for nbr in nbrs:
@@ -426,7 +426,7 @@ class DynDiGraph(nx.DiGraph):
                         yield (n, nbr, {"t": [t]})
                 else:
                     if nbr not in seen:
-                        yield (nbr, n, self.succ[n][nbr])
+                        yield (nbr, n, self._succ[n][nbr])
                 seen[n] = 1
 
         del seen
@@ -471,14 +471,14 @@ class DynDiGraph(nx.DiGraph):
             raise nx.NetworkXError(
                 "The t argument must be specified.")
 
-        if u not in self.succ:
-            self.succ[u] = self.adjlist_dict_factory()
-            self.pred[u] = self.adjlist_dict_factory()
-            self.node[u] = {}
-        if v not in self.succ:
-            self.succ[v] = self.adjlist_dict_factory()
-            self.pred[v] = self.adjlist_dict_factory()
-            self.node[v] = {}
+        if u not in self._succ:
+            self._succ[u] = self.adjlist_inner_dict_factory()
+            self._pred[u] = self.adjlist_inner_dict_factory()
+            self._node[u] = {}
+        if v not in self._succ:
+            self._succ[v] = self.adjlist_inner_dict_factory()
+            self._pred[v] = self.adjlist_inner_dict_factory()
+            self._node[v] = {}
 
         if type(t) != list:
             t = [t, t]
@@ -558,8 +558,8 @@ class DynDiGraph(nx.DiGraph):
                     else:
                         self.snapshots[idt] += 1
 
-        self.succ[u][v] = datadict
-        self.pred[v][u] = datadict
+        self._succ[u][v] = datadict
+        self._pred[v][u] = datadict
 
     def add_interactions_from(self, ebunch, t=None, e=None):
         """Add all the interaction in ebunch at time t.
@@ -622,9 +622,9 @@ class DynDiGraph(nx.DiGraph):
         [(0, 1), (1, 2), (2, 3)]
         """
         if nbunch is None:
-            nodes_nbrs_pred = self.pred.items()
+            nodes_nbrs_pred = self._pred.items()
         else:
-            nodes_nbrs_pred = [(n, self.pred[n]) for n in self.nbunch_iter(nbunch)]
+            nodes_nbrs_pred = [(n, self._pred[n]) for n in self.nbunch_iter(nbunch)]
 
         for n, nbrs in nodes_nbrs_pred:
 
@@ -633,8 +633,8 @@ class DynDiGraph(nx.DiGraph):
                     if self.__presence_test(nbr, n, t):
                         yield (nbr, n, {"t": [t]})
                 else:
-                    if nbr in self.pred[n]:
-                        yield (nbr, n, self.pred[n][nbr])
+                    if nbr in self._pred[n]:
+                        yield (nbr, n, self._pred[n][nbr])
 
     def out_interactions_iter(self, nbunch=None, t=None):
         """Return an iterator over the out interactions present in a given snapshot.
@@ -672,9 +672,9 @@ class DynDiGraph(nx.DiGraph):
         [(0, 1), (1, 2), (2, 3)]
         """
         if nbunch is None:
-            nodes_nbrs_succ = self.succ.items()
+            nodes_nbrs_succ = self._succ.items()
         else:
-            nodes_nbrs_succ = [(n, self.succ[n]) for n in self.nbunch_iter(nbunch)]
+            nodes_nbrs_succ = [(n, self._succ[n]) for n in self.nbunch_iter(nbunch)]
 
         for n, nbrs in nodes_nbrs_succ:
             for nbr in nbrs:
@@ -682,8 +682,8 @@ class DynDiGraph(nx.DiGraph):
                     if self.__presence_test(n, nbr, t):
                         yield (n, nbr, {"t": [t]})
                 else:
-                    if nbr in self.succ[n]:
-                        yield (n, nbr, self.succ[n][nbr])
+                    if nbr in self._succ[n]:
+                        yield (n, nbr, self._succ[n][nbr])
 
     def in_interactions(self, nbunch=None, t=None):
         """Return the list of incoming interaction present in a given snapshot.
@@ -800,7 +800,7 @@ class DynDiGraph(nx.DiGraph):
             if u is None:
                 return int(self.size())
             elif u is not None and v is not None:
-                if v in self.succ[u]:
+                if v in self._succ[u]:
                     return 1
                 else:
                     return 0
@@ -808,7 +808,7 @@ class DynDiGraph(nx.DiGraph):
             if u is None:
                 return int(self.size(t))
             elif u is not None and v is not None:
-                if v in self.succ[u]:
+                if v in self._succ[u]:
                     if self.__presence_test(u, v, t):
                         return 1
                     else:
@@ -846,9 +846,9 @@ class DynDiGraph(nx.DiGraph):
         """
         try:
             if t is None:
-                return v in self.succ[u]
+                return v in self._succ[u]
             else:
-                return v in self.succ[u] and self.__presence_test(u, v, t)
+                return v in self._succ[u] and self.__presence_test(u, v, t)
         except KeyError:
             return False
 
@@ -898,9 +898,9 @@ class DynDiGraph(nx.DiGraph):
         """
         try:
             if t is None:
-                return iter(self.succ[n])
+                return iter(self._succ[n])
             else:
-                return iter([i for i in self.succ[n] if self.__presence_test(n, i, t)])
+                return iter([i for i in self._succ[n] if self.__presence_test(n, i, t)])
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -919,9 +919,9 @@ class DynDiGraph(nx.DiGraph):
         """
         try:
             if t is None:
-                return iter(self.pred[n])
+                return iter(self._pred[n])
             else:
-                return iter([i for i in self.pred[n] if self.__presence_test(i, n, t)])
+                return iter([i for i in self._pred[n] if self.__presence_test(i, n, t)])
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -1030,13 +1030,13 @@ class DynDiGraph(nx.DiGraph):
         [(0, 0), (1, 1)]
         """
         if nbunch is None:
-            nodes_nbrs = self.pred.items()
+            nodes_nbrs = self._pred.items()
         else:
-            nodes_nbrs = ((n, self.pred[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self._pred[n]) for n in self.nbunch_iter(nbunch))
 
         if t is None:
             for n, nbrs in nodes_nbrs:
-                deg = len(self.pred[n])
+                deg = len(self._pred[n])
                 yield (n, deg)
         else:
             for n, nbrs in nodes_nbrs:
@@ -1119,13 +1119,13 @@ class DynDiGraph(nx.DiGraph):
         [(0, 1)]
         """
         if nbunch is None:
-            nodes_nbrs = self.succ.items()
+            nodes_nbrs = self._succ.items()
         else:
-            nodes_nbrs = ((n, self.succ[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self._succ[n]) for n in self.nbunch_iter(nbunch))
 
         if t is None:
             for n, nbrs in nodes_nbrs:
-                deg = len(self.succ[n])
+                deg = len(self._succ[n])
                 yield (n, deg)
         else:
             for n, nbrs in nodes_nbrs:
@@ -1375,10 +1375,10 @@ class DynDiGraph(nx.DiGraph):
                         flag = True
         else:
             # interaction inter event
-            if v not in self.succ[u]:
+            if v not in self._succ[u]:
                 return {}
 
-            evt = self.succ[u][v]['t']
+            evt = self._succ[u][v]['t']
             delta = []
 
             for i in evt:
@@ -1455,10 +1455,10 @@ class DynDiGraph(nx.DiGraph):
                         flag = True
         else:
             # interaction inter event
-            if v not in self.pred[u]:
+            if v not in self._pred[u]:
                 return {}
 
-            evt = self.pred[u][v]['t']
+            evt = self._pred[u][v]['t']
             delta = []
 
             for i in evt:
@@ -1535,10 +1535,10 @@ class DynDiGraph(nx.DiGraph):
         else:
             # interaction inter event
 
-            if v in self.pred[u]:
-                evt = self.pred[u][v]['t']
-            elif v in self.succ[u]:
-                evt = self.succ[u][v]['t']
+            if v in self._pred[u]:
+                evt = self._pred[u][v]['t']
+            elif v in self._succ[u]:
+                evt = self._succ[u][v]['t']
 
             delta = []
 
@@ -1652,12 +1652,12 @@ class DynDiGraph(nx.DiGraph):
         H.add_nodes_from(self)
 
         if reciprocal is True:
-            for u in self.node:
-                for v in self.node:
+            for u in self._node:
+                for v in self._node:
                     if u >= v:
                         try:
-                            outc = self.succ[u][v]['t']
-                            intc = self.pred[u][v]['t']
+                            outc = self._succ[u][v]['t']
+                            intc = self._pred[u][v]['t']
                             for o in outc:
                                 r = set(range(o[0], o[1]+1))
                                 for i in intc:
@@ -1677,5 +1677,5 @@ class DynDiGraph(nx.DiGraph):
                     H.add_interaction(it[0], it[1], t=t[0], e=t[1])
 
         H.graph = deepcopy(self.graph)
-        H.node = deepcopy(self.node)
+        H._node = deepcopy(self._node)
         return H

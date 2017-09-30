@@ -134,7 +134,7 @@ def parse_interactions(lines, comments='#', directed=False, delimiter=None, node
         if op == '+':
             G.add_interaction(u, v, t=s)
         else:
-            timestamps = G.edge[u][v]['t']
+            timestamps = G.adj[u][v]['t']
             if len(timestamps) > 0 and timestamps[-1][1] < s:
                 for t in range(timestamps[-1][1], s):
                     G.add_interaction(u, v, t=t)
