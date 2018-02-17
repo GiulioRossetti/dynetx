@@ -14,7 +14,7 @@ Create an empty dynamic graph with no nodes and no edges.
 .. code:: python
 
 	import dynetx as dn
-	g = dt.DynGraph(edge_removal=True)
+	g = dn.DynGraph(edge_removal=True)
 
 During the construction phase the ``edge_removal`` parameter allows to specify if the dynamic graph will allow edge removal or not.
 
