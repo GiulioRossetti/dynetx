@@ -47,7 +47,7 @@ The same method can be used to add any ``ebunch`` of interaction.  An *ebunch* i
 
 .. code:: python
 
-	g.add_interaction_from(H.edges(), t=2)
+	g.add_interactions_from(H.edges(), t=2)
 
 
 ^^^^^
