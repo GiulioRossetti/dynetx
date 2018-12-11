@@ -367,7 +367,7 @@ class DynGraph(nx.Graph):
             if max_end == app[-1][0] and t[0] == app[-1][0] + 1:
 
                 app[-1] = [app[-1][0], t[1]]
-                if app[-1][0] + 1 in self.time_to_edge:
+                if app[-1][0] + 1 in self.time_to_edge and (u, v, "+") in self.time_to_edge[app[-1][0] + 1]:
                     del self.time_to_edge[app[-1][0] + 1][(u, v, "+")]
 
             else:
@@ -383,7 +383,7 @@ class DynGraph(nx.Graph):
                         del self.time_to_edge[t[0]][(u, v, "+")]
 
                 elif max_end == t[0]-1:
-                    if max_end + 1 in self.time_to_edge:
+                    if max_end + 1 in self.time_to_edge and (u, v, "+") in self.time_to_edge[max_end + 1]:
                         del self.time_to_edge[max_end + 1][(u, v, "+")]
                         if self.edge_removal:
                             if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
