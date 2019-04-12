@@ -3,3 +3,4 @@ sphinx_rtd_theme==0.4.2
 numpy==1.15.4
 future==0.17.1
 networkx==2.3
+pytest>=3.6
