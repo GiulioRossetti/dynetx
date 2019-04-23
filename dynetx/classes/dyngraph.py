@@ -119,6 +119,7 @@ class DynGraph(nx.Graph):
         self.time_to_edge = defaultdict(int)
         self.snapshots = {}
         self.edge_removal = edge_removal
+        self.directed = False
 
     def nodes_iter(self, t=None, data=False):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
@@ -226,7 +227,7 @@ class DynGraph(nx.Graph):
         if self.edge_removal:
             if spans[0][0] <= t <= spans[-1][1]:
                 for s in spans:
-                    if t in range(s[0], s[1]+1):
+                    if t in range(s[0], s[1] + 1):
                         return True
         else:
             if spans[0][0] <= t <= max(self.temporal_snapshots_ids()):
@@ -382,16 +383,16 @@ class DynGraph(nx.Graph):
                             del self.time_to_edge[max_end + 1][(u, v, "-")]
                         del self.time_to_edge[t[0]][(u, v, "+")]
 
-                elif max_end == t[0]-1:
+                elif max_end == t[0] - 1:
                     if max_end + 1 in self.time_to_edge and (u, v, "+") in self.time_to_edge[max_end + 1]:
                         del self.time_to_edge[max_end + 1][(u, v, "+")]
                         if self.edge_removal:
-                            if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
-                                del self.time_to_edge[max_end+1][(u, v, '-')]
-                            if t[1]+1 in self.time_to_edge:
-                                self.time_to_edge[t[1]+1][(u, v, "-")] = None
+                            if max_end + 1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end + 1]:
+                                del self.time_to_edge[max_end + 1][(u, v, '-')]
+                            if t[1] + 1 in self.time_to_edge:
+                                self.time_to_edge[t[1] + 1][(u, v, "-")] = None
                             else:
-                                self.time_to_edge[t[1]+1] = {(u, v, "-"): None}
+                                self.time_to_edge[t[1] + 1] = {(u, v, "-"): None}
 
                     app[-1][1] = t[1]
                 else:
@@ -989,25 +990,18 @@ class DynGraph(nx.Graph):
             t_to = t_from
 
         for u, v, ts in self.interactions_iter():
-            t_to_cp = t_to
-            t_from_cp = t_from
+            I = t_to
+            F = t_from
 
-            for r in ts['t']:
-                if t_to < r[0]:
-                    break
-
-                if t_from < r[0] < t_to or t_to >= r[1]:
-                    t_from_cp = r[0]
-                    t_to_cp = t_to
-                if r[0] <= t_from_cp <= r[1]:
-                    if t_to_cp is None:
-                        H.add_interaction(u, v, t_from_cp)
-                    else:
-                        if t_from_cp < t_to_cp <= r[1]:
-                            H.add_interaction(u, v, t_from_cp, t_to_cp+1)
-                        else:
-                            H.add_interaction(u, v, t_from_cp, r[1]+1)
-                            t_to_cp = r[1]
+            for a, b in ts['t']:
+                if I <= a and b <= F:
+                    H.add_interaction(u, v, a, b)
+                elif a <= I and F <= b:
+                    H.add_interaction(u, v, I, F)
+                elif a <= I <= b and b <= F:
+                    H.add_interaction(u, v, I, b)
+                elif I <= a <= F and F <= b:
+                    H.add_interaction(u, v, a, F)
         return H
 
     def temporal_snapshots_ids(self):
@@ -1058,10 +1052,10 @@ class DynGraph(nx.Graph):
         {0: 3, 1: 3, 2: 3}
         """
         if t is None:
-            return {k: v/2 for k, v in self.snapshots.items()}
+            return {k: v / 2 for k, v in self.snapshots.items()}
         else:
             try:
-                return self.snapshots[t]/2
+                return self.snapshots[t] / 2
             except KeyError:
                 return 0
 

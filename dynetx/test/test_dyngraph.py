@@ -186,7 +186,6 @@ class DynGraphTestCase(unittest.TestCase):
         self.assertEqual(h.number_of_nodes(), 5)
         self.assertEqual(h.number_of_interactions(), 4)
 
-
         h = g.time_slice(5, 5)
         self.assertIsInstance(h, dn.DynGraph)
         self.assertEqual(h.number_of_nodes(), 5)

@@ -6,7 +6,6 @@
 [![pyversions](https://img.shields.io/pypi/pyversions/dynetx.svg)](https://badge.fury.io/py/dynetx)
 [![PyPI version](https://badge.fury.io/py/dynetx.svg)](https://badge.fury.io/py/dynetx)
 [![Updates](https://pyup.io/repos/github/GiulioRossetti/dynetx/shield.svg)](https://pyup.io/repos/github/GiulioRossetti/dynetx/)
-[![BCH compliance](https://bettercodehub.com/edge/badge/GiulioRossetti/dynetx?branch=master)](https://bettercodehub.com/)
 
 ![DyNetx logo](http://dynetx.readthedocs.io/en/latest/_static/dynetx.png)
 
