@@ -1,6 +1,6 @@
 mock==3.0.5
 sphinx_rtd_theme==0.4.3
 numpy==1.17.1
-future==0.17.1
+future==0.18.2
 networkx==2.3
 pytest>=3.6
