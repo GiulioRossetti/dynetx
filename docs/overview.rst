@@ -2,7 +2,7 @@
 Overview
 ********
 
-``DyNetx`` is a Python language software package for describing, model, and study dynamic complex netowrks.
+``DyNetx`` is a Python language software package for describing, model, and study dynamic complex networks.
 
 ----------------
 Who uses DyNetx?
