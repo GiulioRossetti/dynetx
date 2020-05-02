@@ -29,7 +29,7 @@ Every interaction is univocally defined by its endpoints, ``u`` and ``v``, as we
 
 	g.add_interaction(u=1, v=2, t=0)
 
-Moreover, also interaction duration can be specified at creation time:
+Moreover, also interaction duration can be specified at creation time, by setting kwarg ``e`` equal to the last timestamp at which the interaction is present:
 
 .. code:: python
 
