@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 __author__ = 'Giulio Rossetti'
-__license__ = "GPL"
+__license__ = "BSD"
 __email__ = "giulio.rossetti@gmail.com"
 
 # Get the long description from the README file
@@ -10,7 +10,7 @@ __email__ = "giulio.rossetti@gmail.com"
 
 setup(name='dynetx',
       version='0.2.2',
-      license='GNU General Public License v3 or later (GPLv3+)',
+      license='BSD-Clause-2',
       description='Dynamic Network library',
       url='https://github.com/GiulioRossetti/dynetx',
       author='Giulio Rossetti',
