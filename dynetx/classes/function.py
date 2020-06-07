@@ -43,6 +43,7 @@ def nodes(G, t=None):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
             >>> G.add_path([0,1,2], 0)
             >>> dn.nodes(G, t=0)
@@ -213,12 +214,14 @@ def number_of_interactions(G, u=None, v=None, t=None):
 
         Parameters
         ----------
-        u, v : nodes, optional (default=all edges)
-            If u and v are specified, return the number of edges between
-            u and v. Otherwise return the total number of all edges.
+        G : a dynetx graph object
+        u : node, optional (default=all edges)
+        v : node, optional (default=all edges)
         t : snapshot id (default=None)
             If None will be returned the number of edges on the flattened graph.
 
+        If u and v are specified, return the number of edges between u and v.
+        Otherwise return the total number of all edges.
 
         Returns
         -------
@@ -228,10 +231,11 @@ def number_of_interactions(G, u=None, v=None, t=None):
 
         Examples
         --------
-            >>> G = dn.DynGraph()
-            >>> G.add_path([0,1,2,3], t=0)
-            >>> dn.number_of_interactions(G, t=0)
-            """
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_path([0,1,2,3], t=0)
+        >>> dn.number_of_interactions(G, t=0)
+        """
     return G.number_of_interactions(u, v, t)
 
 
@@ -313,7 +317,7 @@ def is_directed(G):
     return G.is_directed()
 
 
-def frozen(*args):
+def frozen():
     """Dummy method for raising errors when trying to modify frozen graphs"""
     raise nx.NetworkXError("Frozen graph can't be modified")
 
@@ -372,28 +376,29 @@ def is_frozen(G):
 def add_star(G, nodes, t, **attr):
     """Add a star at time t.
 
-            The first node in nodes is the middle of the star.  It is connected
-            to all other nodes.
+        The first node in nodes is the middle of the star.  It is connected
+        to all other nodes.
 
-            Parameters
-            ----------
-            G : graph
-                A DyNetx graph
+        Parameters
+        ----------
+        G : graph
+            A DyNetx graph
 
-            nodes : iterable container
-                A container of nodes.
+        nodes : iterable container
+            A container of nodes.
 
-            t : snapshot id (default=None)
-                snapshot id
+        t : snapshot id (default=None)
+            snapshot id
 
-            See Also
-            --------
-            add_path, add_cycle
+        See Also
+        --------
+        add_path, add_cycle
 
-            Examples
-            --------
-            >>> G = dn.DynGraph()
-            >>> dn.add_star(G, [0,1,2,3], t=0)
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> dn.add_star(G, [0,1,2,3], t=0)
     """
     nlist = iter(nodes)
     v = next(nlist)
@@ -521,16 +526,16 @@ def set_node_attributes(G, values, name=None):
         try:  # `values` is a dict
             for n, v in values.items():
                 try:
-                    G.node[n][name] = values[n]
+                    G._node[n][name] = values[n]
                 except KeyError:
                     pass
         except AttributeError:  # `values` is a constant
             for n in G:
-                G.node[n][name] = values
+                G._node[n][name] = values
     else:  # `values` must be dict of dict
         for n, d in values.items():
             try:
-                G.node[n].update(d)
+                G._node[n].update(d)
             except KeyError:
                 pass
 
@@ -549,11 +554,11 @@ def get_node_attributes(G, name):
         -------
         Dictionary of attributes keyed by node.
     """
-    return {n: d[name] for n, d in G.node.items() if name in d}
+    return {n: d[name] for n, d in G._node.items() if name in d}
 
 
 @not_implemented()
-def set_edge_attributes(G, values, name=None):
+def set_edge_attributes(values, name=None):
     pass
 
 
@@ -637,7 +642,7 @@ def non_interactions(graph, t=None):
         Returns
         -------
         non_edges : iterator
-            Iterator of edges that are not in the graph.
+        Iterator of edges that are not in the graph.
         """
     # if graph.is_directed():
     #    for u in graph:
@@ -648,7 +653,7 @@ def non_interactions(graph, t=None):
     while nodes:
         u = nodes.pop()
         for v in nodes - set(graph[u]):
-            yield (u, v)
+            yield u, v
 
 
 def is_empty(G):
@@ -698,6 +703,7 @@ def time_slice(G, t_from, t_to=None):
 
                 Examples
                 --------
+                >>> import dynetx as dn
                 >>> G = dn.DynGraph()
                 >>> G.add_path([0,1,2,3], t=0)
                 >>> G.add_path([0,4,5,6], t=1)
@@ -729,6 +735,7 @@ def stream_interactions(G):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([3,4,5,6], t=1)
@@ -755,6 +762,7 @@ def temporal_snapshots_ids(G):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.add_path([0,4,5,6], t=1)
@@ -786,6 +794,7 @@ def interactions_per_snapshots(G, t=None):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.add_path([0,4,5,6], t=1)

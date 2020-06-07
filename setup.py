@@ -9,7 +9,7 @@ __email__ = "giulio.rossetti@gmail.com"
 #    long_description = f.read()
 
 setup(name='dynetx',
-      version='0.2.2',
+      version='0.2.3',
       license='BSD-Clause-2',
       description='Dynamic Network library',
       url='https://github.com/GiulioRossetti/dynetx',
@@ -38,6 +38,6 @@ setup(name='dynetx',
           'Programming Language :: Python :: 3'
       ],
       keywords='dynamic-networks',
-      install_requires=['numpy', 'networkx', 'scipy', 'future', ''],
+      install_requires=['numpy', 'networkx', 'scipy', ''],
       packages=find_packages(exclude=["*.test", "*.test.*", "test.*", "test", "dynetx.test", "dynetx.test.*"]),
       )

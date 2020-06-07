@@ -1,7 +1,6 @@
 from dynetx.utils import make_str
 import dynetx as dn
 from itertools import chain, count
-import past
 
 __all__ = ['node_link_data', 'node_link_graph']
 _attrs = dict(id='id', source='source', target='target')
@@ -30,6 +29,7 @@ def node_link_data(G, attrs=_attrs):
     Examples
     --------
     >>> from dynetx.readwrite import json_graph
+    >>> import dynetx as dn
     >>> G = dn.DynGraph([(1,2)])
     >>> data = json_graph.node_link_data(G)
 
@@ -50,14 +50,12 @@ def node_link_data(G, attrs=_attrs):
     """
     id_ = attrs['id']
 
-    data = {}
-    data['directed'] = G.is_directed()
-    data['graph'] = G.graph
-    data['nodes'] = [dict(chain(G.node[n].items(), [(id_, n)])) for n in G]
-    data['links'] = []
+    data = {'directed': G.is_directed(), 'graph': G.graph,
+            'nodes': [dict(chain(G._node[n].items(), [(id_, n)])) for n in G], 'links': []}
+
     for u, v, timeline in G.interactions_iter():
         for t in timeline['t']:
-            for tid in past.builtins.xrange(t[0], t[-1]+1):
+            for tid in range(t[0], t[-1]+1):
                 data['links'].append({"source": u, "target": v, "time": tid})
 
     return data
@@ -88,6 +86,7 @@ def node_link_graph(data, directed=False, attrs=_attrs):
     Examples
     --------
     >>> from dynetx.readwrite import json_graph
+    >>> import dynetx as dn
     >>> G = dn.DynGraph([(1,2)])
     >>> data = json_graph.node_link_data(G)
     >>> H = json_graph.node_link_graph(data)

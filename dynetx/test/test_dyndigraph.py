@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import unittest
 import dynetx as dn
 
@@ -456,7 +455,7 @@ class DynDiGraphTestCase(unittest.TestCase):
 
         cres = [(1, 2, '+', 2), (1, 3, '+', 2), (1, 5, '+', 2), (1, 3, '-', 3),
                 (1, 5, '-', 3), (1, 2, '-', 6), (1, 2, '+', 7), (1, 2, '-', 15), (1, 2, '+', 18)]
-        self.assertEquals(sorted(sres), sorted(cres))
+        self.assertEqual(sorted(sres), sorted(cres))
 
     def test_accumulative_growth(self):
         g = dn.DynDiGraph(edge_removal=False)
@@ -469,7 +468,7 @@ class DynDiGraphTestCase(unittest.TestCase):
         g.add_interactions_from([(1, 3), (1, 5)], t=2, e=3)
         sres = list(g.stream_interactions())
         cres = [(1, 2, '+', 2), (1, 5, '+', 2), (1, 3, '+', 2)]
-        self.assertEquals(sorted(sres), sorted(cres))
+        self.assertEqual(sorted(sres), sorted(cres))
         self.assertEqual(g.has_interaction(1, 2, 18), True)
         self.assertEqual(g.has_interaction(1, 2, 40), False)
         try:

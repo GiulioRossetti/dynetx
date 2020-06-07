@@ -5,6 +5,7 @@ Of each interaction needs be specified the set of timestamps of its presence.
 
 Self-loops are allowed.
 """
+from typing import List, Any
 
 import networkx as nx
 from collections import defaultdict
@@ -49,6 +50,7 @@ class DynGraph(nx.Graph):
     Create an empty graph structure (a "null graph") with no nodes and
     no interactions.
 
+    >>> import dynetx as dn
     >>> G = dn.DynGraph()
 
     G can be grown in several ways.
@@ -112,8 +114,9 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
-        >>> G = dn.DynGraph(edge_removal=True)
+        >>> G1 = dn.DynGraph(edge_removal=True)
         """
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = defaultdict(int)
@@ -121,16 +124,13 @@ class DynGraph(nx.Graph):
         self.edge_removal = edge_removal
         self.directed = False
 
-    def nodes_iter(self, t=None, data=False):
+    def nodes_iter(self, t=None):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
 
         Parameters
         ----------
         t : snapshot id (default=None).
             If None the iterator returns all the nodes of the flattened graph.
-        data : boolean, optional (default=False)
-               If False the iterator returns nodes.  If True
-               return a two-tuple of node and node data dictionary
 
         Returns
         -------
@@ -140,6 +140,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> G.add_path([0,1,2], 0)
 
@@ -169,6 +170,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> G.add_path([0,1,2], 0)
         >>> G.nodes(t=0)
@@ -177,7 +179,7 @@ class DynGraph(nx.Graph):
         >>> G.nodes(t=0)
         [0, 1, 2]
         """
-        return list(self.nodes_iter(t=t, data=data))
+        return list(self.nodes_iter(t=t))
 
     def interactions(self, nbunch=None, t=None):
         """Return the list of interaction present in a given snapshot.
@@ -210,6 +212,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2], t=0)
         >>> G.add_edge(2,3, t=1)
@@ -265,6 +268,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2], 0)
         >>> G.add_interaction(2,3,1)
@@ -283,10 +287,10 @@ class DynGraph(nx.Graph):
             for nbr in nbrs:
                 if t is not None:
                     if nbr not in seen and self.__presence_test(n, nbr, t):
-                        yield (n, nbr, {"t": [t]})
+                        yield n, nbr, {"t": [t]}
                 else:
                     if nbr not in seen:
-                        yield (n, nbr, self._adj[n][nbr])
+                        yield n, nbr, self._adj[n][nbr]
                 seen[n] = 1
         del seen
 
@@ -315,7 +319,7 @@ class DynGraph(nx.Graph):
         Examples
         --------
         The following all add the interaction e=(1,2, 0) to graph G:
-
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_interaction(1, 2, 0)           # explicit two-node form
         >>> G.add_interaction( [(1,2)], t=0 ) # add interaction from iterable container
@@ -337,7 +341,7 @@ class DynGraph(nx.Graph):
             self._adj[v] = self.adjlist_inner_dict_factory()
             self._node[v] = {}
 
-        if type(t) != list:
+        if not isinstance(t, list):
             t = [t, t]
 
         for idt in [t[0]]:
@@ -437,6 +441,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_edges_from([(0,1),(1,2)], t=0)
         """
@@ -472,6 +477,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.number_of_interactions()
@@ -520,7 +526,7 @@ class DynGraph(nx.Graph):
         Examples
         --------
         Can be called either using two nodes u,v or interaction tuple (u,v)
-
+        >>> import dynetx as dn
         >>> G = nx.Graph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.has_interaction(0,1, t=0)
@@ -559,6 +565,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.neighbors(0, t=0)
@@ -586,6 +593,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> [n for n in G.neighbors_iter(0, t=0)]
@@ -622,6 +630,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.degree(0, t=0)
@@ -662,6 +671,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> list(G.degree_iter(0, t=0))
@@ -677,14 +687,14 @@ class DynGraph(nx.Graph):
         if t is None:
             for n, nbrs in nodes_nbrs:
                 deg = len(self._adj[n])
-                yield (n, deg)
+                yield n, deg
         else:
             for n, nbrs in nodes_nbrs:
                 edges_t = len([v for v in nbrs.keys() if self.__presence_test(n, v, t)])
                 if edges_t > 0:
-                    yield (n, edges_t)
+                    yield n, edges_t
                 else:
-                    yield (n, 0)
+                    yield n, 0
 
     def size(self, t=None):
         """Return the number of edges at time t.
@@ -706,6 +716,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.size(t=0)
@@ -734,6 +745,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> G.add_path([0,1,2], t=0)
         >>> G.number_of_nodes(0)
@@ -765,6 +777,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> G.add_path([0,1,2], t=0)
         >>> G.order(0)
@@ -783,6 +796,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> G.add_path([0,1,2], t=0)
         >>> G.has_node(0, t=0)
@@ -824,6 +838,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_star([0,1,2,3], t=0)
         """
@@ -847,6 +862,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         """
@@ -869,6 +885,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_cycle([0,1,2,3], t=0)
         """
@@ -876,7 +893,7 @@ class DynGraph(nx.Graph):
         interaction = zip(nlist, nlist[1:] + [nlist[0]])
         self.add_interactions_from(interaction, t)
 
-    def to_directed(self):
+    def to_directed(self, **kwargs):
         """Return a directed representation of the graph.
 
         Returns
@@ -904,6 +921,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()   # or MultiGraph, etc
         >>> G.add_path([0,1])
         >>> H = G.to_directed()
@@ -941,6 +959,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.add_path([3,4,5,6], t=1)
@@ -950,7 +969,7 @@ class DynGraph(nx.Graph):
         timestamps = sorted(self.time_to_edge.keys())
         for t in timestamps:
             for e in self.time_to_edge[t]:
-                yield (e[0], e[1], e[2], t)
+                yield e[0], e[1], e[2], t
 
     def time_slice(self, t_from, t_to=None):
         """Return an new graph containing nodes and interactions present in [t_from, t_to].
@@ -969,6 +988,7 @@ class DynGraph(nx.Graph):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([0,4,5,6], t=1)
@@ -990,18 +1010,18 @@ class DynGraph(nx.Graph):
             t_to = t_from
 
         for u, v, ts in self.interactions_iter():
-            I = t_to
-            F = t_from
+            i_to = t_to
+            f_from = t_from
 
             for a, b in ts['t']:
-                if I <= a and b <= F:
+                if i_to <= a and b <= f_from:
                     H.add_interaction(u, v, a, b)
-                elif a <= I and F <= b:
-                    H.add_interaction(u, v, I, F)
-                elif a <= I <= b and b <= F:
-                    H.add_interaction(u, v, I, b)
-                elif I <= a <= F and F <= b:
-                    H.add_interaction(u, v, a, F)
+                elif a <= i_to and f_from <= b:
+                    H.add_interaction(u, v, i_to, f_from)
+                elif a <= i_to <= b <= f_from:
+                    H.add_interaction(u, v, i_to, b)
+                elif i_to <= a <= f_from <= b:
+                    H.add_interaction(u, v, a, f_from)
         return H
 
     def temporal_snapshots_ids(self):
@@ -1015,6 +1035,7 @@ class DynGraph(nx.Graph):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynGraph()
             >>> G.add_path([0,1,2,3], t=0)
             >>> G.add_path([0,4,5,6], t=1)
@@ -1042,6 +1063,7 @@ class DynGraph(nx.Graph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.add_path([0,4,5,6], t=1)

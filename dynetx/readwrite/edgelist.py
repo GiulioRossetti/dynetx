@@ -24,7 +24,6 @@ Sequence of **Interaction** events (u, v, +/-, t):
 from dynetx.utils import open_file, make_str, compact_timeslot
 from dynetx import DynGraph
 from dynetx import DynDiGraph
-import past.builtins
 
 __author__ = 'Giulio Rossetti'
 __license__ = "GPL"
@@ -46,7 +45,7 @@ def generate_interactions(G, delimiter=' '):
 
 
 @open_file(1, mode='wb')
-def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
+def write_interactions(G, path, delimiter=' ', encoding='utf-8'):
     """Write a DyNetx graph in interaction list format.
 
 
@@ -61,6 +60,9 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
 
         delimiter : character
             Column delimiter
+
+        encoding: str
+            Text enconding, default utf-8
         """
     for line in generate_interactions(G, delimiter):
         line += '\n'
@@ -69,7 +71,7 @@ def write_interactions(G, path, delimiter=' ',  encoding='utf-8'):
 
 @open_file(0, mode='rb')
 def read_interactions(path, comments="#", directed=False, delimiter=None,
-                  nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
+                      nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
     """Read a DyNetx graph from interaction list format.
 
 
@@ -81,6 +83,24 @@ def read_interactions(path, comments="#", directed=False, delimiter=None,
 
         delimiter : character
             Column delimiter
+
+        comments: character
+            Comments row identifier
+
+        directed: bool
+            Whether the graph is directed or not
+
+        nodetype: object
+            node type
+
+        timestamptype: object
+            timestamp type
+
+        encoding: str
+            File encoding, default utf-8
+
+        keys: bool
+
     """
     ids = None
     lines = (line.decode(encoding) for line in path)
@@ -88,10 +108,11 @@ def read_interactions(path, comments="#", directed=False, delimiter=None,
         ids = read_ids(path.name, delimiter=delimiter, timestamptype=timestamptype)
 
     return parse_interactions(lines, comments=comments, directed=directed, delimiter=delimiter, nodetype=nodetype,
-                             timestamptype=timestamptype, keys=ids)
+                              timestamptype=timestamptype, keys=ids)
 
 
-def parse_interactions(lines, comments='#', directed=False, delimiter=None, nodetype=None, timestamptype=None, keys=None):
+def parse_interactions(lines, comments='#', directed=False, delimiter=None, nodetype=None, timestamptype=None,
+                       keys=None):
     if not directed:
         G = DynGraph()
     else:
@@ -143,7 +164,6 @@ def parse_interactions(lines, comments='#', directed=False, delimiter=None, node
 
 
 def generate_snapshots(G, delimiter=' '):
-
     for u, v, d in G.interactions():
         if 't' not in d:
             raise NotImplemented
@@ -151,7 +171,7 @@ def generate_snapshots(G, delimiter=' '):
             e = [u, v, t[0]]
             if t[1] is not None:
                 if t[0] != t[1]:
-                    for s in past.builtins.xrange(t[0], t[1]+1):
+                    for s in range(t[0], t[1] + 1):
                         e = [u, v, s]
                         yield delimiter.join(map(make_str, e))
                 else:
@@ -176,14 +196,16 @@ def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
 
         delimiter : character
             Column delimiter
+
+        encoding: str
+            Encoding string, default utf-8
         """
     for line in generate_snapshots(G, delimiter):
         line += '\n'
         path.write(line.encode(encoding))
 
 
-def parse_snapshots(lines, comments='#', directed=False, delimiter=None,  nodetype=None, timestamptype=None, keys=None):
-
+def parse_snapshots(lines, comments='#', directed=False, delimiter=None, nodetype=None, timestamptype=None, keys=None):
     if not directed:
         G = DynGraph()
     else:
@@ -247,13 +269,30 @@ def read_snapshots(path, comments="#", directed=False, delimiter=None,
 
         delimiter : character
             Column delimiter
+
+        comments: character
+            Comments row identifier
+
+        directed: bool
+            Whether the graph is directed or not
+
+        nodetype: object
+            node type
+
+        timestamptype: object
+            timestamp type
+
+        encoding: str
+            File encoding, default utf-8
+
+        keys: bool
     """
     ids = None
     lines = (line.decode(encoding) for line in path)
     if keys:
         ids = read_ids(path.name, delimiter=delimiter, timestamptype=timestamptype)
 
-    return parse_snapshots(lines, comments=comments, directed=directed, delimiter=delimiter,  nodetype=nodetype,
+    return parse_snapshots(lines, comments=comments, directed=directed, delimiter=delimiter, nodetype=nodetype,
                            timestamptype=timestamptype, keys=ids)
 
 
@@ -272,4 +311,3 @@ def read_ids(path, delimiter=None, timestamptype=None):
 
     ids = compact_timeslot(ids.keys())
     return ids
-

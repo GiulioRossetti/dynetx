@@ -84,7 +84,7 @@ class FunctionTestCase(unittest.TestCase):
 
         dn.get_node_attributes(g, name="test")
         try:
-            dn.set_edge_attributes(g, 3, "dog")
+            dn.set_edge_attributes(3, "dog")
         except:
             pass
         try:
@@ -191,7 +191,7 @@ class FunctionTestCase(unittest.TestCase):
 
         dn.get_node_attributes(g, name="test")
         try:
-            dn.set_edge_attributes(g, 3, "dog")
+            dn.set_edge_attributes(3, "dog")
         except:
             pass
         try:

@@ -41,6 +41,7 @@ class DynDiGraph(nx.DiGraph):
     Create an empty graph structure (a "null graph") with no nodes and
     no interactions.
 
+    >>> import dynetx as dn
     >>> G = dn.DynDiGraph()
 
     G can be grown in several ways.
@@ -56,8 +57,8 @@ class DynDiGraph(nx.DiGraph):
 
     >>> G.add_nodes_from([2,3])
     >>> G.add_nodes_from(range(100,110))
-    >>> H=dn.DynDiGraph()
-    >>> H.add_path([0,1,2,3,4,5,6,7,8,9], t=0)
+    >>> H = dn.DynDiGraph()
+    >>> H.add_nodes_from([0,1,2,3,4,5,6,7,8,9])
     >>> G.add_nodes_from(H)
 
     In addition to strings and integers any hashable Python object
@@ -106,8 +107,9 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
-        >>> G = dn.DynDiGraph(edge_removal=True)
+        >>> H = dn.DynDiGraph(edge_removal=True)
         """
         super(self.__class__, self).__init__(data, **attr)
         self.time_to_edge = defaultdict(int)
@@ -115,16 +117,13 @@ class DynDiGraph(nx.DiGraph):
         self.edge_removal = edge_removal
         self.directed = True
 
-    def nodes_iter(self, t=None, data=False):
+    def nodes_iter(self, t=None):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
 
         Parameters
         ----------
         t : snapshot id (default=None).
             If None the iterator returns all the nodes of the flattened graph.
-        data : boolean, optional (default=False)
-               If False the iterator returns nodes.  If True
-               return a two-tuple of node and node data dictionary
 
         Returns
         -------
@@ -134,6 +133,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, 0)
         >>> G.add_interaction(1,2, 0)
@@ -164,6 +164,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> G.add_interaction(0, 1, 0)
         >>> G.nodes(t=0)
@@ -172,7 +173,7 @@ class DynDiGraph(nx.DiGraph):
         >>> G.nodes(t=0)
         [0, 1]
         """
-        return list(self.nodes_iter(t=t, data=data))
+        return list(self.nodes_iter(t=t))
 
     def has_node(self, n, t=None):
         """Return True if the graph, at time t, contains the node n.
@@ -185,6 +186,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> G.has_node(0, t=0)
@@ -233,6 +235,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> G.add_interaction(2, 3, t=1)
@@ -252,7 +255,7 @@ class DynDiGraph(nx.DiGraph):
         if self.edge_removal:
             if spans[0][0] <= t <= spans[-1][1]:
                 for s in spans:
-                    if t in range(s[0], s[1]+1):
+                    if t in range(s[0], s[1] + 1):
                         return True
         else:
             if spans[0][0] <= t <= max(self.temporal_snapshots_ids()):
@@ -280,6 +283,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> G.number_of_nodes(0)
@@ -317,6 +321,7 @@ class DynDiGraph(nx.DiGraph):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynDiGraph()
             >>> G.add_interaction(0, 1, t=0)
             >>> list(G.degree_iter(0, t=0))
@@ -332,13 +337,13 @@ class DynDiGraph(nx.DiGraph):
 
         if t is None:
             for n, succ, pred in nodes_nbrs:
-                yield (n, len(succ) + len(pred))
+                yield n, len(succ) + len(pred)
 
         else:
             for n, succ, pred in nodes_nbrs:
                 edges_succ = len([v for v in succ.keys() if self.__presence_test(n, v, t)])
                 edges_pred = len([v for v in pred.keys() if self.__presence_test(v, n, t)])
-                yield (n, edges_succ + edges_pred)
+                yield n, edges_succ + edges_pred
 
     def degree(self, nbunch=None, t=None):
         """Return the degree of a node or nodes at time t.
@@ -363,6 +368,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, t=0)
         >>> G.add_interaction(1,2, t=0)
@@ -405,6 +411,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, 0)
         >>> G.add_interaction(1,2, 0)
@@ -424,10 +431,10 @@ class DynDiGraph(nx.DiGraph):
             for nbr in nbrs:
                 if t is not None:
                     if nbr not in seen and self.__presence_test(n, nbr, t):
-                        yield (n, nbr, {"t": [t]})
+                        yield n, nbr, {"t": [t]}
                 else:
                     if nbr not in seen:
-                        yield (nbr, n, self._succ[n][nbr])
+                        yield nbr, n, self._succ[n][nbr]
                 seen[n] = 1
 
         del seen
@@ -458,6 +465,7 @@ class DynDiGraph(nx.DiGraph):
         --------
         The following all add the interaction e=(1,2, 0) to graph G:
 
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(1, 2, 0)
         >>> G.add_interaction( [(1,2)], t=0 )
@@ -527,16 +535,16 @@ class DynDiGraph(nx.DiGraph):
                             del self.time_to_edge[max_end + 1][(u, v, "-")]
                         del self.time_to_edge[t[0]][(u, v, "+")]
 
-                elif max_end == t[0]-1:
+                elif max_end == t[0] - 1:
                     if max_end + 1 in self.time_to_edge and (u, v, "+") in self.time_to_edge[max_end + 1]:
                         del self.time_to_edge[max_end + 1][(u, v, "+")]
                         if self.edge_removal:
-                            if max_end+1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end+1]:
-                                del self.time_to_edge[max_end+1][(u, v, '-')]
-                            if t[1]+1 in self.time_to_edge:
-                                self.time_to_edge[t[1]+1][(u, v, "-")] = None
+                            if max_end + 1 in self.time_to_edge and (u, v, '-') in self.time_to_edge[max_end + 1]:
+                                del self.time_to_edge[max_end + 1][(u, v, '-')]
+                            if t[1] + 1 in self.time_to_edge:
+                                self.time_to_edge[t[1] + 1][(u, v, "-")] = None
                             else:
-                                self.time_to_edge[t[1]+1] = {(u, v, "-"): None}
+                                self.time_to_edge[t[1] + 1] = {(u, v, "-"): None}
 
                     app[-1][1] = t[1]
                 else:
@@ -577,6 +585,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interactions_from([(0,1),(1,2)], t=0)
         """
@@ -613,6 +622,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, 0)
         >>> G.add_interaction(1,2, 0)
@@ -632,10 +642,10 @@ class DynDiGraph(nx.DiGraph):
             for nbr in nbrs:
                 if t is not None:
                     if self.__presence_test(nbr, n, t):
-                        yield (nbr, n, {"t": [t]})
+                        yield nbr, n, {"t": [t]}
                 else:
                     if nbr in self._pred[n]:
-                        yield (nbr, n, self._pred[n][nbr])
+                        yield nbr, n, self._pred[n][nbr]
 
     def out_interactions_iter(self, nbunch=None, t=None):
         """Return an iterator over the out interactions present in a given snapshot.
@@ -663,6 +673,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, 0)
         >>> G.add_interaction(1,2, 0)
@@ -681,10 +692,10 @@ class DynDiGraph(nx.DiGraph):
             for nbr in nbrs:
                 if t is not None:
                     if self.__presence_test(n, nbr, t):
-                        yield (n, nbr, {"t": [t]})
+                        yield n, nbr, {"t": [t]}
                 else:
                     if nbr in self._succ[n]:
-                        yield (n, nbr, self._succ[n][nbr])
+                        yield n, nbr, self._succ[n][nbr]
 
     def in_interactions(self, nbunch=None, t=None):
         """Return the list of incoming interaction present in a given snapshot.
@@ -713,6 +724,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> G.add_interaction(2, 3, t=1)
@@ -752,6 +764,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> G.add_interaction(2, 3, t=1)
@@ -787,6 +800,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_path([0,1,2,3], t=0)
         >>> G.number_of_interactions()
@@ -836,6 +850,7 @@ class DynDiGraph(nx.DiGraph):
         --------
         Can be called either using two nodes u,v or interaction tuple (u,v)
 
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, t=0)
         >>> G.add_interaction(1,2, t=0)
@@ -981,6 +996,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, t=0)
         >>> G.add_interaction(1,2, t=0)
@@ -1023,6 +1039,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> list(G.in_degree_iter(0, t=0))
@@ -1038,14 +1055,14 @@ class DynDiGraph(nx.DiGraph):
         if t is None:
             for n, nbrs in nodes_nbrs:
                 deg = len(self._pred[n])
-                yield (n, deg)
+                yield n, deg
         else:
             for n, nbrs in nodes_nbrs:
                 edges_t = len([v for v in nbrs.keys() if self.__presence_test(v, n, t)])
                 if edges_t > 0:
-                    yield (n, edges_t)
+                    yield n, edges_t
                 else:
-                    yield (n, 0)
+                    yield n, 0
 
     def out_degree(self, nbunch=None, t=None):
         """Return the out degree of a node or nodes at time t.
@@ -1070,6 +1087,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interactions(0,1, t=0)
         >>> G.add_interactions(1,2, t=0)
@@ -1112,6 +1130,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0, 1, t=0)
         >>> list(G.out_degree_iter(0, t=0))
@@ -1127,14 +1146,14 @@ class DynDiGraph(nx.DiGraph):
         if t is None:
             for n, nbrs in nodes_nbrs:
                 deg = len(self._succ[n])
-                yield (n, deg)
+                yield n, deg
         else:
             for n, nbrs in nodes_nbrs:
                 edges_t = len([v for v in nbrs.keys() if self.__presence_test(n, v, t)])
                 if edges_t > 0:
-                    yield (n, edges_t)
+                    yield n, edges_t
                 else:
-                    yield (n, 0)
+                    yield n, 0
 
     def size(self, t=None):
         """Return the number of edges at time t.
@@ -1152,6 +1171,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDinGraph()
         >>> G.add_interaction(0,1, t=0)
         >>> G.add_interaction(1,2, t=0)
@@ -1173,6 +1193,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, t=0)
         >>> G.add_interaction(1,2, t=0)
@@ -1186,7 +1207,7 @@ class DynDiGraph(nx.DiGraph):
         timestamps = sorted(self.time_to_edge.keys())
         for t in timestamps:
             for e in self.time_to_edge[t]:
-                yield (e[0], e[1], e[2], t)
+                yield e[0], e[1], e[2], t
 
     def time_slice(self, t_from, t_to=None):
         """Return an new graph containing nodes and interactions present in [t_from, t_to].
@@ -1205,6 +1226,7 @@ class DynDiGraph(nx.DiGraph):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynDiGraph()
             >>> G.add_interaction(0,1, t=0)
             >>> G.add_interaction(1,2, t=0)
@@ -1232,18 +1254,18 @@ class DynDiGraph(nx.DiGraph):
             t_to = t_from
 
         for u, v, ts in self.interactions_iter():
-            I = t_to
-            F = t_from
+            i_to = t_to
+            f_from = t_from
 
             for a, b in ts['t']:
-                if I <= a and b <= F:
+                if i_to <= a and b <= f_from:
                     H.add_interaction(u, v, a, b)
-                elif a <= I and F <= b:
-                    H.add_interaction(u, v, I, F)
-                elif a <= I <= b and b <= F:
-                    H.add_interaction(u, v, I, b)
-                elif I <= a <= F and F <= b:
-                    H.add_interaction(u, v, a, F)
+                elif a <= i_to and f_from <= b:
+                    H.add_interaction(u, v, i_to, f_from)
+                elif a <= i_to <= b <= f_from:
+                    H.add_interaction(u, v, i_to, b)
+                elif i_to <= a <= f_from <= b:
+                    H.add_interaction(u, v, a, f_from)
         return H
 
     def temporal_snapshots_ids(self):
@@ -1257,6 +1279,7 @@ class DynDiGraph(nx.DiGraph):
 
             Examples
             --------
+            >>> import dynetx as dn
             >>> G = dn.DynDiGraph()
             >>> G.add_interaction(0,1, t=0)
             >>> G.add_interaction(1,2, t=0)
@@ -1290,6 +1313,7 @@ class DynDiGraph(nx.DiGraph):
 
         Examples
         --------
+        >>> import dynetx as dn
         >>> G = dn.DynDiGraph()
         >>> G.add_interaction(0,1, t=0)
         >>> G.add_interaction(1,2, t=0)
@@ -1306,10 +1330,10 @@ class DynDiGraph(nx.DiGraph):
         {0: 3, 1: 3, 2: 3}
         """
         if t is None:
-            return {k: v/2 for k, v in self.snapshots.items()}
+            return {k: v / 2 for k, v in self.snapshots.items()}
         else:
             try:
-                return self.snapshots[t]/2
+                return self.snapshots[t] / 2
             except KeyError:
                 return 0
 
@@ -1529,6 +1553,7 @@ class DynDiGraph(nx.DiGraph):
         else:
             # interaction inter event
 
+            evt = []
             if v in self._pred[u]:
                 evt = self._pred[u][v]['t']
             elif v in self._succ[u]:
@@ -1599,7 +1624,7 @@ class DynDiGraph(nx.DiGraph):
     def out_edges(self, nbunch=None, data=False):
         pass
 
-    def to_undirected(self, reciprocal=False):
+    def to_undirected(self, reciprocal=False, **kwargs):
         """Return an undirected representation of the dyndigraph.
 
         Parameters
@@ -1653,16 +1678,16 @@ class DynDiGraph(nx.DiGraph):
                             outc = self._succ[u][v]['t']
                             intc = self._pred[u][v]['t']
                             for o in outc:
-                                r = set(range(o[0], o[1]+1))
+                                r = set(range(o[0], o[1] + 1))
                                 for i in intc:
-                                    r2 = set(range(i[0], i[1]+1))
+                                    r2 = set(range(i[0], i[1] + 1))
                                     inter = list(r & r2)
                                     if len(inter) == 1:
                                         H.add_interaction(u, v, t=inter[0])
                                     elif len(inter) > 1:
                                         H.add_interaction(u, v, t=inter[0], e=inter[-1])
 
-                        except:
+                        except Exception:
                             pass
 
         else:
