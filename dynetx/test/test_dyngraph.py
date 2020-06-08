@@ -175,6 +175,9 @@ class DynGraphTestCase(unittest.TestCase):
         nn = g.number_of_nodes(t=0)
         self.assertEqual(nn, 0)
 
+        avg = g.avg_number_of_nodes()
+        self.assertEqual(avg, 5)
+
     def test_time_slice(self):
         g = dn.DynGraph()
         g.add_path([0, 1, 2, 3, 4], t=5)

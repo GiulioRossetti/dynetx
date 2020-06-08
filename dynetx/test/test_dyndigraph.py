@@ -305,6 +305,9 @@ class DynDiGraphTestCase(unittest.TestCase):
         nn = g.number_of_nodes(t=0)
         self.assertEqual(nn, 0)
 
+        nds = g.avg_number_of_nodes()
+        self.assertEqual(nds, 5)
+
     def test_time_slice(self):
         g = dn.DynDiGraph()
         g.add_interaction(0, 1, 5)

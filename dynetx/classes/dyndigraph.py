@@ -4,7 +4,7 @@ from dynetx.utils import not_implemented
 from copy import deepcopy
 
 __author__ = 'Giulio Rossetti'
-__license__ = "GPL"
+__license__ = "BSD-Clause-2"
 __email__ = "giulio.rossetti@gmail.com"
 
 
@@ -294,6 +294,28 @@ class DynDiGraph(nx.DiGraph):
         else:
             nds = sum([1 for n in self.degree(t=t).values() if n > 0])
             return nds
+
+    def avg_number_of_nodes(self):
+        """Return the number of nodes in the t snpashot of a dynamic graph.
+
+
+            Returns
+            -------
+            nnodes : int
+                The average number of nodes in the dynamic graph.
+
+
+            Examples
+            --------
+            >>> import dynetx as dn
+            >>> G = dn.DynDiGraph()
+            >>> G.add_path([0,1,2], t=0)
+            >>> G.add_path([0,1], t=1)
+            >>> G.avg_number_of_nodes()
+            2.5
+        """
+        nds = sum([self.number_of_nodes(t) for t in self.temporal_snapshots_ids()])
+        return nds/len(self.snapshots)
 
     def degree_iter(self, nbunch=None, t=None):
         """Return an iterator for (node, degree) at time t.
@@ -1698,3 +1720,26 @@ class DynDiGraph(nx.DiGraph):
         H.graph = deepcopy(self.graph)
         H._node = deepcopy(self._node)
         return H
+
+    def add_path(self, nodes, t=None):
+        """Add a path at time t.
+
+        Parameters
+        ----------
+        nodes : iterable container
+            A container of nodes.
+        t : snapshot id (default=None)
+
+        See Also
+        --------
+        add_path, add_cycle
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynDiGraph()
+        >>> G.add_path([0,1,2,3], t=0)
+        """
+        nlist = list(nodes)
+        interaction = zip(nlist[:-1], nlist[1:])
+        self.add_interactions_from(interaction, t)

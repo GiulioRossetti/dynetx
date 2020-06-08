@@ -8,7 +8,7 @@ import networkx as nx
 
 
 __author__ = 'Giulio Rossetti'
-__license__ = "GPL"
+__license__ = "BSD-Clause-2"
 __email__ = "giulio.rossetti@gmail.com"
 
 

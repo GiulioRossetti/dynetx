@@ -13,7 +13,7 @@ from dynetx.utils import not_implemented
 from copy import deepcopy
 
 __author__ = 'Giulio Rossetti'
-__license__ = "GPL"
+__license__ = "BSD-Clause-2"
 __email__ = "giulio.rossetti@gmail.com"
 
 
@@ -746,7 +746,7 @@ class DynGraph(nx.Graph):
         Examples
         --------
         >>> import dynetx as dn
-        >>> G = dn.DynGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
+        >>> G = dn.DynGraph()
         >>> G.add_path([0,1,2], t=0)
         >>> G.number_of_nodes(0)
         3
@@ -756,6 +756,28 @@ class DynGraph(nx.Graph):
         else:
             nds = sum([1 for n in self.degree(t=t).values() if n > 0])
             return nds
+
+    def avg_number_of_nodes(self):
+        """Return the number of nodes in the t snpashot of a dynamic graph.
+
+
+            Returns
+            -------
+            nnodes : int
+                The average number of nodes in the dynamic graph.
+
+
+            Examples
+            --------
+            >>> import dynetx as dn
+            >>> G = dn.DynGraph()
+            >>> G.add_path([0,1,2], t=0)
+            >>> G.add_path([0,1], t=1)
+            >>> G.avg_number_of_nodes()
+            2.5
+        """
+        nds = sum([self.number_of_nodes(t) for t in self.temporal_snapshots_ids()])
+        return nds/len(self.snapshots)
 
     def order(self, t=None):
         """Return the number of nodes in the t snpashot of a dynamic graph.

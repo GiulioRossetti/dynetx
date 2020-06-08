@@ -26,7 +26,7 @@ from dynetx import DynGraph
 from dynetx import DynDiGraph
 
 __author__ = 'Giulio Rossetti'
-__license__ = "GPL"
+__license__ = "BSD-Clause-2"
 __email__ = "giulio.rossetti@gmail.com"
 
 __all__ = ['write_interactions',
