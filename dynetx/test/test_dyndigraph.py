@@ -4,6 +4,19 @@ import dynetx as dn
 
 class DynDiGraphTestCase(unittest.TestCase):
 
+    def test_self_loop(self):
+        G = dn.DynDiGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 0, t=0)
+        G.add_interaction(1, 1, t=0)
+        G.add_interaction(2, 2, t=0)
+        G.add_interaction(2, 2, t=2)
+        ints = G.interactions(t=0)
+        self.assertEqual(len(ints), 5)
+        self.assertEqual(G.has_interaction(0, 0, t=0), True)
+        self.assertEqual(G.has_interaction(2, 0, t=0), False)
+
     def test_dyndigraph_add_interaction(self):
         g = dn.DynDiGraph()
         self.assertIsInstance(g, dn.DynDiGraph)
@@ -305,6 +318,9 @@ class DynDiGraphTestCase(unittest.TestCase):
         nn = g.number_of_nodes(t=0)
         self.assertEqual(nn, 0)
 
+        nds = g.avg_number_of_nodes()
+        self.assertEqual(nds, 5)
+
     def test_time_slice(self):
         g = dn.DynDiGraph()
         g.add_interaction(0, 1, 5)
@@ -475,6 +491,21 @@ class DynDiGraphTestCase(unittest.TestCase):
             g.add_interaction(2, 1, 7)
         except:
             pass
+
+    def test_conversion(self):
+        G = dn.DynDiGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 0, t=0)
+        G.add_interaction(1, 1, t=0)
+        G.add_interaction(2, 2, t=0)
+        G.add_interaction(2, 2, t=2)
+
+        H = G.to_undirected()
+        self.assertIsInstance(H, dn.DynGraph)
+        self.assertEqual(H.number_of_nodes(), 3)
+        print(H.edges, H.number_of_edges())
+        self.assertEqual(H.number_of_edges(), 3)
 
 if __name__ == '__main__':
     unittest.main()

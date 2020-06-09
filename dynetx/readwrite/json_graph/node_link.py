@@ -16,10 +16,8 @@ def node_link_data(G, attrs=_attrs):
 
     attrs : dict
         A dictionary that contains three keys 'id', 'source' and 'target'.
-         The corresponding values provide the attribute names for storing
-        DyNetx-internal graph data. The values should be unique. Default
-        value:
-        :samp:`dict(id='id', source='source', target='target')`.
+        The corresponding values provide the attribute names for storing DyNetx-internal graph data. The values should be unique.
+        Default value :samp:`dict(id='id', source='source', target='target')`.
 
     Returns
     -------
@@ -47,6 +45,7 @@ def node_link_data(G, attrs=_attrs):
     See Also
     --------
     node_link_graph
+
     """
     id_ = attrs['id']
 
