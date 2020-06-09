@@ -5,29 +5,52 @@ __author__ = 'Giulio Rossetti'
 __license__ = "BSD-Clause-2"
 __email__ = "giulio.rossetti@gmail.com"
 
-__all__ = ['time_respecting_paths', 'all_time_respecting_paths', 'annotate_paths', 'path_duration', 'path_length']
+__all__ = ['time_respecting_paths', 'all_time_respecting_paths', 'annotate_paths', 'temporal_dag', 'path_duration', 'path_length']
 
 
-def __temporal_dag(G, u, v, start=None, end=None):
+def temporal_dag(G, u, v, start=None, end=None):
     """
         Creates a rooted temporal DAG assuming interaction chains of length 1 within each network snapshot.
 
         Parameters
         ----------
         G : a DynGraph or DynDiGraph object
+            The graph to use for computing DAG
         u : a node id
+            A node in G
         v : a node id
-        start : temporal id to start searching
+            A node in G
+        start : temporal id
+            min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
+            max temporal id for bounding the DAG, default None
 
         Returns
         --------
         DAG: a directed graph
+            A DAG rooted in u (networkx DiGraph object)
         sources: source node ids
+            List of temporal occurrences of u
         targets: target node ids
+            List of temporal occurrences of v
+        node_type: type
+            network node_type
+        tid_type: type
+            network temporal id type
 
         Examples
         --------
+
+        >>> import dynetx as dn
+        >>> g = dn.DynGraph()
+        >>> g.add_interaction("A", "B", 1, 4)
+        >>> g.add_interaction("B", "D", 2, 5)
+        >>> g.add_interaction("A", "C", 4, 8)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("B", "C", 6, 10)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("A", "B", 7, 9)
+        >>> DAG, sources, targets, _, _ = al.temporal_dag(g, "D", "C", start=1, end=9)
 
     """
     ids = G.temporal_snapshots_ids()
@@ -93,20 +116,37 @@ def time_respecting_paths(G, u, v, start=None, end=None):
         Parameters
         ----------
         G : a DynGraph or DynDiGraph object
+            The graph to use for computing DAG
         u : a node id
+            A node in G
         v : a node id
-        start : temporal id to start searching
+            A node in G
+        start : temporal id
+            min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
+            max temporal id for bounding the DAG, default None
 
         Returns
         --------
-        paths: a list of paths, each one expressed as a list of timestamped interactions
+        paths: list
+            The list of paths, each one expressed as a list of timestamped interactions
 
         Examples
         --------
 
+        >>> import dynetx as dn
+        >>> g = dn.DynGraph()
+        >>> g.add_interaction("A", "B", 1, 4)
+        >>> g.add_interaction("B", "D", 2, 5)
+        >>> g.add_interaction("A", "C", 4, 8)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("B", "C", 6, 10)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("A", "B", 7, 9)
+        >>> paths = al.time_respecting_paths(g, "D", "C", start=1, end=9)
+
     """
-    DAG, sources, targets, n_type, t_type = __temporal_dag(G, u, v, start, end)
+    DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v, start, end)
 
     pairs = [(x, y) for x in sources for y in targets]
 
@@ -132,15 +172,30 @@ def all_time_respecting_paths(G, start=None, end=None):
         Parameters
         ----------
         G : a DynGraph or DynDiGraph object
-        start : temporal id to start searching
+            The graph to use for computing DAG
+        start : temporal id
+            min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
+            max temporal id for bounding the DAG, default None
 
         Returns
         --------
-        paths: a dictionary <(u,v), paths>
+        paths: dictionary
+            A dictionary that associate to each node pair (u,v) the list of paths connecting them.
 
         Examples
         --------
+
+        >>> import dynetx as dn
+        >>> g = dn.DynGraph()
+        >>> g.add_interaction("A", "B", 1, 4)
+        >>> g.add_interaction("B", "D", 2, 5)
+        >>> g.add_interaction("A", "C", 4, 8)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("B", "C", 6, 10)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("A", "B", 7, 9)
+        >>> paths = al.all_time_respecting_paths(g, start=1, end=9)
 
     """
     res = {}
@@ -150,26 +205,41 @@ def all_time_respecting_paths(G, start=None, end=None):
             res[(u, v)] = paths
     return res
 
+
 def annotate_paths(paths):
     """
         Annotate a set of paths identifying peculiar types of paths.
 
-        shortest: topological shortest paths
-        fastest: paths that have minimal duration
-        foremost: first paths that reach the destination
-        shortest fastest: minimum length path among minimum duration ones
-        fastest shortest: minimum duration path among minimum length ones
+        - **shortest**: topological shortest paths
+        - **fastest**: paths that have minimal duration
+        - **foremost**: first paths that reach the destination
+        - **shortest fastest**: minimum length path among minimum duration ones
+        - **fastest shortest**: minimum duration path among minimum length ones
 
         Parameters
         ----------
-        paths : a list of paths
+        paths : list
+            a list of paths among a same node pair
 
         Returns
         --------
-        annotated: a dictionary identifying shortest, fastest, foremost, fastest_shortest and shortest_fastest paths.
+        annotated: dictionary
+            A mapping for shortest, fastest, foremost, fastest_shortest and shortest_fastest paths.
 
         Examples
         --------
+
+        >>> import dynetx as dn
+        >>> g = dn.DynGraph()
+        >>> g.add_interaction("A", "B", 1, 4)
+        >>> g.add_interaction("B", "D", 2, 5)
+        >>> g.add_interaction("A", "C", 4, 8)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("B", "C", 6, 10)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("A", "B", 7, 9)
+        >>> paths = al.time_respecting_paths(g, "D", "C", start=1, end=9)
+        >>> annotated = al.annotate_paths(paths)
 
     """
     annotated = {"shortest": None, "fastest": None, "shortest_fastest": None,
@@ -218,16 +288,33 @@ def annotate_paths(paths):
 
 def path_length(path):
     """
+        Computes the topological length of a given path.
+
         Parameters
         ----------
         path : a path
+            list of interactions forming a path among a node pair
 
         Returns
         --------
-        length: the number of interactions composing the path
+        length: int
+            The number of interactions composing the path
 
         Examples
         --------
+
+        >>> import dynetx as dn
+        >>> g = dn.DynGraph()
+        >>> g.add_interaction("A", "B", 1, 4)
+        >>> g.add_interaction("B", "D", 2, 5)
+        >>> g.add_interaction("A", "C", 4, 8)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("B", "C", 6, 10)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("A", "B", 7, 9)
+        >>> paths = al.time_respecting_paths(g, "D", "C", start=1, end=9)
+        >>> for p in paths:
+        >>>     print(al.path_length(p))
 
     """
     return len(path)
@@ -235,16 +322,33 @@ def path_length(path):
 
 def path_duration(path):
     """
+        Computes the timespan of a given path.
+
         Parameters
         ----------
         path : a path
+            list of interactions forming a path among a node pair
 
         Returns
         --------
-        duration: the duration of the path
+        duration: int
+            The duration of the path
 
         Examples
         --------
+
+        >>> import dynetx as dn
+        >>> g = dn.DynGraph()
+        >>> g.add_interaction("A", "B", 1, 4)
+        >>> g.add_interaction("B", "D", 2, 5)
+        >>> g.add_interaction("A", "C", 4, 8)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("B", "C", 6, 10)
+        >>> g.add_interaction("B", "D", 2, 4)
+        >>> g.add_interaction("A", "B", 7, 9)
+        >>> paths = al.time_respecting_paths(g, "D", "C", start=1, end=9)
+        >>> for p in paths:
+        >>>     print(al.path_duration(p))
 
     """
     return path[-1][-1] - path[0][-1]

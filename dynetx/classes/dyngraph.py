@@ -291,7 +291,7 @@ class DynGraph(nx.Graph):
                 else:
                     if nbr not in seen:
                         yield n, nbr, self._adj[n][nbr]
-                seen[n] = 1
+            seen[n] = 1
         del seen
 
     def add_interaction(self, u, v, t=None, e=None):

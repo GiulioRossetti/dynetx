@@ -457,7 +457,7 @@ class DynDiGraph(nx.DiGraph):
                 else:
                     if nbr not in seen:
                         yield nbr, n, self._succ[n][nbr]
-                seen[n] = 1
+            seen[n] = 1
 
         del seen
 
@@ -923,7 +923,9 @@ class DynDiGraph(nx.DiGraph):
         return self.has_interaction(v, u, t)
 
     def successors_iter(self, n, t=None):
-        """Return an iterator over successor nodes of n at time t (optional).
+        """
+        Return an iterator over successor nodes of n at time t (optional).
+
         Parameters
         ----------
         n : node
@@ -931,7 +933,6 @@ class DynDiGraph(nx.DiGraph):
             Nodes must be hashable (and not None) Python objects.
         t : snapshot id (default=None)
             If None will be returned the presence of the interaction on the flattened graph.
-
 
         """
         try:

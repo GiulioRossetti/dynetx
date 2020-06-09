@@ -4,6 +4,18 @@ import dynetx as dn
 
 class DynGraphTestCase(unittest.TestCase):
 
+    def test_self_loop(self):
+        G = dn.DynGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 0, t=0)
+        G.add_interaction(1, 1, t=0)
+        G.add_interaction(2, 2, t=0)
+        G.add_interaction(2, 2, t=2)
+        ints = G.interactions(t=0)
+        self.assertEqual(len(ints), 5)
+        self.assertEqual(G.has_interaction(0, 0, t=0), True)
+
     def test_dyngraph_add_interaction(self):
         g = dn.DynGraph()
         self.assertIsInstance(g, dn.DynGraph)
@@ -74,7 +86,6 @@ class DynGraphTestCase(unittest.TestCase):
             pass
 
         self.assertEqual(g.number_of_interactions(1, 90), 0)
-
 
     def test_nodes(self):
         g = dn.DynGraph()
@@ -276,6 +287,21 @@ class DynGraphTestCase(unittest.TestCase):
             g.add_interaction(2, 1, 7)
         except:
             pass
+
+    def test_conversion(self):
+        G = dn.DynGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 0, t=0)
+        G.add_interaction(1, 1, t=0)
+        G.add_interaction(2, 2, t=0)
+        G.add_interaction(2, 2, t=2)
+
+        H = G.to_directed()
+        self.assertIsInstance(H, dn.DynDiGraph)
+        self.assertEqual(H.number_of_nodes(), 3)
+        self.assertEqual(H.number_of_edges(), 5)
+
 
 if __name__ == '__main__':
     unittest.main()
