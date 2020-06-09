@@ -14,5 +14,6 @@ In ``DyNetx`` are implemented the following **Dynamic Graph** models:
    :maxdepth: 1
 
    classes/gtypes.rst
+   algorithms/algorithms.rst
    functions.rst
    read_write
