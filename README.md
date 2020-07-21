@@ -7,14 +7,18 @@
 [![PyPI version](https://badge.fury.io/py/dynetx.svg)](https://badge.fury.io/py/dynetx)
 [![Updates](https://pyup.io/repos/github/GiulioRossetti/dynetx/shield.svg)](https://pyup.io/repos/github/GiulioRossetti/dynetx/)
 [![PyPI download month](https://img.shields.io/pypi/dm/dynetx.svg?color=blue&style=plastic)](https://pypi.python.org/pypi/dynetx/)
+[![DOI](https://zenodo.org/badge/98746676.svg)](https://zenodo.org/badge/latestdoi/98746676)
 
 ![DyNetx logo](http://dynetx.readthedocs.io/en/latest/_static/dynetx.png)
 
 
 DyNetx provides implementations of dynamic networks in python (it is built upon [networkx](http://networkx.github.io)).
 
-
 The project documentation can be found on [ReadTheDocs](http://dynetx.readthedocs.io).
+
+## Citation
+
+>> Rossetti, G. (2020) DyNetx: dynamic network analysis library, v0.2.1, Zenodo, doi: 10.5281/zenodo.3953119
 
 
 ## Installation
