@@ -18,7 +18,7 @@ The project documentation can be found on [ReadTheDocs](http://dynetx.readthedoc
 
 ## Citation
 
->> Rossetti, G. (2020) DyNetx: dynamic network analysis library, v0.2.1, Zenodo, doi: 10.5281/zenodo.3953119
+> Rossetti, G. (2020) DyNetx: dynamic network analysis library, v0.2.1, Zenodo, doi: 10.5281/zenodo.3953119
 
 
 ## Installation
