@@ -11,6 +11,7 @@ import networkx as nx
 from collections import defaultdict
 from dynetx.utils import not_implemented
 from copy import deepcopy
+from itertools import combinations
 
 __author__ = 'Giulio Rossetti'
 __license__ = "BSD-Clause-2"
@@ -777,7 +778,7 @@ class DynGraph(nx.Graph):
             2.5
         """
         nds = sum([self.number_of_nodes(t) for t in self.temporal_snapshots_ids()])
-        return nds/len(self.snapshots)
+        return nds / len(self.snapshots)
 
     def order(self, t=None):
         """Return the number of nodes in the t snpashot of a dynamic graph.
@@ -1178,6 +1179,222 @@ class DynGraph(nx.Graph):
                     dist[e] += 1
 
         return dist
+
+    def coverage(self):
+        """
+        Coverage of the temporal graph.
+
+        Returns
+        -------
+        cov : float
+            The ratio of existing nodes w.r.t. the possible ones.
+        """
+        T = len(self.snapshots)
+        V = self.number_of_nodes()
+        W = 0
+        for t in self.snapshots:
+            W += self.number_of_nodes(t)
+
+        return W / (T * V)
+
+    def node_contribution(self, u):
+        """
+            Node u coverage of the temporal graph.
+
+            Parameters
+            ----------
+
+            u : node id, mandatory
+
+            Returns
+            -------
+            ucov : float
+                Probability that u belongs to a randomly selected network timestamp.
+        """
+
+        ucov = 0
+        for t in self.snapshots:
+            ucov += 1 if self.has_node(u, t) else 0
+        return ucov / len(self.snapshots)
+
+    def edge_contribution(self, u, v):
+        """
+            Edge (u, v) coverage of the temporal graph.
+
+            Parameters
+            ----------
+
+            u : node id, mandatory
+            v : node id, mandatory
+
+            Returns
+            -------
+            ecov : float
+                Probability that (u, v) belongs to a randomly selected network timestamp.
+        """
+        presences = self._adj[u][v]['t']
+        count = 0
+        for interval in presences:
+            count += (interval[-1] - interval[0]) + 1
+
+        return count / len(self.snapshots)
+
+    def node_pair_uniformity(self, u, v):
+        """
+            Overlap between the presence times of u and v
+
+            Parameters
+            ----------
+
+            u : node id, mandatory
+            v : node id, mandatory
+
+            Returns
+            -------
+            uniformity : float
+                Overlap between the presence times of u and v, in [0, 1]
+        """
+
+        u_presence = []
+        v_presence = []
+
+        for t in self.snapshots:
+            if self.has_node(u, t):
+                u_presence.append(t)
+            if self.has_node(v, t):
+                v_presence.append(t)
+
+        unif = len(set(u_presence) & set(v_presence)) / len(set(u_presence) | set(v_presence))
+        return unif
+
+    def uniformity(self):
+        """
+            Temporal network uniformity
+
+            Returns
+            -------
+            uniformity : float
+                Uniformity of the temporal graph in [0, 1]
+        """
+        nds = self.nodes()
+        numerator, denominator = 0, 0
+        for u, v in combinations(nds, 2):
+            for t in self.snapshots:
+                if self.has_node(u, t) and self.has_node(v, t):
+                    numerator += 1
+                if self.has_node(u, t) or self.has_node(v, t):
+                    denominator += 1
+        return numerator / denominator
+
+    def density(self):
+        """
+            Temporal network density: fraction of possible interactions that do exist in the temporal network.
+
+            Returns
+            -------
+            density : float
+                density of the temporal graph in [0, 1]
+        """
+        nds = self.nodes()
+        numerator, denominator = 0, 0
+        for u, v in combinations(nds, 2):
+            for t in self.snapshots:
+                if self.has_node(u, t) and self.has_node(v, t):
+                    denominator += 1
+                if self.has_interaction(u, v, t):
+                    numerator += 1
+        return numerator / denominator
+
+    def node_density(self, u):
+        """
+            Node pair density.
+            Intersection among the temporal presence of the edge (u, v) and the joint temporal presences of u and v.
+
+            Parameters
+            ----------
+
+            u : node id, mandatory
+            v : node id, mandatory
+
+            Returns
+            -------
+            density : float
+                Node pair density, in [0, 1]
+        """
+
+        numerator, denominator = 0, 0
+        presence_u = self.node_presence(u)
+
+        for t in self.snapshots:
+            if self.has_node(u, t):
+                numerator += self.degree([u], t)[0]
+
+        for v in self.nodes():
+            denominator += len(self.node_presence(v) & presence_u)
+
+        return 0 if denominator == 0 else numerator / denominator
+
+    def pair_density(self, u, v):
+        """
+            Node pair density.
+            Intersection among the temporal presence of the edge (u, v) and the joint temporal presences of u and v.
+
+            Parameters
+            ----------
+
+            u : node id, mandatory
+            v : node id, mandatory
+
+            Returns
+            -------
+            density : float
+                Node pair density, in [0, 1]
+        """
+
+        numerator, denominator = 0, 0
+
+        for t in self.snapshots:
+            if self.has_node(u, t) and self.has_node(v, t):
+                denominator += 1
+            if self.has_interaction(u, v, t):
+                numerator += 1
+
+        return 0 if denominator == 0 else numerator / denominator
+
+    def snapshot_density(self, t):
+        """
+            Density of a temporal network at time t.
+
+            Returns
+            -------
+            density : float
+                density of the temporal graph at time t, in [0, 1]
+        """
+        return nx.density(self.time_slice(t))
+
+    def node_presence(self, u):
+        """
+            Timestamps of presence for node u
+
+            Returns
+            -------
+            density : set
+                temporal ids
+        """
+        pres = []
+        for t in self.snapshots:
+            if self.has_node(u, t):
+                pres.append(t)
+
+        return set(pres)
+
+    def temporal_degree(self):
+        # @todo: implement (page 7, Latapy)
+        pass
+
+    def avg_temporal_degree(self):
+        # @todo: implement (page 8, Latapy)
+        pass
 
     @not_implemented()
     def remove_edge(self, u, v):

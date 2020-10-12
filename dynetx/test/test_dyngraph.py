@@ -4,6 +4,46 @@ import dynetx as dn
 
 class DynGraphTestCase(unittest.TestCase):
 
+    def test_coverage(self):
+        G = dn.DynGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 1, t=1)
+        G.add_interaction(0, 2, t=2)
+        G.add_interaction(0, 3, t=2)
+        self.assertEqual(G.coverage(), 2/3)
+        self.assertEqual(G.node_contribution(1), 2/3)
+        self.assertEqual(G.edge_contribution(0, 1), 2/3)
+        self.assertEqual(G.edge_contribution(0, 3), 1/3)
+
+    def test_uniformity(self):
+        G = dn.DynGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 1, t=1)
+        G.add_interaction(0, 2, t=1)
+        self.assertEqual(G.uniformity(), 1)
+        G.add_interaction(3, 4, t=1)
+        G.add_interaction(5, 6, t=1)
+        self.assertEqual(G.uniformity(), 2/3)
+        self.assertEqual(G.node_pair_uniformity(0, 1), 1)
+        self.assertEqual(G.node_pair_uniformity(0, 3), 0.5)
+
+    def test_density(self):
+        G = dn.DynGraph()
+        G.add_interaction(0, 1, t=0)
+        G.add_interaction(0, 2, t=0)
+        G.add_interaction(0, 1, t=1)
+        G.add_interaction(0, 2, t=1)
+        self.assertEqual(G.density(), 2/3)
+        self.assertEqual(G.pair_density(0, 1), 1)
+        G.add_interaction(1, 3, t=2)
+        self.assertEqual(G.pair_density(0, 3), 0)
+        G.add_interaction(0, 3, t=2)
+        self.assertEqual(G.pair_density(0, 1), 2/3)
+        self.assertAlmostEqual(G.node_density(0), 0.5555555555555556)
+        self.assertEqual(G.node_presence(0), set([0, 1, 2]))
+
     def test_self_loop(self):
         G = dn.DynGraph()
         G.add_interaction(0, 1, t=0)
