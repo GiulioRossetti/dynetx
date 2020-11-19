@@ -117,13 +117,15 @@ class DynDiGraph(nx.DiGraph):
         self.edge_removal = edge_removal
         self.directed = True
 
-    def nodes_iter(self, t=None):
+    def nodes_iter(self, t=None, data=False):
         """Return an iterator over the nodes with respect to a given temporal snapshot.
 
         Parameters
         ----------
         t : snapshot id (default=None).
             If None the iterator returns all the nodes of the flattened graph.
+
+        data: node data(default=False)
 
         Returns
         -------
@@ -142,8 +144,15 @@ class DynDiGraph(nx.DiGraph):
         [0, 1, 2]
         """
         if t is not None:
-            return iter([n for n in self.degree(t=t).values() if n > 0])
-        return iter(self._node)
+            if not data:
+                return [n for n, d in self.degree(t=t).items() if d > 0]
+            else:
+                return {n: self._node[n] for n, d in self.degree(t=t).items() if d > 0}
+
+        if not data:
+            return iter(self._node)
+        else:
+            return self._node
 
     def nodes(self, t=None, data=False):
         """Return a list of the nodes in the graph at a given snapshot.
@@ -173,7 +182,10 @@ class DynDiGraph(nx.DiGraph):
         >>> G.nodes(t=0)
         [0, 1]
         """
-        return list(self.nodes_iter(t=t))
+        if data:
+            return [(k, v) for k, v in self.nodes_iter(t=t, data=data).items()]
+        else:
+            return [k for k in self.nodes_iter(t=t, data=data)]
 
     def has_node(self, n, t=None):
         """Return True if the graph, at time t, contains the node n.
@@ -1289,7 +1301,48 @@ class DynDiGraph(nx.DiGraph):
                     H.add_interaction(u, v, i_to, b)
                 elif i_to <= a <= f_from <= b:
                     H.add_interaction(u, v, a, f_from)
+
+        for n in H.nodes():
+            H._node[n] = self._node[n]
+
         return H
+
+    def update_node_attr(self, n, **data):
+        """Updates the attributes of a specified node.
+
+            Parameters
+            ----------
+
+            n : node id
+            **data : the attributes and their new values
+
+            Examples
+            --------
+            >>> import dynetx as dn
+            >>> G = dn.DynGraph()
+            >>> G.add_node(0, Label="A")
+            >>> G.update_node_attr(0, Label="B")
+        """
+        self._node[n] = data
+
+    def update_node_attr_from(self, nlist, **data):
+        """Updates the attributes of a specified node.
+
+            Parameters
+            ----------
+
+            nlist : list of node ids
+            **data : the attributes and their new values
+
+            Examples
+            --------
+            >>> import dynetx as dn
+            >>> G = dn.DynGraph()
+            >>> G.add_nodes_from([0, 1, 2], Label="A")
+            >>> G.update_node_attr_from([0, 2], Label="B")
+        """
+        for n in nlist:
+            self._node[n] = data
 
     def temporal_snapshots_ids(self):
         """Return the ordered list of snapshot ids present in the dynamic graph.

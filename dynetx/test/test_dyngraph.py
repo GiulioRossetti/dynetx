@@ -229,6 +229,61 @@ class DynGraphTestCase(unittest.TestCase):
         avg = g.avg_number_of_nodes()
         self.assertEqual(avg, 5)
 
+    def test_update_node_attr(self):
+        g = dn.DynGraph()
+
+        for n in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
+            g.add_node(n, Label="A")
+
+        for n in g.nodes():
+            g.update_node_attr(n, Label="B")
+
+        for n in g.nodes(data=True):
+            self.assertEqual(n[1]['Label'], "B")
+
+        g.update_node_attr_from([0, 1, 2], Label="C")
+        self.assertEqual(g._node[0]['Label'], "C")
+
+    def test_add_node_attr(self):
+        g = dn.DynGraph()
+
+        for n in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
+            g.add_node(n, Label="A")
+
+        g.add_nodes_from([9, 10, 11, 12], Label="A")
+
+        g.add_path([0, 1, 2, 3, 4], t=5)
+        g.add_path([4, 5, 6, 7, 8], t=6)
+
+        for n in g.nodes(data=True):
+            self.assertEqual(n[1]['Label'], "A")
+
+        nds5 = []
+        for n in g.nodes(data=True, t=5):
+            nds5.append(n[0])
+            self.assertEqual(n[1]['Label'], "A")
+
+        self.assertListEqual(nds5, [0, 1, 2, 3, 4])
+
+    def test_time_slice_node_attr(self):
+        g = dn.DynGraph()
+
+        for n in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
+            g.add_node(n, Label="A")
+
+        g.add_path([0, 1, 2, 3, 4], t=5)
+        g.add_path([4, 5, 6, 7, 8], t=6)
+
+        h = g.time_slice(5)
+        for n in h.nodes(data=True):
+            self.assertEqual(n[1]['Label'], "A")
+
+        self.assertIsInstance(h, dn.DynGraph)
+        self.assertEqual(h.number_of_nodes(), 5)
+        self.assertEqual(h.number_of_interactions(), 4)
+
+
+
     def test_time_slice(self):
         g = dn.DynGraph()
         g.add_path([0, 1, 2, 3, 4], t=5)

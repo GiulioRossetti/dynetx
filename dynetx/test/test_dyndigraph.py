@@ -210,6 +210,21 @@ class DynDiGraphTestCase(unittest.TestCase):
         sr = g.out_interactions([0, 1], 7)
         self.assertEqual(sr, [])
 
+    def test_update_node_attr(self):
+        g = dn.DynDiGraph()
+
+        for n in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
+            g.add_node(n, Label="A")
+
+        for n in g.nodes():
+            g.update_node_attr(n, Label="B")
+
+        for n in g.nodes(data=True):
+            self.assertEqual(n[1]['Label'], "B")
+
+        g.update_node_attr_from([0, 1, 2], Label="C")
+        self.assertEqual(g._node[0]['Label'], "C")
+
     def test_neighbors(self):
         g = dn.DynDiGraph()
         g.add_interaction(0, 1, 5)
@@ -336,7 +351,6 @@ class DynDiGraphTestCase(unittest.TestCase):
         self.assertIsInstance(h, dn.DynDiGraph)
         self.assertEqual(h.number_of_nodes(), 5)
         self.assertEqual(h.number_of_interactions(), 4)
-
 
         h = g.time_slice(5, 5)
         self.assertIsInstance(h, dn.DynDiGraph)
@@ -504,7 +518,6 @@ class DynDiGraphTestCase(unittest.TestCase):
         H = G.to_undirected()
         self.assertIsInstance(H, dn.DynGraph)
         self.assertEqual(H.number_of_nodes(), 3)
-        print(H.edges, H.number_of_edges())
         self.assertEqual(H.number_of_edges(), 3)
 
 if __name__ == '__main__':
