@@ -50,6 +50,8 @@ Information about graph structure
 	DynGraph.has_node
 	DynGraph.number_of_nodes
 	DynGraph.to_directed
+    DynGraph.update_node_attr
+    DynGraph.update_node_attr_from
 
 
 Dynamic Representation: Access Snapshots and Interactions

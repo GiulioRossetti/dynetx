@@ -60,7 +60,9 @@ Information about graph structure
 	DynDiGraph.order
 	DynDiGraph.has_node
 	DynDiGraph.number_of_nodes
-	DynGraph.to_undirected
+	DynDiGraph.to_undirected
+    DynDiGraph.update_node_attr
+    DynDiGraph.update_node_attr_from
 
 
 Dynamic Representation: Access Snapshots and Interactions
