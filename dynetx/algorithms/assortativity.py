@@ -2,7 +2,7 @@ from itertools import combinations
 from tqdm import tqdm
 from collections import defaultdict
 import dynetx as dn
-import dynetx.algorithms as al
+from .paths import *
 import networkx as nx
 
 __all__ = ["delta_conformity", "sliding_delta_conformity"]
@@ -132,11 +132,11 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes()} for profile in profiles} for a in alphas}
 
-    sp = al.paths.all_time_respecting_paths(dg, start, delta + start)
+    sp = all_time_respecting_paths(dg, start, delta + start)
 
     distances = defaultdict(lambda: defaultdict(int))
     for k, v in sp.items():
-        distances[k[0]][k[1]] = len(al.annotate_paths(v)[path_type])
+        distances[k[0]][k[1]] = len(annotate_paths(v)[path_type])
 
     for u in tqdm(g.nodes()):
 
