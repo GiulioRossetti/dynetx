@@ -133,7 +133,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes()} for profile in profiles} for a in alphas}
 
-    sp = all_time_respecting_paths(g, start, delta + start)
+    sp = all_time_respecting_paths(dg, start, delta + start, nodes_from=list(g.nodes()))
 
     distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
