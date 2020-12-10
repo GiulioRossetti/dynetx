@@ -313,7 +313,7 @@ class DynGraphTestCase(unittest.TestCase):
         g = dn.DynGraph()
         g.add_path([0, 1, 2, 3, 4], t=5)
         g.add_path([4, 5, 6, 7, 8], t=6)
-        tsd =g.temporal_snapshots_ids()
+        tsd = g.temporal_snapshots_ids()
 
         self.assertEqual(tsd, [5, 6])
 

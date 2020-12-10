@@ -54,6 +54,9 @@ def temporal_dag(G, u, v, start=None, end=None):
 
     """
     ids = G.temporal_snapshots_ids()
+    if len(ids) == 0:
+        return nx.DiGraph(), [], [], int, int
+
     tid_type = type(ids[0])
     node_type = type(u)
 

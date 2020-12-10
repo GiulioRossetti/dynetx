@@ -101,7 +101,6 @@ class ConformityTestCase(unittest.TestCase):
 
         os.remove("conformity_hierarchy.json")
 
-
     def test_sliding_delta_conformity(self):
         g = dn.DynGraph()
 

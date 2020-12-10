@@ -20,7 +20,7 @@ class AlgorithmsTestCase(unittest.TestCase):
 
     def test_DAG(self):
         g = get_netowrk()
-        DAG, sources, targets , _, _= al.temporal_dag(g, "D", "C", start=1, end=9)
+        DAG, sources, targets, _, _ = al.temporal_dag(g, "D", "C", start=1, end=9)
         self.assertIsInstance(DAG, nx.DiGraph)
         self.assertIsInstance(sources, list)
         self.assertIsInstance(targets, list)
