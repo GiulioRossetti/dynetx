@@ -167,7 +167,7 @@ def time_respecting_paths(G, u, v, start=None, end=None):
     return paths
 
 
-def all_time_respecting_paths(G, start=None, end=None):
+def all_time_respecting_paths(G, start=None, end=None, nodes_from=None, nodes_to=None):
     """
         Computes all the simple paths among network node pairs.
         It assumes interaction chains of length 1 within each network snapshot.
@@ -180,6 +180,8 @@ def all_time_respecting_paths(G, start=None, end=None):
             min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
             max temporal id for bounding the DAG, default None
+        nodes_from: list of source nodes
+        nodes_to: list of target nodes
 
         Returns
         --------
@@ -202,7 +204,13 @@ def all_time_respecting_paths(G, start=None, end=None):
 
     """
     res = {}
-    for u, v in itertools.permutations(list(G.nodes()), 2):
+    if nodes_from is None:
+        nodes_from = list(G.nodes())
+
+    if nodes_to is None:
+        nodes_to = list(G.nodes())
+
+    for u, v in itertools.product(nodes_from, nodes_to):  # itertools.permutations(list(G.nodes()), 2):
         paths = list(time_respecting_paths(G, u, v, start, end))
         if len(paths) > 0:
             res[(u, v)] = paths
