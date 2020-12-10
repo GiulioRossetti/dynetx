@@ -67,7 +67,7 @@ def __normalize(u: object, scores: list, max_dist: int, alphas: list):
 
 
 def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, profile_size: int = 1,
-                     hierarchies: dict = None, path_type="shortest") -> dict:
+                     hierarchies: dict = None, path_type="shortest", progress_bar: bool = False) -> dict:
     """
     Compute the Delta-Conformity for the considered dynamic graph
     :param dg: a dynetx Graph object composed by a single component
@@ -78,6 +78,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     :param profile_size:
     :param hierarchies: label hierarchies
     :param path_type: time respecting path type. String among: shortest, fastest, foremost, fastest_shortest and shortest_fastest (default: shortest)
+    :param progress_bar: wheter to show the progress bar, default false
     :return: conformity value for each node in [-1, 1]
 
     -- Example --
@@ -117,17 +118,17 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     labels_value_frequency = defaultdict(lambda: defaultdict(int))
 
     for _, metadata in g.nodes(data=True):
-        for k, v in metadata.items():
+        for k, v in list(metadata.items()):
             labels_value_frequency[k][v] += 1
 
     # Normalization
     df = defaultdict(lambda: defaultdict(int))
-    for k, v in labels_value_frequency.items():
+    for k, v in list(labels_value_frequency.items()):
         tot = 0
-        for p, c in v.items():
+        for p, c in list(v.items()):
             tot += c
 
-        for p, c in v.items():
+        for p, c in list(v.items()):
             df[k][p] = c / tot
 
     res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes()} for profile in profiles} for a in alphas}
@@ -135,19 +136,19 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     sp = all_time_respecting_paths(g, start, delta + start)
 
     distances = defaultdict(lambda: defaultdict(int))
-    for k, v in sp.items():
+    for k, v in list(sp.items()):
         distances[k[0]][k[1]] = len(annotate_paths(v)[path_type])
 
-    for u in tqdm(g.nodes()):
+    for u in tqdm(g.nodes(), disable=not progress_bar):
 
         sp = dict(distances[u])
 
         dist_to_nodes = defaultdict(list)
-        for node, dist in sp.items():
+        for node, dist in list(sp.items()):
             dist_to_nodes[dist].append(node)
         sp = dist_to_nodes
 
-        for dist, nodes in sp.items():
+        for dist, nodes in list(sp.items()):
             if dist != 0:
                 for profile in profiles:
                     sim = __label_frequency(g, u, nodes, list(profile), hierarchies)
@@ -164,7 +165,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
 
 def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile_size: int = 1,
-                             hierarchies: dict = None, path_type="shortest") -> dict:
+                             hierarchies: dict = None, path_type="shortest", progress_bar: bool = False) -> dict:
     """
     Compute the Delta-Conformity for the considered dynamic graph on a sliding window of predefined size
 
@@ -175,6 +176,7 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
     :param profile_size:
     :param hierarchies: label hierarchies
     :param path_type: time respecting path type. String among: shortest, fastest, foremost, fastest_shortest and shortest_fastest (default: shortest)
+    :param progress_bar: wheter to show the progress bar, default false
     :return: conformity trend value for each node
 
     -- Example --
@@ -202,12 +204,12 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
 
     alpha_attribute_node_to_seq = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
-    for t in tids:
+    for t in tqdm(tids, disable=not progress_bar):
         if t + delta < tids[-1]:
             dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type)
-            for alpha, data in dconf.items():
-                for attribute, node_values in data.items():
-                    for n, v in node_values.items():
+            for alpha, data in list(dconf.items()):
+                for attribute, node_values in list(data.items()):
+                    for n, v in list(node_values.items()):
                         alpha_attribute_node_to_seq[alpha][attribute][n].append((t + delta, v))
 
     return alpha_attribute_node_to_seq
