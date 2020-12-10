@@ -214,7 +214,7 @@ def all_time_respecting_paths(G, start=None, end=None, nodes_from=None, nodes_to
         nodes_to = nodes
 
     for u, v in itertools.product(nodes_from, nodes_to):  # itertools.permutations(list(G.nodes()), 2):
-        paths = list(time_respecting_paths(G, u, v, start, end))
+        paths = list(time_respecting_paths(S, u, v, start, end))
         if len(paths) > 0:
             res[(u, v)] = paths
     return res
