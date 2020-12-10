@@ -134,6 +134,9 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes()} for profile in profiles} for a in alphas}
 
     tids = g.temporal_snapshots_ids()
+    if len(tids) == 0:
+        return None
+
     mid = max(tids)
     mmid = min(tids)
     sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start))
@@ -210,6 +213,8 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
     for t in tqdm(tids, disable=not progress_bar):
         if t + delta < tids[-1]:
             dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type)
+            if dconf is None:
+                continue
             for alpha, data in list(dconf.items()):
                 for attribute, node_values in list(data.items()):
                     for n, v in list(node_values.items()):
