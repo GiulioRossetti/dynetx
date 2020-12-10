@@ -204,11 +204,13 @@ def all_time_respecting_paths(G, start=None, end=None, nodes_from=None, nodes_to
 
     """
     res = {}
+
+    nodes = list(G.time_slice(t_from=start, t_to=end).nodes())
     if nodes_from is None:
-        nodes_from = list(G.nodes())
+        nodes_from = nodes
 
     if nodes_to is None:
-        nodes_to = list(G.nodes())
+        nodes_to = nodes
 
     for u, v in itertools.product(nodes_from, nodes_to):  # itertools.permutations(list(G.nodes()), 2):
         paths = list(time_respecting_paths(G, u, v, start, end))
