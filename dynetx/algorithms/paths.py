@@ -205,7 +205,8 @@ def all_time_respecting_paths(G, start=None, end=None, nodes_from=None, nodes_to
     """
     res = {}
 
-    nodes = list(G.time_slice(t_from=start, t_to=end).nodes())
+    S = G.time_slice(t_from=start, t_to=end)
+    nodes = list(S.nodes())
     if nodes_from is None:
         nodes_from = nodes
 
