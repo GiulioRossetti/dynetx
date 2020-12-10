@@ -55,7 +55,7 @@ class ConformityTestCase(unittest.TestCase):
         g.add_interaction("B", "D", 2, 4)
         g.add_interaction("A", "B", 7, 9)
 
-        res = al.delta_conformity(g, 1, 5, list(np.arange(1, 4, 0.2)), ['labels'], profile_size=1, path_type="fastest")
+        res = al.delta_conformity(g, 1, 10, list(np.arange(1, 4, 0.2)), ['labels'], profile_size=1, path_type="fastest")
 
         with open(f"conformity_annotated.json", "w") as o:
             json.dump(res, o)
@@ -64,6 +64,7 @@ class ConformityTestCase(unittest.TestCase):
             for z, t in v.items():
                 for _, val in t.items():
                     self.assertTrue(-1 <= val <= 1)
+                    # print(val)
 
         os.remove("conformity_annotated.json")
 

@@ -1044,21 +1044,22 @@ class DynGraph(nx.Graph):
                 raise ValueError("Invalid range: t_to must be grater that t_from")
         else:
             t_to = t_from
-
         for u, v, ts in self.interactions_iter():
             i_to = t_to
             f_from = t_from
 
             for a, b in ts['t']:
+                if i_to < a or f_from > b:
+                    continue
 
-                if i_to <= a and b <= f_from:
+                if f_from >=a and i_to <= b:
+                    H.add_interaction(u, v, f_from, i_to)
+                elif a >= f_from and i_to <= b:
+                    H.add_interaction(u, v, a, i_to)
+                elif f_from>=a and b<= i_to:
+                    H.add_interaction(u, v, f_from, b)
+                elif f_from <= a and b <= i_to:
                     H.add_interaction(u, v, a, b)
-                elif a <= i_to and f_from <= b:
-                    H.add_interaction(u, v, i_to, f_from)
-                elif a <= i_to <= b <= f_from:
-                    H.add_interaction(u, v, i_to, b)
-                elif i_to <= a <= f_from <= b:
-                    H.add_interaction(u, v, a, f_from)
 
         for n in H.nodes():
             H._node[n] = self._node[n]
