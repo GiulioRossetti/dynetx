@@ -149,6 +149,9 @@ def time_respecting_paths(G, u, v, start=None, end=None):
         >>> paths = al.time_respecting_paths(g, "D", "C", start=1, end=9)
 
     """
+    if not G.has_node(u, start):
+        return []
+
     DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v, start, end)
 
     pairs = [(x, y) for x in sources for y in targets]

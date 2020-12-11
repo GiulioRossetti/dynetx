@@ -66,6 +66,20 @@ def __normalize(u: object, scores: list, max_dist: int, alphas: list):
     return scores
 
 
+def __remap_path_distances(temporal_distances):
+    """
+    Mapping shortest paths temporal distances in hop distances
+
+    :param temporal_distances: a dictionary of <node_id, reach_time>
+    :return: a dictionary <node_id, hop_distance>
+    """
+    tids = sorted(set(temporal_distances.values()))
+    tids = {t: pos+1 for pos, t in enumerate(tids)}
+    for k, v in temporal_distances.items():
+        temporal_distances[k] = tids[v]
+    return temporal_distances
+
+
 def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, profile_size: int = 1,
                      hierarchies: dict = None, path_type="shortest", progress_bar: bool = False) -> dict:
     """
@@ -131,7 +145,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
         for p, c in list(v.items()):
             df[k][p] = c / tot
 
-    res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes()} for profile in profiles} for a in alphas}
+    res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes(t=start)} for profile in profiles} for a in alphas}
 
     tids = g.temporal_snapshots_ids()
     if len(tids) == 0:
@@ -145,7 +159,10 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     for k, v in list(sp.items()):
         distances[k[0]][k[1]] = len(annotate_paths(v)[path_type])
 
-    for u in tqdm(g.nodes(), disable=not progress_bar):
+    for k in distances:
+        distances[k] = __remap_path_distances(distances[k])
+
+    for u in tqdm(g.nodes(t=start), disable=not progress_bar):
 
         sp = dict(distances[u])
 
@@ -166,6 +183,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
         if len(sp) > 0:
             res = __normalize(u, res, max(sp.keys()), alphas)
+
 
     return res
 
