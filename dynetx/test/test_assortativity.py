@@ -64,7 +64,6 @@ class ConformityTestCase(unittest.TestCase):
             for z, t in v.items():
                 for _, val in t.items():
                     self.assertTrue(-1 <= val <= 1)
-                    # print(val)
 
         os.remove("conformity_annotated.json")
 
