@@ -32,8 +32,7 @@ class AlgorithmsTestCase(unittest.TestCase):
         for p in pts:
             self.assertIsInstance(p, list)
 
-        with self.assertRaises(ValueError) as _:
-            al.time_respecting_paths(g, "D", "C", start=20, end=40)
+        self.assertEqual(len(al.time_respecting_paths(g, "D", "C", start=20, end=40)), 0)
 
     def test_all_time_respecting_paths(self):
         g = get_netowrk()
@@ -44,7 +43,7 @@ class AlgorithmsTestCase(unittest.TestCase):
 
     def test_annotated_paths(self):
         g = get_netowrk()
-        pts = list(al.time_respecting_paths(g, "D", "C", start=1, end=9))
+        pts = list(al.time_respecting_paths(g, "D", "C", start=2, end=9))
         ann_pts = al.annotate_paths(pts)
 
         for k, v in ann_pts.items():
