@@ -1084,6 +1084,19 @@ class DynGraph(nx.Graph):
         """
         self._node[n] = data
 
+    def get_node_snapshots(self, n):
+        """
+        Return the snapshot ids for which the given node is in the graph
+
+        :param n: node id
+        :return: list of snapshot ids
+        """
+        snaps = []
+        for t in self.temporal_snapshots_ids():
+            if self.has_node(n, t):
+                snaps.append(t)
+        return t
+
     def update_node_attr_from(self, nlist, **data):
         """Updates the attributes of a specified node.
 

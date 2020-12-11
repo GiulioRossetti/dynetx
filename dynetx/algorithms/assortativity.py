@@ -8,7 +8,7 @@ import networkx as nx
 __all__ = ["delta_conformity", "sliding_delta_conformity"]
 
 
-def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hierarchies: dict = None) -> float:
+def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hierarchies: dict = None, t_dist: dict = None, start = None) -> float:
     """
     Compute the similarity of node profiles
     :param g: a networkx Graph object
@@ -18,16 +18,39 @@ def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hier
     :return: node profiles similarity score in [-1, 1]
     """
     s = 1
+
     for label in labels:
+
         a_u = g._node[u][label]
+        if isinstance(a_u, dict):
+            a_u = a_u[start]
+
         # set of nodes at given distance
         sgn = {}
         for v in nodes:
+
+            a_v = g._node[v][label]
+
+            if isinstance(a_v, dict):
+                t = t_dist[v]
+                a_v = a_v[t]
+
+
             # indicator function that exploits label hierarchical structure
-            sgn[v] = 1 if a_u == g._node[v][label] else __distance(label, a_u, g._node[v][label], hierarchies)
-            v_neigh = list(g.neighbors(v))
+            sgn[v] = 1 if a_u == a_v else __distance(label, a_u, a_v, hierarchies)
+            v_neigh = list(g.neighbors(v, t_dist[v]))
             # compute the frequency for the given node at distance n over neighbors label
-            f_label = (len([x for x in v_neigh if g._node[x][label] == g._node[v][label]]) / len(v_neigh))
+
+            f_label = 0
+            for x in v_neigh:
+                a_x = g._node[x][label]
+                if isinstance(a_x, dict):
+                    tx = t_dist[x]
+                    a_x = a_x[t_dist[v]]
+                if a_x == a_v:
+                    f_label += 1
+
+            f_label = (f_label / len(v_neigh))
             f_label = f_label if f_label > 0 else 1
             sgn[v] *= f_label
         s *= sum(sgn.values()) / len(nodes)
@@ -73,11 +96,12 @@ def __remap_path_distances(temporal_distances):
     :param temporal_distances: a dictionary of <node_id, reach_time>
     :return: a dictionary <node_id, hop_distance>
     """
+    res = {}
     tids = sorted(set(temporal_distances.values()))
     tids = {t: pos+1 for pos, t in enumerate(tids)}
     for k, v in temporal_distances.items():
-        temporal_distances[k] = tids[v]
-    return temporal_distances
+        res[k] = tids[v]
+    return res
 
 
 def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, profile_size: int = 1,
@@ -133,7 +157,11 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     for _, metadata in g.nodes(data=True):
         for k, v in list(metadata.items()):
-            labels_value_frequency[k][v] += 1
+            if not isinstance(v, dict):
+                labels_value_frequency[k][v] += 1
+            else:
+                for j in v.values():
+                    labels_value_frequency[k][j] += 1
 
     # Normalization
     df = defaultdict(lambda: defaultdict(int))
@@ -155,12 +183,15 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     mmid = min(tids)
     sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start))
 
-    distances = defaultdict(lambda: defaultdict(int))
+    t_distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
-        distances[k[0]][k[1]] = len(annotate_paths(v)[path_type])
+        ss = [x[-1] for x in annotate_paths(v)[path_type]]
+        ss = [x[-1] for x in ss]
+        t_distances[k[0]][k[1]] = min(ss)
 
-    for k in distances:
-        distances[k] = __remap_path_distances(distances[k])
+    distances = defaultdict(lambda: defaultdict(int))
+    for k in t_distances:
+        distances[k] = __remap_path_distances(t_distances[k])
 
     for u in tqdm(g.nodes(t=start), disable=not progress_bar):
 
@@ -174,7 +205,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
         for dist, nodes in list(sp.items()):
             if dist != 0:
                 for profile in profiles:
-                    sim = __label_frequency(g, u, nodes, list(profile), hierarchies)
+                    sim = __label_frequency(g, u, nodes, list(profile), hierarchies, t_distances[u], start)
 
                     for alpha in alphas:
                         partial = sim / (dist ** alpha)
