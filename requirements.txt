@@ -1,5 +1,5 @@
 mock
-numpy
+numpy==1.19.5
 future
 tqdm
 networkx>=2.4
