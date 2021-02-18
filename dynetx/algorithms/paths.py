@@ -163,8 +163,20 @@ def time_respecting_paths(G, u, v, start=None, end=None):
         for p in path:
             pt = []
             for first, second in zip(p, p[1:]):
-                u, _ = first.split("_")
-                v, t = second.split("_")
+                u = first.split("_")
+                if len(u) == 2:
+                    u = u[0]
+                else:
+                    u = "_".join(u[0:-1])
+
+                v = second.split("_")
+                if len(v) == 2:
+                    t = v[1]
+                    v = v[0]
+                else:
+                    t = v[-1]
+                    v = "_".join(v[0:-1])
+
                 pt.append((n_type(u), n_type(v), t_type(t)))
             paths.append(pt)
     return paths

@@ -591,7 +591,10 @@ class DynGraph(nx.Graph):
             if t is None:
                 return list(self._adj[n])
             else:
-                return [i for i in self._adj[n] if self.__presence_test(n, i, t)]
+                if n in self._adj:
+                    return [i for i in self._adj[n] if self.__presence_test(n, i, t)]
+                else:
+                    return []
         except KeyError:
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
@@ -1396,7 +1399,7 @@ class DynGraph(nx.Graph):
 
         for t in self.snapshots:
             if self.has_node(u, t):
-                numerator += self.degree([u], t)[0]
+                numerator += self.degree([u], t)[u]
 
         for v in self.nodes():
             denominator += len(self.node_presence(v) & presence_u)
