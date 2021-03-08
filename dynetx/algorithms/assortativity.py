@@ -173,7 +173,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
         for p, c in list(v.items()):
             df[k][p] = c / tot
 
-    res = {str(a): {"_".join(profile): {n: 0 for n in g.nodes(t=start)} for profile in profiles} for a in alphas}
+    res = {"%.2f" % a: {"_".join(profile): {n: 0 for n in g.nodes(t=start)} for profile in profiles} for a in alphas}
 
     tids = g.temporal_snapshots_ids()
     if len(tids) == 0:
@@ -181,8 +181,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     mid = max(tids)
     mmid = min(tids)
-
-    sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start), sample=sample)
+    sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start), sample=sample, min_t=mmid)
 
     t_distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
@@ -211,7 +210,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
                     for alpha in alphas:
                         partial = sim / (dist ** alpha)
                         p_name = "_".join(profile)
-                        res[str(alpha)][p_name][u] += partial
+                        res["%.2f" % alpha][p_name][u] += partial
 
         if len(sp) > 0:
             res = __normalize(u, res, max(sp.keys()), alphas)
