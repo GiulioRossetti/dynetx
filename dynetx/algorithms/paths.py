@@ -161,7 +161,7 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
     if not G.has_node(u, start):
         return []
 
-    DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v, start, end)
+    DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v=None, start=start, end=end)
 
     pairs = [(x, y) for x in sources for y in targets]
     if sample < 1:
@@ -236,7 +236,9 @@ def all_time_respecting_paths(G, start=None, end=None, sample=1, min_t=None):
     for u in tqdm.tqdm(G.nodes(t=min_t)):
         paths = list(time_respecting_paths(G, u, start, end, sample=sample))
         if len(paths) > 0:
-            res[(u, v)] = paths
+            for path in paths:
+                v = path[-1][1]
+                res[(u, v)] = paths
 
     return res
 
