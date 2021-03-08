@@ -35,7 +35,6 @@ def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hier
                 t = t_dist[v]
                 a_v = a_v[t]
 
-
             # indicator function that exploits label hierarchical structure
             sgn[v] = 1 if a_u == a_v else __distance(label, a_u, a_v, hierarchies)
             v_neigh = list(g.neighbors(v, t_dist[v]))
@@ -83,8 +82,8 @@ def __normalize(u: object, scores: list, max_dist: int, alphas: list):
     for alpha in alphas:
         norm = sum([(d ** -alpha) for d in range(1, max_dist + 1)])
 
-        for profile in scores[str(alpha)]:
-            scores[str(alpha)][profile][u] /= norm
+        for profile in scores["%.2f" % alpha]:
+            scores["%.2f" % alpha][profile][u] /= norm
 
     return scores
 
