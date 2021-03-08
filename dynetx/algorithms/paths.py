@@ -1,14 +1,18 @@
 import networkx as nx
 import itertools
+import tqdm
+import random
+import numpy as np
 
 __author__ = 'Giulio Rossetti'
 __license__ = "BSD-Clause-2"
 __email__ = "giulio.rossetti@gmail.com"
 
-__all__ = ['time_respecting_paths', 'all_time_respecting_paths', 'annotate_paths', 'temporal_dag', 'path_duration', 'path_length']
+__all__ = ['time_respecting_paths', 'all_time_respecting_paths', 'annotate_paths', 'temporal_dag', 'path_duration',
+           'path_length']
 
 
-def temporal_dag(G, u, v, start=None, end=None):
+def temporal_dag(G, u, v=None, start=None, end=None):
     """
         Creates a rooted temporal DAG assuming interaction chains of length 1 within each network snapshot.
 
@@ -19,7 +23,7 @@ def temporal_dag(G, u, v, start=None, end=None):
         u : a node id
             A node in G
         v : a node id
-            A node in G
+            A node in G, default None
         start : temporal id
             min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
@@ -72,8 +76,8 @@ def temporal_dag(G, u, v, start=None, end=None):
                          f"{[min(ids), max(ids)]}.")
 
     # adjusting temporal window
-    start = list(map(lambda i: i >= start, ids)).index(True)
-    end = end if end == ids[-1] else list(map(lambda i: i > end, ids)).index(True)
+    start = list([i >= start for i in ids]).index(True)
+    end = end if end == ids[-1] else list([i > end for i in ids]).index(True)
     ids = ids[start:end]
 
     # creating empty DAG
@@ -87,8 +91,12 @@ def temporal_dag(G, u, v, start=None, end=None):
         to_add = []
         for an in active:
             neighbors = {f"{n}_{tid}": None for n in G.neighbors(node_type(str(an).split("_")[0]), tid)}
-            if f"{v}_{tid}" in neighbors:
-                targets[f"{v}_{tid}"] = None
+            if v is not None:
+                if f"{v}_{tid}" in neighbors:
+                    targets[f"{v}_{tid}"] = None
+            else:
+                for k in neighbors:
+                    targets[k] = None
 
             if len(neighbors) == 0 and an != u:
                 to_remove.append(an)
@@ -111,7 +119,7 @@ def temporal_dag(G, u, v, start=None, end=None):
     return DG, list(sources), list(targets), node_type, tid_type
 
 
-def time_respecting_paths(G, u, v, start=None, end=None):
+def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
     """
         Computes all the simple time respecting paths among u and v within [start, stop].
         It assumes interaction chains of length 1 within each network snapshot.
@@ -128,6 +136,7 @@ def time_respecting_paths(G, u, v, start=None, end=None):
             min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
             max temporal id for bounding the DAG, default None
+        sample : percentage of connected node pairs for which compute the time respecting paths. Default 1.
 
         Returns
         --------
@@ -155,6 +164,10 @@ def time_respecting_paths(G, u, v, start=None, end=None):
     DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v, start, end)
 
     pairs = [(x, y) for x in sources for y in targets]
+    if sample < 1:
+        to_sample = int(len(pairs) * sample)
+        pairs_idx = np.random.choice(len(pairs), size=to_sample, replace=False)
+        pairs = np.array(pairs)[pairs_idx]
 
     paths = []
     for pair in pairs:
@@ -182,7 +195,7 @@ def time_respecting_paths(G, u, v, start=None, end=None):
     return paths
 
 
-def all_time_respecting_paths(G, start=None, end=None):
+def all_time_respecting_paths(G, start=None, end=None, sample=1, min_t=None):
     """
         Computes all the simple paths among network node pairs.
         It assumes interaction chains of length 1 within each network snapshot.
@@ -195,6 +208,8 @@ def all_time_respecting_paths(G, start=None, end=None):
             min temporal id for bounding the DAG, default None
         end : temporal id to conclude the search
             max temporal id for bounding the DAG, default None
+        sample : percentage of paths to compute. Default, 1
+        min_t : temporal id for the source nodes, Default, None (all possible tids in [start, end])
 
         Returns
         --------
@@ -218,10 +233,11 @@ def all_time_respecting_paths(G, start=None, end=None):
     """
     res = {}
 
-    for u, v in itertools.permutations(list(G.nodes()), 2):
-        paths = list(time_respecting_paths(G, u, v, start, end))
+    for u in G.nodes(t=min_t):
+        paths = list(time_respecting_paths(G, u, start, end, sample=sample))
         if len(paths) > 0:
             res[(u, v)] = paths
+
     return res
 
 
@@ -293,11 +309,11 @@ def annotate_paths(paths):
 
     fastest_shortest = {tuple(path): path_duration(path) for path in annotated['shortest']}
     minval = min(fastest_shortest.values())
-    fastest_shortest = list(filter(lambda x: fastest_shortest[x] == minval, fastest_shortest))
+    fastest_shortest = list([x for x in fastest_shortest if fastest_shortest[x] == minval])
 
     shortest_fastest = {tuple(path): path_length(path) for path in annotated['fastest']}
     minval = min(shortest_fastest.values())
-    shortest_fastest = list(filter(lambda x: shortest_fastest[x] == minval, shortest_fastest))
+    shortest_fastest = list([x for x in shortest_fastest if shortest_fastest[x] == minval])
 
     annotated['fastest_shortest'] = [list(p) for p in fastest_shortest]
     annotated['shortest_fastest'] = [list(p) for p in shortest_fastest]

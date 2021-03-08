@@ -25,14 +25,24 @@ class AlgorithmsTestCase(unittest.TestCase):
         self.assertIsInstance(sources, list)
         self.assertIsInstance(targets, list)
 
+        DAG, sources, targets, _, _ = al.temporal_dag(g, "D", start=1, end=9)
+        self.assertIsInstance(DAG, nx.DiGraph)
+        self.assertIsInstance(sources, list)
+        self.assertIsInstance(targets, list)
+
     def test_time_respecting_paths(self):
         g = get_netowrk()
-        pts = al.time_respecting_paths(g, "D", "C", start=1, end=9)
+        pts = al.time_respecting_paths(g, "A", "D", start=1, end=9)
 
         for p in pts:
             self.assertIsInstance(p, list)
 
         self.assertEqual(len(al.time_respecting_paths(g, "D", "C", start=20, end=40)), 0)
+
+        pts = al.time_respecting_paths(g, "A", "D", start=1, end=9, sample=0.5)
+
+        for p in pts:
+            self.assertIsInstance(p, list)
 
     def test_all_time_respecting_paths(self):
         g = get_netowrk()

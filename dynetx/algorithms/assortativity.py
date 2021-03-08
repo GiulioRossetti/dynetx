@@ -99,13 +99,13 @@ def __remap_path_distances(temporal_distances):
     res = {}
     tids = sorted(set(temporal_distances.values()))
     tids = {t: pos+1 for pos, t in enumerate(tids)}
-    for k, v in temporal_distances.items():
+    for k, v in list(temporal_distances.items()):
         res[k] = tids[v]
     return res
 
 
 def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, profile_size: int = 1,
-                     hierarchies: dict = None, path_type="shortest", progress_bar: bool = False) -> dict:
+                     hierarchies: dict = None, path_type="shortest", progress_bar: bool = False, sample: float = 1) -> dict:
     """
     Compute the Delta-Conformity for the considered dynamic graph
     :param dg: a dynetx Graph object composed by a single component
@@ -160,7 +160,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
             if not isinstance(v, dict):
                 labels_value_frequency[k][v] += 1
             else:
-                for j in v.values():
+                for j in list(v.values()):
                     labels_value_frequency[k][j] += 1
 
     # Normalization
@@ -181,7 +181,8 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     mid = max(tids)
     mmid = min(tids)
-    sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start))
+
+    sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start), sample=sample)
 
     t_distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
@@ -215,12 +216,11 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
         if len(sp) > 0:
             res = __normalize(u, res, max(sp.keys()), alphas)
 
-
     return res
 
 
 def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile_size: int = 1,
-                             hierarchies: dict = None, path_type="shortest", progress_bar: bool = False) -> dict:
+                             hierarchies: dict = None, path_type="shortest", progress_bar: bool = False, sample: float = 1) -> dict:
     """
     Compute the Delta-Conformity for the considered dynamic graph on a sliding window of predefined size
 
@@ -261,7 +261,7 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
 
     for t in tqdm(tids, disable=not progress_bar):
         if t + delta < tids[-1]:
-            dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type)
+            dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type, progress_bar=not progress_bar, sample=sample)
             if dconf is None:
                 continue
             for alpha, data in list(dconf.items()):
