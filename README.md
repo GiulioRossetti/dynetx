@@ -8,6 +8,7 @@
 [![Updates](https://pyup.io/repos/github/GiulioRossetti/dynetx/shield.svg)](https://pyup.io/repos/github/GiulioRossetti/dynetx/)
 [![PyPI download month](https://img.shields.io/pypi/dm/dynetx.svg?color=blue&style=plastic)](https://pypi.python.org/pypi/dynetx/)
 [![DOI](https://zenodo.org/badge/98746676.svg)](https://zenodo.org/badge/latestdoi/98746676)
+[![SBD++](https://img.shields.io/badge/Available%20on-SoBigData%2B%2B-green)](https://sobigdata.d4science.org/group/sobigdata-gateway/explore?siteId=20371853)
 
 ![DyNetx logo](http://dynetx.readthedocs.io/en/latest/_static/dynetx.png)
 
@@ -15,6 +16,9 @@
 DyNetx provides implementations of dynamic networks in python (it is built upon [networkx](http://networkx.github.io)).
 
 The project documentation can be found on [ReadTheDocs](http://dynetx.readthedocs.io).
+
+If you would like to test ``DyNetx`` functionalities withouth installing anything on your machine consider using the preconfigured Jupyter Hub instances offered by [SoBigData++](https://sobigdata.d4science.org/group/sobigdata-gateway/explore?siteId=20371853).
+
 
 ## Citation
 
