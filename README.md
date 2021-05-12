@@ -6,7 +6,8 @@
 [![pyversions](https://img.shields.io/pypi/pyversions/dynetx.svg)](https://badge.fury.io/py/dynetx)
 [![PyPI version](https://badge.fury.io/py/dynetx.svg)](https://badge.fury.io/py/dynetx)
 [![Updates](https://pyup.io/repos/github/GiulioRossetti/dynetx/shield.svg)](https://pyup.io/repos/github/GiulioRossetti/dynetx/)
-[![PyPI download month](https://img.shields.io/pypi/dm/dynetx.svg?color=blue&style=plastic)](https://pypi.python.org/pypi/dynetx/)
+[![Downloads](https://pepy.tech/badge/dynetx)](https://pepy.tech/project/dynetx)
+[![Downloads](https://pepy.tech/badge/dynetx/month)](https://pepy.tech/project/dynetx)
 [![DOI](https://zenodo.org/badge/98746676.svg)](https://zenodo.org/badge/latestdoi/98746676)
 [![SBD++](https://img.shields.io/badge/Available%20on-SoBigData%2B%2B-green)](https://sobigdata.d4science.org/group/sobigdata-gateway/explore?siteId=20371853)
 
