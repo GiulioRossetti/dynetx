@@ -40,7 +40,7 @@ PY2 = sys.version_info[0] == 2
 if PY2:
     def make_str(x):
         """Return the string representation of t."""
-        if isinstance(x, unicode):
+        if isinstance(x, str):
             return x
         else:
             return unicode(str(x), 'unicode-escape')
