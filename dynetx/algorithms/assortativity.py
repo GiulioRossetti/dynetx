@@ -166,7 +166,6 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     t_distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
         ss = [x[-1] for x in annotate_paths(v)[path_type]]
-        print(ss, path_type)
         ss = [x[-1] for x in ss]
         t_distances[k[0]][k[1]] = min(ss)
 
