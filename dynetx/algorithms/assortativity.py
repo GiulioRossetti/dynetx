@@ -8,7 +8,8 @@ import networkx as nx
 __all__ = ["delta_conformity", "sliding_delta_conformity"]
 
 
-def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hierarchies: dict = None, t_dist: dict = None, start = None) -> float:
+def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hierarchies: dict = None,
+                      t_dist: dict = None, start=None) -> float:
     """
     Compute the similarity of node profiles
     :param g: a networkx Graph object
@@ -22,6 +23,7 @@ def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hier
     for label in labels:
 
         a_u = g._node[u][label]
+
         if isinstance(a_u, dict):
             a_u = a_u[start]
 
@@ -34,7 +36,6 @@ def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hier
             if isinstance(a_v, dict):
                 t = t_dist[v]
                 a_v = a_v[t]
-
             # indicator function that exploits label hierarchical structure
             sgn[v] = 1 if a_u == a_v else __distance(label, a_u, a_v, hierarchies)
             v_neigh = list(g.neighbors(v, t_dist[v]))
@@ -97,14 +98,15 @@ def __remap_path_distances(temporal_distances):
     """
     res = {}
     tids = sorted(set(temporal_distances.values()))
-    tids = {t: pos+1 for pos, t in enumerate(tids)}
+    tids = {t: pos + 1 for pos, t in enumerate(tids)}
     for k, v in list(temporal_distances.items()):
         res[k] = tids[v]
     return res
 
 
 def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, profile_size: int = 1,
-                     hierarchies: dict = None, path_type="shortest", progress_bar: bool = False, sample: float = 1) -> dict:
+                     hierarchies: dict = None, path_type="shortest", progress_bar: bool = False,
+                     sample: float = 1) -> dict:
     """
     Compute the Delta-Conformity for the considered dynamic graph
     :param dg: a dynetx Graph object composed by a single component
@@ -151,27 +153,6 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     g = dg.time_slice(t_from=start, t_to=start + delta)
 
-    # Attribute value frequency
-    labels_value_frequency = defaultdict(lambda: defaultdict(int))
-
-    for _, metadata in g.nodes(data=True):
-        for k, v in list(metadata.items()):
-            if not isinstance(v, dict):
-                labels_value_frequency[k][v] += 1
-            else:
-                for j in list(v.values()):
-                    labels_value_frequency[k][j] += 1
-
-    # Normalization
-    df = defaultdict(lambda: defaultdict(int))
-    for k, v in list(labels_value_frequency.items()):
-        tot = 0
-        for p, c in list(v.items()):
-            tot += c
-
-        for p, c in list(v.items()):
-            df[k][p] = c / tot
-
     res = {"%.2f" % a: {"_".join(profile): {n: 0 for n in g.nodes(t=start)} for profile in profiles} for a in alphas}
 
     tids = g.temporal_snapshots_ids()
@@ -185,6 +166,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     t_distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
         ss = [x[-1] for x in annotate_paths(v)[path_type]]
+        print(ss, path_type)
         ss = [x[-1] for x in ss]
         t_distances[k[0]][k[1]] = min(ss)
 
@@ -218,7 +200,8 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
 
 def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile_size: int = 1,
-                             hierarchies: dict = None, path_type="shortest", progress_bar: bool = False, sample: float = 1) -> dict:
+                             hierarchies: dict = None, path_type="shortest", progress_bar: bool = False,
+                             sample: float = 1) -> dict:
     """
     Compute the Delta-Conformity for the considered dynamic graph on a sliding window of predefined size
 
@@ -259,7 +242,8 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
 
     for t in tqdm(tids, disable=not progress_bar):
         if t + delta < tids[-1]:
-            dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type, progress_bar=not progress_bar, sample=sample)
+            dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type,
+                                     progress_bar=not progress_bar, sample=sample)
             if dconf is None:
                 continue
             for alpha, data in list(dconf.items()):

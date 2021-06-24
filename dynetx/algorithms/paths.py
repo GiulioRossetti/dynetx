@@ -161,7 +161,7 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
     if not G.has_node(u, start):
         return []
 
-    DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v=None, start=start, end=end)
+    DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v=v, start=start, end=end)
 
     pairs = [(x, y) for x in sources for y in targets]
     if sample < 1:
