@@ -43,7 +43,7 @@ if PY2:
         if isinstance(x, str):
             return x
         else:
-            return unicode(str(x), 'unicode-escape')
+            return str(str(x), 'unicode-escape')
 else:
     def make_str(x):
         """Return the string representation of t."""
