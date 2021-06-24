@@ -27,9 +27,14 @@ If you would like to test ``DyNetx`` functionalities withouth installing anythin
 
 ## Installation
 
-In order to install the library just download (or clone) the current project and copy the dynetx folder in the root of your application.
-Alternatively use pip:
+In order to install the library  use pip:
 ```bash
-sudo pip install dynetx
+pip install dynetx
+```
+
+or conda:
+
+```bash
+conda install -c giuliorossetti dynetx
 ```
 
