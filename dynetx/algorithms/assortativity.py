@@ -35,7 +35,11 @@ def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hier
 
             if isinstance(a_v, dict):
                 t = t_dist[v]
-                a_v = a_v[t]
+                if t in a_v:
+                    a_v = a_v[t]
+                else:
+                    continue
+
             # indicator function that exploits label hierarchical structure
             sgn[v] = 1 if a_u == a_v else __distance(label, a_u, a_v, hierarchies)
             v_neigh = list(g.neighbors(v, t_dist[v]))
