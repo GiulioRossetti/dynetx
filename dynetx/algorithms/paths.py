@@ -234,7 +234,7 @@ def all_time_respecting_paths(G, start=None, end=None, sample=1, min_t=None):
     res = {}
 
     for u in tqdm.tqdm(G.nodes(t=min_t)):
-        paths = list(time_respecting_paths(G, u, start, end, sample=sample))
+        paths = list(time_respecting_paths(G, u, v=None, start=start, end=end, sample=sample))
         if len(paths) > 0:
             for path in paths:
                 v = path[-1][1]

@@ -44,13 +44,13 @@ def __label_frequency(g: dn.DynGraph, u: object, nodes: list, labels: list, hier
             f_label = 0
             for x in v_neigh:
                 a_x = g._node[x][label]
+                # tx = t_dist[x]
                 if isinstance(a_x, dict):
-                    tx = t_dist[x]
                     a_x = a_x[t_dist[v]]
                 if a_x == a_v:
                     f_label += 1
 
-            f_label = (f_label / len(v_neigh))
+            f_label = (f_label / len(v_neigh)) if len(v_neigh) > 0 else 0
             f_label = f_label if f_label > 0 else 1
             sgn[v] *= f_label
         s *= sum(sgn.values()) / len(nodes)
@@ -161,6 +161,7 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
 
     mid = max(tids)
     mmid = min(tids)
+
     sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start), sample=sample, min_t=mmid)
 
     t_distances = defaultdict(lambda: defaultdict(int))
