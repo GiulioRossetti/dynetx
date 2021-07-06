@@ -1,6 +1,6 @@
 numpy
 future
-tqdm
+tqdm==4.61.2
 networkx>=2.4
 
 
