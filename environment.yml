@@ -1,4 +1,4 @@
-name: angel_env
+name: dynetx
 channels:
 - conda-forge
 - defaults
@@ -8,3 +8,4 @@ dependencies:
 - future
 - tqdm
 - networkx>=2.4
+- decorator
