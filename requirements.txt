@@ -3,4 +3,4 @@ future
 tqdm
 networkx>=2.4
 decorator
-pendulum
+pendulum==2.1.2
