@@ -1,10 +1,6 @@
-numpy~=1.18.1
+numpy
 future
-tqdm~=4.52.0
+tqdm
 networkx>=2.4
-sphinx~=3.1.0
-mock~=4.0.2
 decorator
-matplotlib~=3.3.4
-setuptools~=47.1.1
-pendulum~=2.1.2
+pendulum

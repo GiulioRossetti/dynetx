@@ -1,9 +1,9 @@
 package:
   name: "dynetx"
-  version: "0.2.7"
+  version: "0.2.8"
 
 source:
-  git_rev: v0.2.7
+  git_rev: v0.2.8
   git_url: https://github.com/GiulioRossetti/dynetx
 
 requirements:
@@ -14,7 +14,8 @@ requirements:
     - python
     - setuptools
   run:
-    - python>=3.7
+    - python>=3.8
+    - pendulum
     - numpy
     - future
     - tqdm
