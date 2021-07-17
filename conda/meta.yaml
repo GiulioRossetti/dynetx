@@ -14,8 +14,7 @@ requirements:
     - python
     - setuptools
   run:
-    - python>=3.8
-    - pendulum
+    - python>=3.7
     - numpy
     - future
     - tqdm
