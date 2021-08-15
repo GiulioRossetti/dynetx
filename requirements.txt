@@ -1,4 +1,4 @@
-numpy
+numpy==1.21.2
 future
 tqdm
 networkx>=2.4
