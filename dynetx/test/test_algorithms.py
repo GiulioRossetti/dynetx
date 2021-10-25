@@ -49,16 +49,14 @@ class AlgorithmsTestCase(unittest.TestCase):
         for n in g.nodes():
             g.add_node(n, lab=labs[n])
 
-        ress = al.delta_conformity(g, start=0, delta=4, alphas=[1], labels=['lab'],
+        ress = al.delta_conformity(g, start=0, delta=4, alphas=[4], labels=['lab'],
                                    path_type="shortest")
 
-        ressa = al.delta_conformity(g, start=0, delta=4, alphas=[1], labels=['lab'],
+        ressa = al.delta_conformity(g, start=0, delta=4, alphas=[4], labels=['lab'],
                                     path_type="foremost")
 
         self.assertIsInstance(ress, dict)
         self.assertIsInstance(ressa, dict)
-        print(ress)
-        print(ressa)
 
     def test_time_respecting_paths(self):
         g = get_netowrk()
