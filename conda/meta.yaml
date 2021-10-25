@@ -1,9 +1,9 @@
 package:
   name: "dynetx"
-  version: "0.3.0"
+  version: "0.3.1"
 
 source:
-  git_rev: v0.3.0
+  git_rev: v0.3.1
   git_url: https://github.com/GiulioRossetti/dynetx
 
 requirements:

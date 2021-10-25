@@ -1041,21 +1041,20 @@ class DynGraph(nx.Graph):
         """
         # create new graph and copy subgraph into it
         H = self.__class__()
-
         if t_to is not None:
             if t_to < t_from:
                 raise ValueError("Invalid range: t_to must be grater that t_from")
         else:
             t_to = t_from
+
         for u, v, ts in self.interactions_iter():
             i_to = t_to
             f_from = t_from
-
             for a, b in ts['t']:
                 if i_to < a or f_from > b:
                     continue
 
-                if f_from >=a and i_to <= b:
+                if f_from >= a and i_to <= b:
                     H.add_interaction(u, v, f_from, i_to)
                 elif a >= f_from and i_to <= b:
                     H.add_interaction(u, v, a, i_to)

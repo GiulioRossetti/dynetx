@@ -21,7 +21,7 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 
 
 setup(name='dynetx',
-      version='0.3.0',
+      version='0.3.1',
       license='BSD-Clause-2',
       description='Dynamic Network library',
       url='https://github.com/GiulioRossetti/dynetx',

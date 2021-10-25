@@ -155,22 +155,23 @@ def delta_conformity(dg, start: int, delta: int, alphas: list, labels: list, pro
     for i in range(1, profile_size + 1):
         profiles.extend(combinations(labels, i))
 
-    g = dg.time_slice(t_from=start, t_to=start + delta)
+    g = dg.time_slice(t_from=start, t_to=start + delta + 1)
 
     res = {"%.2f" % a: {"_".join(profile): {n: 0 for n in g.nodes(t=start)} for profile in profiles} for a in alphas}
 
     tids = g.temporal_snapshots_ids()
+
     if len(tids) == 0:
         return None
 
     mid = max(tids)
     mmid = min(tids)
 
-    sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start), sample=sample, min_t=mmid)
+    sp = all_time_respecting_paths(g, max(start, mmid), min(mid, delta + start + 1))
 
     t_distances = defaultdict(lambda: defaultdict(int))
     for k, v in list(sp.items()):
-        ss = [x[-1] for x in annotate_paths(v)[path_type]]
+        ss = annotate_paths(v)[path_type][-1]
         ss = [x[-1] for x in ss]
         t_distances[k[0]][k[1]] = min(ss)
 

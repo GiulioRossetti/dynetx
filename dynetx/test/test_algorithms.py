@@ -30,19 +30,49 @@ class AlgorithmsTestCase(unittest.TestCase):
         self.assertIsInstance(sources, list)
         self.assertIsInstance(targets, list)
 
+    def test_ping_pong(self):
+        g = dn.DynGraph()
+        g.add_interaction("A", "B", 0, 2)
+        g.add_interaction("B", "C", 1, 4)
+        g.add_interaction("A", "C", 2, 4)
+        g.add_interaction("D", "E", 0, 2)
+        g.add_interaction("C", "E", 3, 5)
+        g.add_interaction("A", "E", 4, 6)
+
+        labs = {"A": 'x',
+                "B": 'y',
+                "C": 'y',
+                "D": 'y',
+                "E": 'x',
+                }
+
+        for n in g.nodes():
+            g.add_node(n, lab=labs[n])
+
+        ress = al.delta_conformity(g, start=0, delta=4, alphas=[1], labels=['lab'],
+                                   path_type="shortest")
+
+        ressa = al.delta_conformity(g, start=0, delta=4, alphas=[1], labels=['lab'],
+                                    path_type="foremost")
+
+        self.assertIsInstance(ress, dict)
+        self.assertIsInstance(ressa, dict)
+        print(ress)
+        print(ressa)
+
     def test_time_respecting_paths(self):
         g = get_netowrk()
         pts = al.time_respecting_paths(g, "A", "D", start=1, end=9)
 
         for p in pts:
-            self.assertIsInstance(p, list)
+            self.assertIsInstance(p, tuple)
 
         self.assertEqual(len(al.time_respecting_paths(g, "D", "C", start=20, end=40)), 0)
 
         pts = al.time_respecting_paths(g, "A", "D", start=1, end=9, sample=0.5)
 
         for p in pts:
-            self.assertIsInstance(p, list)
+            self.assertIsInstance(p, tuple)
 
     def test_all_time_respecting_paths(self):
         g = get_netowrk()
@@ -53,9 +83,10 @@ class AlgorithmsTestCase(unittest.TestCase):
 
     def test_annotated_paths(self):
         g = get_netowrk()
-        pts = list(al.time_respecting_paths(g, "D", "C", start=2, end=9))
-        ann_pts = al.annotate_paths(pts)
+        pts = al.time_respecting_paths(g, "D", "C", start=2, end=9)
 
-        for k, v in ann_pts.items():
-            self.assertIn(k, ['shortest', 'fastest', 'foremost', 'fastest_shortest', 'shortest_fastest'])
-            self.assertIsInstance(v, list)
+        for _, ap in pts.items():
+            v = al.annotate_paths(ap)
+            for k, i in v.items():
+                self.assertIn(k, ['shortest', 'fastest', 'foremost', 'fastest_shortest', 'shortest_fastest'])
+                self.assertIsInstance(i, list)

@@ -1,8 +1,10 @@
 import networkx as nx
 import itertools
+from collections import defaultdict
 import tqdm
 import random
 import numpy as np
+import copy
 
 __author__ = 'Giulio Rossetti'
 __license__ = "BSD-Clause-2"
@@ -140,8 +142,8 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
 
         Returns
         --------
-        paths: list
-            The list of paths, each one expressed as a list of timestamped interactions
+        paths: dict
+            A dictionary that associate to each node pair (u,v) the list of time respecting paths connecting them.
 
         Examples
         --------
@@ -191,8 +193,28 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
                     v = "_".join(v[0:-1])
 
                 pt.append((n_type(u), n_type(v), t_type(t)))
-            paths.append(pt)
-    return paths
+            # check ping pong
+
+            flag = True
+            if len(pt) > 1:
+                s = pt[0]
+                for l in pt[1:]:
+                    if l[0] == s[1] and l[1] == s[0] or l[2] == s[2]:
+                        flag = False
+                        continue
+                    s = l
+
+            if flag:
+                paths.append(pt)
+
+    pa = list(dict.fromkeys([tuple(x) for x in paths]))
+
+    res = defaultdict(list)
+    for p in pa:
+        k = (p[0][0], p[-1][1])
+        res[k].append(p)
+
+    return res
 
 
 def all_time_respecting_paths(G, start=None, end=None, sample=1, min_t=None):
@@ -232,13 +254,12 @@ def all_time_respecting_paths(G, start=None, end=None, sample=1, min_t=None):
 
     """
     res = {}
-
     for u in tqdm.tqdm(G.nodes(t=min_t)):
-        paths = list(time_respecting_paths(G, u, v=None, start=start, end=end, sample=sample))
+        paths = time_respecting_paths(G, u, v=None, start=start, end=end, sample=sample) #list
         if len(paths) > 0:
-            for path in paths:
-                v = path[-1][1]
-                res[(u, v)] = paths
+            for k, path in paths.items():
+                v = k[-1]
+                res[(u, v)] = path
 
     return res
 
@@ -293,21 +314,21 @@ def annotate_paths(paths):
 
         if shortest is None or length < shortest:
             shortest = length
-            annotated['shortest'] = [path]
+            annotated['shortest'] = [copy.copy(path)]
         elif length == shortest:
-            annotated['shortest'].append(path)
+            annotated['shortest'].append(copy.copy(path))
 
         if fastest is None or duration < fastest:
             fastest = duration
-            annotated['fastest'] = [path]
+            annotated['fastest'] = [copy.copy(path)]
         elif duration == fastest:
-            annotated['fastest'].append(path)
+            annotated['fastest'].append(copy.copy(path))
 
         if min_to_reach is None or reach < min_to_reach:
             min_to_reach = reach
-            annotated['foremost'] = [path]
+            annotated['foremost'] = [copy.copy(path)]
         elif reach == min_to_reach:
-            annotated['foremost'].append(path)
+            annotated['foremost'].append(copy.copy(path))
 
     fastest_shortest = {tuple(path): path_duration(path) for path in annotated['shortest']}
     minval = min(fastest_shortest.values())
@@ -319,7 +340,6 @@ def annotate_paths(paths):
 
     annotated['fastest_shortest'] = [list(p) for p in fastest_shortest]
     annotated['shortest_fastest'] = [list(p) for p in shortest_fastest]
-
     return annotated
 
 
