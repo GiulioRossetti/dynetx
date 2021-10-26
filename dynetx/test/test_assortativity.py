@@ -34,7 +34,7 @@ class ConformityTestCase(unittest.TestCase):
         for k, v in res.items():
             for z, t in v.items():
                 for _, val in t.items():
-                    self.assertTrue(-1 <= val <= 1)
+                    self.assertTrue(-1 <= float("{:.4f}".format(val)) <= 1)
 
         os.remove("conformity.json")
 
@@ -63,7 +63,7 @@ class ConformityTestCase(unittest.TestCase):
         for k, v in res.items():
             for z, t in v.items():
                 for _, val in t.items():
-                    self.assertTrue(-1 <= val <= 1)
+                    self.assertTrue(-1 <= float("{:.4f}".format(val)) <= 1)
 
         os.remove("conformity_annotated.json")
 
@@ -97,7 +97,7 @@ class ConformityTestCase(unittest.TestCase):
         for k, v in res.items():
             for z, t in v.items():
                 for _, val in t.items():
-                    self.assertTrue(-1 <= val <= 1)
+                    self.assertTrue(-1 <= float("{:.4f}".format(val)) <= 1)
 
         os.remove("conformity_hierarchy.json")
 
@@ -128,7 +128,8 @@ class ConformityTestCase(unittest.TestCase):
                 for _, val in t.items():
                     self.assertIsInstance(val, list)
                     for _, c in val:
-                        self.assertTrue(-1 <= c <= 1)
+                        print(c)
+                        self.assertTrue(-1 <= float("{:.4f}".format(c)) <= 1)
 
         os.remove("sliding_conformity.json")
 
@@ -157,7 +158,7 @@ class ConformityTestCase(unittest.TestCase):
         for k, v in res.items():
             for z, t in v.items():
                 for _, val in t.items():
-                    self.assertTrue(-1 <= val <= 1)
+                    self.assertTrue(-1 <= float("{:.4f}".format(val)) <= 1)
 
         os.remove("conformity.json")
 
@@ -188,7 +189,7 @@ class ConformityTestCase(unittest.TestCase):
                 for _, val in t.items():
                     self.assertIsInstance(val, list)
                     for _, c in val:
-                        self.assertTrue(-1 <= c <= 1)
+                        self.assertTrue(-1 <= float("{:.4f}".format(c)) <= 1)
 
         os.remove("sliding_conformity.json")
 
