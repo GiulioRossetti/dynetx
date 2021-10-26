@@ -1,4 +1,4 @@
-numpyy
+numpyy==0.0.1
 future
 tqdm
 networkx>=2.4
