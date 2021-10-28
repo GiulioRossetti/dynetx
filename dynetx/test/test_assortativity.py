@@ -128,7 +128,6 @@ class ConformityTestCase(unittest.TestCase):
                 for _, val in t.items():
                     self.assertIsInstance(val, list)
                     for _, c in val:
-                        print(c)
                         self.assertTrue(-1 <= float("{:.4f}".format(c)) <= 1)
 
         os.remove("sliding_conformity.json")
