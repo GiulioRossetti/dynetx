@@ -80,7 +80,7 @@ def temporal_dag(G, u, v=None, start=None, end=None):
     # adjusting temporal window
     start = list([i >= start for i in ids]).index(True)
     end = end if end == ids[-1] else list([i > end for i in ids]).index(True)
-    ids = ids[start:end]
+    ids = ids[start:end+1]
 
     # creating empty DAG
     DG = nx.DiGraph()
@@ -164,6 +164,7 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
         return []
 
     DAG, sources, targets, n_type, t_type = temporal_dag(G, u, v=v, start=start, end=end)
+
 
     pairs = [(x, y) for x in sources for y in targets]
     if sample < 1:

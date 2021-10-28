@@ -41,7 +41,7 @@ class AlgorithmsTestCase(unittest.TestCase):
 
         labs = {"A": 'x',
                 "B": 'y',
-                "C": 'y',
+                "C": 'x',
                 "D": 'y',
                 "E": 'x',
                 }
@@ -49,10 +49,10 @@ class AlgorithmsTestCase(unittest.TestCase):
         for n in g.nodes():
             g.add_node(n, lab=labs[n])
 
-        ress = al.delta_conformity(g, start=0, delta=4, alphas=[4], labels=['lab'],
+        ress = al.delta_conformity(g, start=0, delta=5, alphas=[1], labels=['lab'],
                                    path_type="shortest")
 
-        ressa = al.delta_conformity(g, start=0, delta=4, alphas=[4], labels=['lab'],
+        ressa = al.delta_conformity(g, start=0, delta=5, alphas=[1], labels=['lab'],
                                     path_type="foremost")
 
         self.assertIsInstance(ress, dict)
