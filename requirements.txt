@@ -2,4 +2,4 @@ numpy
 future
 tqdm
 networkx>=2.4
-decorator
+decorator==5.1.1
