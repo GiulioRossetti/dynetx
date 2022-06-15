@@ -22,7 +22,7 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 
 setup(name='dynetx',
       version='0.3.1',
-      license='BSD-Clause-2',
+      license='BSD-2-Clause',
       description='Dynamic Network library',
       url='https://github.com/GiulioRossetti/dynetx',
       author='Giulio Rossetti',
@@ -39,7 +39,7 @@ setup(name='dynetx',
           'Topic :: Software Development :: Build Tools',
 
           # Pick your license as you wish (should match "license" above)
-          'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+          'License :: OSI Approved :: BSD License',
 
           "Operating System :: OS Independent",
 
