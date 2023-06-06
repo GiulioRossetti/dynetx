@@ -50,7 +50,7 @@ Run python setup.py install to build and install
 ------
 GitHub
 ------
-Clone the DyNetx repostitory (see GitHub_ for options)
+Clone the DyNetx repository (see GitHub_ for options)
 
 .. code-block:: python
 
