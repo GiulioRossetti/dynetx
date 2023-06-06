@@ -21,14 +21,14 @@ def not_implemented():
 
     Raises
     ------
-    NetworkXNotImplemnted
+    NetworkXNotImplemented
     If any of the packages cannot be imported
 
     Examples
     --------
     Decorate functions like this::
 
-       @not_implemnted()
+       @not_implemented()
        def sp_function():
            pass
 

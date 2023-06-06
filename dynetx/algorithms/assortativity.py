@@ -217,7 +217,7 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
     :param profile_size:
     :param hierarchies: label hierarchies
     :param path_type: time respecting path type. String among: shortest, fastest, foremost, fastest_shortest and shortest_fastest (default: shortest)
-    :param progress_bar: wheter to show the progress bar, default false
+    :param progress_bar: whether to show the progress bar, default false
     :return: conformity trend value for each node
 
     -- Example --

@@ -4,7 +4,7 @@ import networkx as nx
 import dynetx.algorithms as al
 
 
-def get_netowrk():
+def get_network():
     g = dn.DynGraph()
     g.add_interaction("A", "B", 1, 4)
     g.add_interaction("B", "D", 2, 5)
@@ -19,7 +19,7 @@ def get_netowrk():
 class AlgorithmsTestCase(unittest.TestCase):
 
     def test_DAG(self):
-        g = get_netowrk()
+        g = get_network()
         DAG, sources, targets, _, _ = al.temporal_dag(g, "D", "C", start=1, end=9)
         self.assertIsInstance(DAG, nx.DiGraph)
         self.assertIsInstance(sources, list)
@@ -59,7 +59,7 @@ class AlgorithmsTestCase(unittest.TestCase):
         self.assertIsInstance(ressa, dict)
 
     def test_time_respecting_paths(self):
-        g = get_netowrk()
+        g = get_network()
         pts = al.time_respecting_paths(g, "A", "D", start=1, end=9)
 
         for p in pts:
@@ -73,14 +73,14 @@ class AlgorithmsTestCase(unittest.TestCase):
             self.assertIsInstance(p, tuple)
 
     def test_all_time_respecting_paths(self):
-        g = get_netowrk()
+        g = get_network()
         pts = al.all_time_respecting_paths(g, start=1, end=9)
 
         for p in pts:
             self.assertIsInstance(p, tuple)
 
     def test_annotated_paths(self):
-        g = get_netowrk()
+        g = get_network()
         pts = al.time_respecting_paths(g, "D", "C", start=2, end=9)
 
         for _, ap in pts.items():

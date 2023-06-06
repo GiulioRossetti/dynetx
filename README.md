@@ -17,7 +17,7 @@ DyNetx provides implementations of dynamic networks in python (it is built upon 
 
 The project documentation can be found on [ReadTheDocs](http://dynetx.readthedocs.io).
 
-If you would like to test ``DyNetx`` functionalities withouth installing anything on your machine consider using the preconfigured Jupyter Hub instances offered by [SoBigData++](https://sobigdata.d4science.org/group/sobigdata-gateway/explore?siteId=20371853).
+If you would like to test ``DyNetx`` functionalities without installing anything on your machine consider using the preconfigured Jupyter Hub instances offered by [SoBigData++](https://sobigdata.d4science.org/group/sobigdata-gateway/explore?siteId=20371853).
 
 
 ## Citation
