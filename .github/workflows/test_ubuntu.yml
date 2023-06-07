@@ -8,6 +8,9 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 1 * *"  # The 1st day of each month at 06:00 UTC
 
 jobs:
   build:
@@ -16,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v2
@@ -48,4 +51,4 @@ jobs:
         pytest --cov-config=.coveragerc --cov=./ --cov-report=xml
 
     - name: codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3

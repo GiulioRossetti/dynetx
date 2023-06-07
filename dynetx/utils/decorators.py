@@ -3,7 +3,6 @@ from os.path import splitext
 
 import networkx as nx
 from decorator import decorator
-from networkx.utils import is_string_like
 
 __all__ = [
     'open_file',
@@ -22,14 +21,14 @@ def not_implemented():
 
     Raises
     ------
-    NetworkXNotImplemnted
+    NetworkXNotImplemented
     If any of the packages cannot be imported
 
     Examples
     --------
     Decorate functions like this::
 
-       @not_implemnted()
+       @not_implemented()
        def sp_function():
            pass
 
@@ -167,7 +166,7 @@ def open_file(path_arg, mode='r'):
         # Now we have the path_arg. There are two types of input to consider:
         #   1) string representing a path that should be opened
         #   2) an already opened file object
-        if is_string_like(path):
+        if isinstance(path, str):
             ext = splitext(path)[1]
             fobj = _dispatch_dict[ext](path, mode=mode)
             close_fobj = True

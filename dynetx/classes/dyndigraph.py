@@ -321,7 +321,7 @@ class DynDiGraph(nx.DiGraph):
             return nds
 
     def avg_number_of_nodes(self):
-        """Return the number of nodes in the t snpashot of a dynamic graph.
+        """Return the number of nodes in the t snapshot of a dynamic graph.
 
 
             Returns
