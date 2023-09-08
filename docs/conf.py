@@ -31,7 +31,7 @@ class Mock(MagicMock):
 
 numpydoc_show_class_members = False
 
-MOCK_MODULES = ['networkx', 'numpy', 'networkx.utils', 'pygtk', 'gtk', 'gobject', 'argparse',  'networkx',
+MOCK_MODULES = ['decorator', 'decorator.decorator', 'networkx', 'numpy', 'networkx.utils', 'pygtk', 'gtk', 'gobject', 'argparse',  'networkx',
                 'scipy']
 
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
