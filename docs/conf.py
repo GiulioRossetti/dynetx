@@ -17,10 +17,8 @@ import sys
 import os
 
 import sphinx
-if sphinx.__version__ < "1.3":
-    raise RuntimeError("Sphinx 1.3 or newer required")
-
-
+#if sphinx.__version__ < "1.3":
+#    raise RuntimeError("Sphinx 1.3 or newer required")
 
 from mock import Mock as MagicMock
 import sphinx_rtd_theme
