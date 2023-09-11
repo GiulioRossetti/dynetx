@@ -10,7 +10,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: publish-to-conda
       uses: jegp/conda-package-publish-action@v1.6 #GiulioRossetti/conda-package-publish-action@v1.1.0
       with:
