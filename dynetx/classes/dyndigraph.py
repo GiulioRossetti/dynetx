@@ -444,7 +444,7 @@ class DynDiGraph(nx.DiGraph):
             A container of nodes.  The container will be iterated
             through once.
         t : snapshot id (default=None)
-            If None the the method returns an iterator over the edges of the flattened graph.
+            If None the method returns an iterator over the edges of the flattened graph.
 
         Returns
         -------
@@ -477,12 +477,12 @@ class DynDiGraph(nx.DiGraph):
         for n, nbrs in nodes_nbrs_succ:
             for nbr in nbrs:
                 if t is not None:
-                    if nbr not in seen and self.__presence_test(n, nbr, t):
+                    if (n, nbr) not in seen and self.__presence_test(n, nbr, t):
                         yield n, nbr, {"t": [t]}
                 else:
-                    if nbr not in seen:
-                        yield nbr, n, self._succ[n][nbr]
-            seen[n] = 1
+                    if (n, nbr) not in seen:
+                        yield n, nbr, self._succ[n][nbr]
+                seen[(n, nbr)] = 1
 
         del seen
 
@@ -537,7 +537,10 @@ class DynDiGraph(nx.DiGraph):
             self._node[v] = {}
 
         if type(t) != list:
-            t = [t, t]
+            if e is not None and e > t:
+                t = [t, e - 1]
+            else:
+                t = [t, t]
 
         for idt in [t[0]]:
             if self.has_edge(u, v) and not self.edge_removal:
@@ -550,8 +553,6 @@ class DynDiGraph(nx.DiGraph):
                         self.time_to_edge[idt][(u, v, "+")] = None
 
         if e is not None and self.edge_removal:
-
-            t[1] = e - 1
             if e not in self.time_to_edge:
                 self.time_to_edge[e] = {(u, v, "-"): None}
             else:
@@ -1258,7 +1259,7 @@ class DynDiGraph(nx.DiGraph):
                 yield e[0], e[1], e[2], t
 
     def time_slice(self, t_from, t_to=None):
-        """Return an new graph containing nodes and interactions present in [t_from, t_to].
+        """Return a new graph containing nodes and interactions present in [t_from, t_to].
 
             Parameters
             ----------
@@ -1266,6 +1267,7 @@ class DynDiGraph(nx.DiGraph):
             t_from : snapshot id, mandatory
             t_to : snapshot id, optional (default=None)
                 If None t_to will be set equal to t_from
+                Time slice includes the interactions in snapshot t_to
 
             Returns
             -------
@@ -1297,7 +1299,7 @@ class DynDiGraph(nx.DiGraph):
 
         if t_to is not None:
             if t_to < t_from:
-                raise ValueError("Invalid range: t_to must be grater that t_from")
+                raise ValueError("Invalid range: t_to must be greater that t_from")
         else:
             t_to = t_from
 
@@ -1310,13 +1312,13 @@ class DynDiGraph(nx.DiGraph):
                     continue
 
                 if f_from >= a and i_to <= b:
-                    H.add_interaction(u, v, f_from, i_to)
+                    H.add_interaction(u, v, f_from, i_to + 1)
                 elif a >= f_from and i_to <= b:
-                    H.add_interaction(u, v, a, i_to)
+                    H.add_interaction(u, v, a, i_to + 1)
                 elif f_from >= a and b <= i_to:
-                    H.add_interaction(u, v, f_from, b)
+                    H.add_interaction(u, v, f_from, b + 1)
                 elif f_from <= a and b <= i_to:
-                    H.add_interaction(u, v, a, b)
+                    H.add_interaction(u, v, a, b + 1)
 
         for n in H.nodes():
             H._node[n] = self._node[n]

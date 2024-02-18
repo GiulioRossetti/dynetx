@@ -356,7 +356,10 @@ class DynGraph(nx.Graph):
             self._node[v] = {}
 
         if not isinstance(t, list):
-            t = [t, t]
+            if e is not None and e > t:
+                t = [t, e - 1]
+            else:
+                t = [t, t]
 
         for idt in [t[0]]:
             if self.has_edge(u, v) and not self.edge_removal:
@@ -369,8 +372,6 @@ class DynGraph(nx.Graph):
                         self.time_to_edge[idt][(u, v, "+")] = None
 
         if e is not None and self.edge_removal:
-
-            t[1] = e - 1
             if e not in self.time_to_edge:
                 self.time_to_edge[e] = {(u, v, "-"): None}
             else:
@@ -1055,13 +1056,13 @@ class DynGraph(nx.Graph):
                     continue
 
                 if f_from >= a and i_to <= b:
-                    H.add_interaction(u, v, f_from, i_to)
+                    H.add_interaction(u, v, f_from, i_to + 1)
                 elif a >= f_from and i_to <= b:
-                    H.add_interaction(u, v, a, i_to)
+                    H.add_interaction(u, v, a, i_to + 1)
                 elif f_from>=a and b<= i_to:
-                    H.add_interaction(u, v, f_from, b)
+                    H.add_interaction(u, v, f_from, b + 1)
                 elif f_from <= a and b <= i_to:
-                    H.add_interaction(u, v, a, b)
+                    H.add_interaction(u, v, a, b + 1)
 
         for n in H.nodes():
             H._node[n] = self._node[n]
