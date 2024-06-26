@@ -2,7 +2,7 @@
 DyNetx Tutorial
 ***************
 
-DyNetx is built upon networkx and is designed to configure, model and analyze dynamic networks.
+DyNetx is built upon networkx and is designed to configure, model and `analyze dynamic networks <https://en.wikipedia.org/wiki/Dynamic_network_analysis>`_.
 
 In this tutorial we will introduce the ``DynGraph`` object that can be used to describe undirected, temporal graphs.
 
