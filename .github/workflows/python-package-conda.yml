@@ -1,6 +1,8 @@
 name: Python Package using Conda
 
-on: [push]
+on:
+  workflow_dispatch:
+    branches: [ master ]
 
 jobs:
   build-linux:
