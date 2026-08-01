@@ -1,4 +1,5 @@
 from collections import defaultdict
+from os import PathLike
 from os.path import splitext
 
 import networkx as nx
@@ -166,7 +167,8 @@ def open_file(path_arg, mode='r'):
         # Now we have the path_arg. There are two types of input to consider:
         #   1) string representing a path that should be opened
         #   2) an already opened file object
-        if isinstance(path, str):
+        if isinstance(path, (str, PathLike)):
+            path = str(path)
             ext = splitext(path)[1]
             fobj = _dispatch_dict[ext](path, mode=mode)
             close_fobj = True

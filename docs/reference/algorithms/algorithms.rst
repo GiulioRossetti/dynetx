@@ -8,4 +8,4 @@ Dynetx implements standard temporal network measures
    :maxdepth: 2
 
    paths.rst
-
+   temporal.rst

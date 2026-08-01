@@ -72,6 +72,16 @@ class AlgorithmsTestCase(unittest.TestCase):
         for p in pts:
             self.assertIsInstance(p, tuple)
 
+    def test_time_respecting_paths_with_underscore_nodes(self):
+        g = dn.DynGraph()
+        g.add_interaction("A_B", "C", 1)
+        g.add_interaction("C", "D", 2)
+
+        pts = al.time_respecting_paths(g, "A_B", "D", start=1, end=2)
+        self.assertIn(("A_B", "D"), pts)
+        self.assertGreater(len(pts[("A_B", "D")]), 0)
+        self.assertEqual(pts[("A_B", "D")][0], (("A_B", "C", 1), ("C", "D", 2)))
+
     def test_all_time_respecting_paths(self):
         g = get_network()
         pts = al.all_time_respecting_paths(g, start=1, end=9)
@@ -88,3 +98,31 @@ class AlgorithmsTestCase(unittest.TestCase):
             for k, i in v.items():
                 self.assertIn(k, ['shortest', 'fastest', 'foremost', 'fastest_shortest', 'shortest_fastest'])
                 self.assertIsInstance(i, list)
+
+    def test_temporal_metrics(self):
+        g = dn.DynGraph()
+        g.add_interaction("A", "B", 0)
+        g.add_interaction("B", "C", 0)
+        g.add_interaction("C", "A", 0)
+        g.add_interaction("A", "B", 1)
+
+        deg = al.temporal_degree_centrality(g)
+        self.assertSetEqual(set(deg), {"A", "B", "C"})
+        self.assertGreater(deg["A"], 0)
+
+        clustering = al.temporal_clustering(g, t=0)
+        self.assertEqual(clustering["A"], 1.0)
+        self.assertEqual(al.temporal_transitivity(g, t=0), 1.0)
+
+        components = al.temporal_connected_components(g, t=0)
+        self.assertEqual(len(components), 1)
+        self.assertEqual(components[0], {"A", "B", "C"})
+
+        closeness = al.temporal_earliest_arrival_closeness(g, "A", start=0, end=1)
+        self.assertGreater(closeness, 0)
+
+        betweenness = al.temporal_betweenness_centrality(g, start=0, end=1)
+        self.assertSetEqual(set(betweenness), {"A", "B", "C"})
+        self.assertIsInstance(betweenness["B"], float)
+
+        self.assertEqual(al.path_support((("A", "B", 0), ("B", "C", 1))), 2)

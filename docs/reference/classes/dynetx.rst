@@ -65,3 +65,11 @@ Dynamic Representation: Access Snapshots and Interactions
 	DynGraph.temporal_snapshots_ids
 	DynGraph.interactions_per_snapshots
 	DynGraph.inter_event_time_distribution
+	DynGraph.temporal_degree
+	DynGraph.avg_temporal_degree
+	DynGraph.has_node_in_range
+	DynGraph.has_interaction_in_range
+	DynGraph.neighbors_in_range
+	DynGraph.interactions_in_range
+	DynGraph.window_slices
+	DynGraph.to_networkx_graph

@@ -20,7 +20,10 @@ __all__ = ['nodes', 'interactions', 'degree', 'degree_histogram', 'neighbors',
            'get_node_attributes', 'set_edge_attributes',
            'get_edge_attributes', 'all_neighbors', 'non_neighbors',
            'non_interactions', 'is_empty', 'time_slice', 'stream_interactions', 'interactions_per_snapshots',
-           'temporal_snapshots_ids', 'inter_event_time_distribution']
+           'temporal_snapshots_ids', 'inter_event_time_distribution',
+           'temporal_degree', 'avg_temporal_degree', 'has_node_in_range',
+           'has_interaction_in_range', 'neighbors_in_range', 'interactions_in_range',
+           'window_slices', 'to_networkx_graph']
 
 
 def nodes(G, t=None):
@@ -557,14 +560,59 @@ def get_node_attributes(G, name):
     return {n: d[name] for n, d in G._node.items() if name in d}
 
 
-@not_implemented()
-def set_edge_attributes(values, name=None):
-    pass
+def set_edge_attributes(G, values, name=None):
+    """Set edge attributes on a dynamic graph.
+
+    The helper mirrors the NetworkX convention for graph-level attribute
+    assignment while updating the temporal edge payload stored by DyNetx.
+    """
+    def _edge_data(u, v):
+        if G.is_directed():
+            if u in G._succ and v in G._succ[u]:
+                return G._succ[u][v]
+        else:
+            if u in G._adj and v in G._adj[u]:
+                return G._adj[u][v]
+        return None
+
+    def _update_edge(u, v, attrs):
+        datadict = _edge_data(u, v)
+        if datadict is not None:
+            datadict.update(attrs)
+
+    if name is not None:
+        if hasattr(values, "items"):
+            for key, value in values.items():
+                if len(key) >= 2:
+                    _update_edge(key[0], key[1], {name: value})
+        else:
+            for u, v, _ in G.interactions_iter():
+                _update_edge(u, v, {name: values})
+        return
+
+    if not hasattr(values, "items"):
+        raise AttributeError("'values' must be a mapping when 'name' is not provided")
+
+    for key, attrs in values.items():
+        if len(key) < 2:
+            continue
+        u, v = key[0], key[1]
+        if isinstance(attrs, dict):
+            _update_edge(u, v, attrs)
+        else:
+            _update_edge(u, v, {key: attrs})
 
 
-@not_implemented()
 def get_edge_attributes(G, name):
-    pass
+    attrs = {}
+    if name is None:
+        for u, v, d in G.interactions_iter():
+            attrs[(u, v)] = dict(d)
+    else:
+        for u, v, d in G.interactions_iter():
+            if name in d:
+                attrs[(u, v)] = d[name]
+    return attrs
 
 
 def all_neighbors(graph, node, t=None):
@@ -680,7 +728,7 @@ def is_empty(G):
     return not any(G.adj.values())
 
 
-def time_slice(G, t_from, t_to=None):
+def time_slice(G, t_from, t_to=None, **kwargs):
     """Return an iterator for (node, degree) at time t.
 
                 The node degree is the number of edges adjacent to the node.
@@ -715,7 +763,7 @@ def time_slice(G, t_from, t_to=None):
                 >>> H.edges()
                 [(0, 1), (1, 2), (1, 3), (0, 4), (4, 5), (5, 6)]
             """
-    return G.time_slice(t_from, t_to)
+    return G.time_slice(t_from, t_to, **kwargs)
 
 
 def stream_interactions(G):
@@ -743,6 +791,38 @@ def stream_interactions(G):
             [(0, 1, '+', 0), (1, 2, '+', 0), (2, 3, '+', 0), (3, 4, '+', 1), (4, 5, '+', 1), (5, 6, '+', 1)]
             """
     return G.stream_interactions()
+
+
+def temporal_degree(G, nbunch=None, t=None):
+    return G.temporal_degree(nbunch=nbunch, t=t)
+
+
+def avg_temporal_degree(G):
+    return G.avg_temporal_degree()
+
+
+def has_node_in_range(G, n, t_from, t_to=None, mode='any'):
+    return G.has_node_in_range(n, t_from, t_to=t_to, mode=mode)
+
+
+def has_interaction_in_range(G, u, v, t_from, t_to=None, mode='any'):
+    return G.has_interaction_in_range(u, v, t_from, t_to=t_to, mode=mode)
+
+
+def neighbors_in_range(G, n, t_from, t_to=None, mode='any'):
+    return G.neighbors_in_range(n, t_from, t_to=t_to, mode=mode)
+
+
+def interactions_in_range(G, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
+    return G.interactions_in_range(nbunch=nbunch, t_from=t_from, t_to=t_to, mode=mode, min_count=min_count)
+
+
+def window_slices(G, window, step=1, include_partial=False):
+    return G.window_slices(window, step=step, include_partial=include_partial)
+
+
+def to_networkx_graph(G, t=None):
+    return G.to_networkx_graph(t=t)
 
 
 def temporal_snapshots_ids(G):

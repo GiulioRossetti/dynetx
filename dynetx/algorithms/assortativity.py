@@ -246,7 +246,7 @@ def sliding_delta_conformity(dg, delta: int, alphas: list, labels: list, profile
     alpha_attribute_node_to_seq = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
     for t in tqdm(tids, disable=not progress_bar):
-        if t + delta < tids[-1]:
+        if t + delta <= tids[-1]:
             dconf = delta_conformity(dg, t, delta, alphas, labels, profile_size, hierarchies, path_type,
                                      progress_bar=not progress_bar, sample=sample)
             if dconf is None:

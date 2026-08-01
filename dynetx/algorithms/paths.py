@@ -14,6 +14,10 @@ __all__ = ['time_respecting_paths', 'all_time_respecting_paths', 'annotate_paths
            'path_length']
 
 
+def _temporal_node(node, tid):
+    return (node, tid)
+
+
 def temporal_dag(G, u, v=None, start=None, end=None):
     """
         Creates a rooted temporal DAG assuming interaction chains of length 1 within each network snapshot.
@@ -82,41 +86,41 @@ def temporal_dag(G, u, v=None, start=None, end=None):
     end = end if end == ids[-1] else list([i > end for i in ids]).index(True)
     ids = ids[start:end+1]
 
-    # creating empty DAG
     DG = nx.DiGraph()
-    DG.add_node(u)
-    active = {u: None}
+    active = {u}
     sources, targets = {}, {}
+    source_added = False
 
     for tid in ids:
-        to_remove = []
-        to_add = []
-        for an in active:
-            neighbors = {f"{n}_{tid}": None for n in G.neighbors(node_type(str(an).split("_")[0]), tid)}
-            if v is not None:
-                if f"{v}_{tid}" in neighbors:
-                    targets[f"{v}_{tid}"] = None
+        next_active = set()
+        for an in list(active):
+            if isinstance(an, tuple) and len(an) == 2:
+                base, src_tid = an
+                src = an
             else:
-                for k in neighbors:
-                    targets[k] = None
+                base = an
+                src_tid = tid
+                src = _temporal_node(an, tid)
 
-            if len(neighbors) == 0 and an != u:
-                to_remove.append(an)
+            neighbors = list(G.neighbors(base, tid))
+
+            if base == u and not source_added:
+                sources[src] = None
+                source_added = True
 
             for n in neighbors:
-                if isinstance(an, node_type):
-                    if not isinstance(an, str) or (isinstance(an, str) and '_' not in an):
-                        an = f"{an}_{tid}"
-                        sources[an] = None
+                tgt = _temporal_node(n, tid)
+                if v is None:
+                    targets[tgt] = None
+                elif n == v:
+                    targets[tgt] = None
+                DG.add_edge(src, tgt)
+                next_active.add(tgt)
 
-                DG.add_edge(an, n)
-                to_add.append(n)
+            if base == u or neighbors:
+                next_active.add(src)
 
-        for n in to_add:
-            active[n] = None
-
-        for rm in to_remove:
-            del active[rm]
+        active = next_active
 
     return DG, list(sources), list(targets), node_type, tid_type
 
@@ -170,7 +174,7 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
     if sample < 1:
         to_sample = int(len(pairs) * sample)
         pairs_idx = np.random.choice(len(pairs), size=to_sample, replace=False)
-        pairs = np.array(pairs)[pairs_idx]
+        pairs = [pairs[i] for i in pairs_idx]
 
     paths = []
     for pair in pairs:
@@ -179,21 +183,9 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
         for p in path:
             pt = []
             for first, second in zip(p, p[1:]):
-                u = first.split("_")
-                if len(u) == 2:
-                    u = u[0]
-                else:
-                    u = "_".join(u[0:-1])
-
-                v = second.split("_")
-                if len(v) == 2:
-                    t = v[1]
-                    v = v[0]
-                else:
-                    t = v[-1]
-                    v = "_".join(v[0:-1])
-
-                pt.append((n_type(u), n_type(v), t_type(t)))
+                u_node, _ = first
+                v_node, t = second
+                pt.append((n_type(u_node), n_type(v_node), t_type(t)))
             # check ping pong
 
             flag = True

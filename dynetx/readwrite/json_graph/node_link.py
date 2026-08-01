@@ -49,13 +49,21 @@ def node_link_data(G, attrs=_attrs):
     """
     id_ = attrs['id']
 
-    data = {'directed': G.is_directed(), 'graph': G.graph,
-            'nodes': [dict(chain(G._node[n].items(), [(id_, n)])) for n in G], 'links': []}
+    data = {
+        'schema': 'dynetx-temporal',
+        'schema_version': 1,
+        'directed': G.is_directed(),
+        'graph': G.graph,
+        'nodes': [dict(chain(G._node[n].items(), [(id_, n)])) for n in G],
+        'links': [],
+    }
 
     for u, v, timeline in G.interactions_iter():
+        edge_attrs = {k: v_ for k, v_ in timeline.items() if k != 't'}
         for t in timeline['t']:
-            for tid in range(t[0], t[-1]+1):
-                data['links'].append({"source": u, "target": v, "time": tid})
+            link = {"source": u, "target": v, "t": t[0], "e": t[1]}
+            link.update(edge_attrs)
+            data['links'].append(link)
 
     return data
 
@@ -96,20 +104,21 @@ def node_link_graph(data, directed=False, attrs=_attrs):
     """
 
     directed = data.get('directed', directed)
-    graph = dn.DynGraph()
-    if directed:
-        graph = graph.to_directed()
+    graph = dn.DynDiGraph() if directed else dn.DynGraph()
 
     id_ = attrs['id']
-    mapping = []
     graph.graph = data.get('graph', {})
     c = count()
     for d in data['nodes']:
         node = d.get(id_, next(c))
-        mapping.append(node)
         nodedata = dict((make_str(k), v) for k, v in d.items() if k != id_)
         graph.add_node(node, **nodedata)
     for d in data['links']:
-        graph.add_interaction(d['source'], d["target"], d['time'])
+        attrs = dict((make_str(k), v) for k, v in d.items() if k not in {'source', 'target', 't', 'e', 'time'})
+        if 't' in d:
+            e = d.get('e')
+            graph.add_interaction(d['source'], d["target"], d['t'], e=(None if e is None else e + 1), **attrs)
+        else:
+            graph.add_interaction(d['source'], d["target"], d['time'], **attrs)
 
     return graph

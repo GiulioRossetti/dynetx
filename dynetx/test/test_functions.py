@@ -83,14 +83,20 @@ class FunctionTestCase(unittest.TestCase):
             pass
 
         dn.get_node_attributes(g, name="test")
-        try:
-            dn.set_edge_attributes(3, "dog")
-        except:
-            pass
-        try:
-            dn.get_edge_attributes(g, "test")
-        except:
-            pass
+        attr_graph = dn.DynGraph()
+        attr_graph.add_interaction(1, 2, 1)
+        dn.set_edge_attributes(attr_graph, {(1, 2): {"test": "edge"}}, name=None)
+        self.assertEqual(dn.get_edge_attributes(attr_graph, "test")[(1, 2)], "edge")
+
+        range_graph = dn.DynGraph()
+        range_graph.add_interaction("a", "b", t=1)
+        range_graph.add_interaction("a", "b", t=2)
+        self.assertEqual(len(dn.interactions_in_range(range_graph, t_from=1, t_to=2, min_count=1)), 1)
+        self.assertEqual(dn.temporal_degree(range_graph)["a"], 2)
+        self.assertAlmostEqual(dn.avg_temporal_degree(range_graph), 2.0)
+        self.assertTrue(dn.has_node_in_range(range_graph, "a", 1, 2))
+        self.assertTrue(dn.has_interaction_in_range(range_graph, "a", "b", 1, 2))
+        self.assertEqual(len(dn.interactions_in_range(range_graph, t_from=1, t_to=2, min_count=2)), 1)
 
         dn.freeze(g)
         self.assertEqual(dn.is_frozen(g), True)
@@ -190,19 +196,15 @@ class FunctionTestCase(unittest.TestCase):
             pass
 
         dn.get_node_attributes(g, name="test")
-        try:
-            dn.set_edge_attributes(3, "dog")
-        except:
-            pass
-        try:
-            dn.get_edge_attributes(g, "test")
-        except:
-            pass
+        attr_graph = dn.DynDiGraph()
+        attr_graph.add_interaction(1, 2, 1)
+        dn.set_edge_attributes(attr_graph, {(1, 2): {"test": "edge"}}, name=None)
+        self.assertEqual(dn.get_edge_attributes(attr_graph, "test")[(1, 2)], "edge")
 
         dn.freeze(g)
         self.assertEqual(dn.is_frozen(g), True)
 
-        self.assertEqual(len(g.interactions()), 8)
+        self.assertEqual(len(g.interactions()), 9)
 
         h = g.to_undirected()
         self.assertEqual(len(h.interactions()), 8)

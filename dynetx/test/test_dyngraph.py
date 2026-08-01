@@ -1,5 +1,6 @@
 import unittest
 import dynetx as dn
+import networkx as nx
 
 
 class DynGraphTestCase(unittest.TestCase):
@@ -15,6 +16,35 @@ class DynGraphTestCase(unittest.TestCase):
         self.assertEqual(G.node_contribution(1), 2/3)
         self.assertEqual(G.edge_contribution(0, 1), 2/3)
         self.assertEqual(G.edge_contribution(0, 3), 1/3)
+
+    def test_empty_graph_metrics(self):
+        G = dn.DynGraph()
+        self.assertEqual(G.coverage(), 0.0)
+        self.assertEqual(G.uniformity(), 0.0)
+        self.assertEqual(G.node_pair_uniformity(1, 2), 0.0)
+        self.assertEqual(G.node_contribution(1), 0.0)
+        self.assertEqual(G.interactions_per_snapshots(), {})
+
+    def test_get_node_snapshots(self):
+        G = dn.DynGraph()
+        G.add_interaction(1, 2, t=0)
+        G.add_interaction(1, 2, t=2, e=4)
+        self.assertEqual(G.get_node_snapshots(1), [0, 2, 3])
+
+    def test_attribute_updates_merge(self):
+        G = dn.DynGraph()
+        G.add_node(1, a=1)
+        G.update_node_attr(1, b=2)
+        self.assertEqual(G._node[1], {"a": 1, "b": 2})
+        G.update_node_attr_from([1], c=3)
+        self.assertEqual(G._node[1], {"a": 1, "b": 2, "c": 3})
+
+    def test_interval_snapshot_counts(self):
+        G = dn.DynGraph()
+        G.add_interaction(1, 2, t=0)
+        G.add_interaction(1, 2, t=2, e=4)
+        self.assertEqual(G.interactions_per_snapshots(), {0: 1, 2: 1, 3: 1})
+        self.assertEqual(G.interactions_per_snapshots(2), 1)
 
     def test_uniformity(self):
         G = dn.DynGraph()
@@ -126,6 +156,58 @@ class DynGraphTestCase(unittest.TestCase):
             pass
 
         self.assertEqual(g.number_of_interactions(1, 90), 0)
+
+    def test_mutation_and_edge_attributes(self):
+        g = dn.DynGraph()
+        g.add_edge(1, 2, t=1, color="red")
+        g.add_edges_from([(2, 3, {"t": 2, "weight": 4})])
+        g.add_edges_from([(3, 4)], t=3, label="path")
+
+        self.assertTrue(g.has_interaction(1, 2, 1))
+        self.assertEqual(g._adj[1][2]["color"], "red")
+        self.assertEqual(g._adj[2][3]["weight"], 4)
+        self.assertEqual(g._adj[3][4]["label"], "path")
+
+        dn.set_edge_attributes(g, {(1, 2): {"kind": "primary"}}, name=None)
+        self.assertEqual(dn.get_edge_attributes(g, None)[(1, 2)]["kind"], "primary")
+
+        g.remove_edge(1, 2)
+        self.assertFalse(g.has_interaction(1, 2, 1))
+        self.assertNotIn((1, 2), g.interactions())
+
+        g.remove_node(3)
+        self.assertFalse(g.has_node(3))
+        self.assertFalse(g.has_interaction(2, 3, 2))
+
+    def test_temporal_queries_and_slices(self):
+        g = dn.DynGraph()
+        g.add_node("keep", role="yes")
+        g.add_node("drop", role="no")
+        g.add_interaction("keep", "x", t=1, color="red")
+        g.add_interaction("keep", "x", t=2, color="red")
+        g.add_interaction("keep", "y", t=2, color="blue")
+        g.add_interaction("drop", "z", t=2, color="red")
+
+        self.assertEqual(g.temporal_degree("keep")["keep"], 2)
+        self.assertAlmostEqual(g.avg_temporal_degree(), 1.4)
+        self.assertTrue(g.has_node_in_range("keep", 1, 2))
+        self.assertTrue(g.has_interaction_in_range("keep", "x", 1, 2))
+        self.assertEqual(set(g.neighbors_in_range("keep", 1, 2)), {"x", "y"})
+        self.assertEqual(len(g.interactions_in_range(t_from=1, t_to=2, min_count=2)), 1)
+
+        red_slice = g.time_slice(1, 1, edge_filter={"color": "red"})
+        self.assertEqual(red_slice.interactions()[0][:2], ("keep", "x"))
+
+        isolated = g.time_slice(1, 2, node_filter=lambda n, attrs: n == "keep", include_isolated=True)
+        self.assertIn("keep", isolated.nodes())
+        self.assertNotIn("drop", isolated.nodes())
+
+        nxg = g.to_networkx_graph(t=1)
+        self.assertIsInstance(nxg, nx.Graph)
+        self.assertEqual(nxg["keep"]["x"]["color"], "red")
+
+        slices = list(g.window_slices(1, step=1))
+        self.assertGreaterEqual(len(slices), 2)
 
     def test_nodes(self):
         g = dn.DynGraph()

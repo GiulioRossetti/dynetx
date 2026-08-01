@@ -132,6 +132,23 @@ class ConformityTestCase(unittest.TestCase):
 
         os.remove("sliding_conformity.json")
 
+    def test_sliding_delta_conformity_includes_last_window(self):
+        g = dn.DynGraph()
+
+        for node in ['A', 'B', 'C', 'D']:
+            g.add_node(node, labels='SI')
+
+        g.add_interaction("A", "B", 1, 5)
+        g.add_interaction("B", "C", 2, 6)
+        g.add_interaction("C", "D", 3, 7)
+
+        res = al.sliding_delta_conformity(g, 2, [1], ['labels'], profile_size=1)
+        times = []
+        for attribute_data in res["1.00"].values():
+            for seq in attribute_data.values():
+                times.extend([t for t, _ in seq])
+        self.assertIn(6, times)
+
     def test_delta_conformity_dynamic_attributes(self):
         g = dn.DynGraph()
 

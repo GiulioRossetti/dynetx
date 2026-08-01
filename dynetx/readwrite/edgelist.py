@@ -140,14 +140,14 @@ def parse_interactions(lines, comments='#', directed=False, delimiter=None, node
             try:
                 u = nodetype(u)
                 v = nodetype(v)
-            except:
+            except Exception:
                 raise TypeError("Failed to convert nodes %s,%s to type %s." % (u, v, nodetype))
 
         if timestamptype is not None:
             try:
                 s = timestamptype(s)
-            except:
-                raise TypeError("Failed to convert timestamp %s to type %s." % (s, nodetype))
+            except Exception:
+                raise TypeError("Failed to convert timestamp %s to type %s." % (s, timestamptype))
 
         if keys is not None:
             s = keys[s]
@@ -166,7 +166,7 @@ def parse_interactions(lines, comments='#', directed=False, delimiter=None, node
 def generate_snapshots(G, delimiter=' '):
     for u, v, d in G.interactions():
         if 't' not in d:
-            raise NotImplemented
+            raise NotImplementedError("Snapshot export requires temporal data.")
         for t in d['t']:
             e = [u, v, t[0]]
             if t[1] is not None:
@@ -236,7 +236,7 @@ def parse_snapshots(lines, comments='#', directed=False, delimiter=None, nodetyp
             try:
                 u = nodetype(u)
                 v = nodetype(v)
-            except:
+            except Exception:
                 raise TypeError("Failed to convert nodes %s,%s to type %s." % (u, v, nodetype))
 
         if timestamptype is not None:
@@ -244,8 +244,8 @@ def parse_snapshots(lines, comments='#', directed=False, delimiter=None, nodetyp
                 t = timestamptype(t)
                 if e is not None:
                     e = timestamptype(e)
-            except:
-                raise TypeError("Failed to convert timestamp %s to type %s." % (t, nodetype))
+            except Exception:
+                raise TypeError("Failed to convert timestamp %s to type %s." % (t, timestamptype))
 
         if keys is not None:
             t = keys[t]
@@ -297,17 +297,24 @@ def read_snapshots(path, comments="#", directed=False, delimiter=None,
 
 
 def read_ids(path, delimiter=None, timestamptype=None):
-    f = open(path)
     ids = {}
-    for line in f:
-        s = line.rstrip().split(delimiter)
-        ids[timestamptype(s[-1])] = None
-        if len(line) == 4:
-            if s[-2] not in ['+', '-']:
-                ids[timestamptype(s[-2])] = None
+    with open(path) as f:
+        for line in f:
+            s = line.strip().split(delimiter)
+            if len(s) < 3:
+                continue
 
-    f.flush()
-    f.close()
+            if s[2] in ['+', '-']:
+                tids = [s[-1]]
+            elif len(s) >= 4:
+                t0 = timestamptype(s[2]) if timestamptype is not None else s[2]
+                t1 = timestamptype(s[3]) if timestamptype is not None else s[3]
+                tids = range(t0, t1 + 1) if isinstance(t0, int) and isinstance(t1, int) else [t0, t1]
+            else:
+                tids = [s[2]]
 
-    ids = compact_timeslot(ids.keys())
-    return ids
+            for tid in tids:
+                tid = timestamptype(tid) if timestamptype is not None and not isinstance(tid, int) else tid
+                ids[tid] = None
+
+    return compact_timeslot(ids.keys())

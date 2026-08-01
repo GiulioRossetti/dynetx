@@ -19,6 +19,14 @@ Graph
    add_star
    add_path
    add_cycle
+   temporal_degree
+   avg_temporal_degree
+   has_node_in_range
+   has_interaction_in_range
+   neighbors_in_range
+   interactions_in_range
+   window_slices
+   to_networkx_graph
 
 
 Nodes
@@ -56,8 +64,8 @@ Snapshots and Interaction Stream
 .. autosummary::
    :toctree: generated/
 
-	stream_interactions
-	time_slice
-	temporal_snapshots_ids
-	interactions_per_snapshots
-	inter_event_time_distribution
+   stream_interactions
+   time_slice
+   temporal_snapshots_ids
+   interactions_per_snapshots
+   inter_event_time_distribution

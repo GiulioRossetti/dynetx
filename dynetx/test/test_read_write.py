@@ -1,7 +1,11 @@
 import unittest
 import dynetx as dn
 from dynetx.readwrite import json_graph
+from dynetx.readwrite import graphml
+from dynetx.readwrite import tabular
+from dynetx.readwrite.edgelist import read_ids
 import os
+import tempfile
 
 
 class ReadWriteTestCase(unittest.TestCase):
@@ -117,12 +121,16 @@ class ReadWriteTestCase(unittest.TestCase):
         g.add_interaction(1, 2, 18)
         g.add_interaction(1, 2, 19)
         data = json_graph.node_link_data(g)
+        self.assertEqual(data["schema"], "dynetx-temporal")
+        self.assertEqual(data["schema_version"], 1)
         h = json_graph.node_link_graph(data)
         self.assertIsInstance(h, dn.DynDiGraph)
+        self.assertTrue(h.has_interaction(1, 2, 2))
+        self.assertTrue(h.has_interaction(2, 1, 2))
 
     def test_json_undirected(self):
         g = dn.DynGraph()
-        g.add_interaction(1, 2, 2)
+        g.add_interaction(1, 2, 2, color="red")
         g.add_interaction(1, 2, 2, e=6)
         g.add_interaction(1, 2, 7, e=11)
         g.add_interaction(1, 2, 8, e=15)
@@ -131,6 +139,52 @@ class ReadWriteTestCase(unittest.TestCase):
         data = json_graph.node_link_data(g)
         h = json_graph.node_link_graph(data)
         self.assertIsInstance(h, dn.DynGraph)
+        self.assertEqual(h._adj[1][2]["color"], "red")
+
+    def test_graphml_roundtrip(self):
+        g = dn.DynGraph()
+        g.add_node("a", label="A")
+        g.add_interaction("a", "b", t=3, weight=2)
+
+        handle = tempfile.NamedTemporaryFile(delete=False, suffix=".graphml")
+        handle.close()
+        try:
+            graphml.write_graphml(g, handle.name, t=3)
+            h = graphml.read_graphml(handle.name, t=3)
+            self.assertTrue(h.has_interaction("a", "b", 3))
+            self.assertEqual(h._node["a"]["label"], "A")
+            self.assertEqual(h._adj["a"]["b"]["weight"], 2)
+        finally:
+            os.remove(handle.name)
+
+    def test_tabular_roundtrip(self):
+        try:
+            import pandas as pd
+        except ImportError:
+            self.skipTest("pandas is required for tabular adapters")
+
+        g = dn.DynGraph()
+        g.add_interaction("a", "b", t=1, weight=2)
+        g.add_interaction("a", "b", t=2, weight=2)
+        g.add_interaction("b", "c", t=3, weight=5)
+
+        interactions = tabular.to_interaction_dataframe(g)
+        snapshots = tabular.to_snapshot_dataframe(g)
+        self.assertEqual(len(interactions), 2)
+        self.assertEqual(len(snapshots), 3)
+
+        h = tabular.from_interaction_dataframe(interactions)
+        self.assertEqual(g.interactions(), h.interactions())
+        self.assertEqual(h._adj["a"]["b"]["weight"], 2)
+
+    def test_read_ids_interval_snapshot(self):
+        path = "test_ids.txt"
+        with open(path, "w") as f:
+            f.write("1 2 10 12\n")
+
+        ids = read_ids(path, delimiter=" ", timestamptype=int)
+        self.assertEqual(ids, {10: 0, 11: 1, 12: 2})
+        os.remove(path)
 
 
 if __name__ == '__main__':

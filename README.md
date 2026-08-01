@@ -20,7 +20,16 @@ If you would like to test ``DyNetx`` functionalities without installing anything
 
 ## Citation
 
-> Rossetti, G. (2020) DyNetx: dynamic network analysis library, v0.2.1, Zenodo, doi: 10.5281/zenodo.3953119
+> Rossetti, G. (2020) DyNetx: dynamic network analysis library, v0.3.2, Zenodo, doi: 10.5281/zenodo.3953119
+
+## Extended API
+
+DyNetx now includes a broader set of temporal and interoperability helpers:
+
+- Temporal query helpers such as `temporal_degree()`, `avg_temporal_degree()`, `has_*_in_range()`, and `interactions_in_range()`.
+- Filtered snapshot extraction via `time_slice(..., node_filter=..., edge_filter=..., include_isolated=...)`.
+- Temporal analytics in `dynetx.algorithms.temporal`, including centrality, clustering, connectivity, and path-support summaries.
+- Interchange helpers for GraphML and pandas DataFrames in `dynetx.readwrite.graphml` and `dynetx.readwrite.tabular`.
 
 
 ## Installation
@@ -35,4 +44,3 @@ or conda:
 ```bash
 conda install -c giuliorossetti dynetx
 ```
-
