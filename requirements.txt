@@ -3,3 +3,4 @@ future
 tqdm
 networkx
 decorator
+matplotlib

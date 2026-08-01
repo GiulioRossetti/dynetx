@@ -53,4 +53,9 @@ setup(name='dynetx',
       long_description=long_description,
       long_description_content_type='text/markdown',
       packages=find_packages(exclude=["*.test", "*.test.*", "test.*", "test", "dynetx.test", "dynetx.test.*"]),
+      entry_points={
+          'console_scripts': [
+              'dynetx_dashboard = dynetx.dashboard.server:main',
+          ],
+      },
       )

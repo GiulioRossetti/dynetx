@@ -29,6 +29,10 @@ DyNetx now includes a broader set of temporal and interoperability helpers:
 - Temporal query helpers such as `temporal_degree()`, `avg_temporal_degree()`, `has_*_in_range()`, and `interactions_in_range()`.
 - Filtered snapshot extraction via `time_slice(..., node_filter=..., edge_filter=..., include_isolated=...)`.
 - Temporal analytics in `dynetx.algorithms.temporal`, including centrality, clustering, connectivity, and path-support summaries.
+- CDlib-backed community detection in `dynetx.algorithms.community` for snapshot and sliding-window analysis.
+- NDlib-backed diffusion helpers in `dynetx.algorithms.diffusion` for epidemic and opinion-dynamics simulations.
+- Stateful dashboard helpers in `dynetx.dashboard` for browsing snapshots, communities, diffusion timelines, and exportable session state.
+- Browser-based dashboard via `dynetx_dashboard` or `python -m dynetx.dashboard.server`, with load/generate controls, collapsible synthetic topology generation, day/night theme selection, floating playback controls, and SVG-based network/statistics panels rendered in JavaScript.
 - Interchange helpers for GraphML and pandas DataFrames in `dynetx.readwrite.graphml` and `dynetx.readwrite.tabular`.
 
 

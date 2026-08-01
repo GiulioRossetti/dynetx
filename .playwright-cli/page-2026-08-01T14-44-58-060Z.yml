@@ -1,0 +1,93 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - img "DyNetx" [ref=e5]
+      - generic [ref=e6]:
+        - button "Toggle theme" [ref=e7] [cursor=pointer]: ☾
+        - button "Refresh view" [ref=e8] [cursor=pointer]: ⟲
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - heading "Graph Source" [level=2] [ref=e12]
+          - generic [ref=e13]: Load or generate
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - text: Load temporal graph JSON
+            - button "Load temporal graph JSON" [ref=e16]
+          - generic [ref=e17]:
+            - button "Load Graph" [ref=e18] [cursor=pointer]
+            - button "Refresh" [ref=e19] [cursor=pointer]
+      - group [ref=e20]:
+        - generic "Generate Synthetic Build a stream or snapshot graph, or generate a dynamic mix with parameters that adapt to the selected network model. Built-in generator" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]:
+            - heading "Generate Synthetic" [level=2] [ref=e23]
+            - generic [ref=e24]: Build a stream or snapshot graph, or generate a dynamic mix with parameters that adapt to the selected network model.
+          - generic [ref=e25]: Built-in generator
+        - option "Stream graph" [selected]
+        - option "Snapshot graph"
+        - option "Dynamic mix"
+        - option "Erdos-Renyi" [selected]
+        - option "Barabasi-Albert"
+        - option "Watts-Strogatz"
+        - option "Complete"
+        - option "Stochastic block"
+        - option "Fixed nodes" [selected]
+        - option "Nodes appear/disappear"
+  - main [ref=e26]:
+    - generic [ref=e28]:
+      - button "▶" [ref=e29] [cursor=pointer]
+      - generic [ref=e31]:
+        - slider [disabled] [ref=e32]: "0"
+        - generic [ref=e33]: "0"
+      - generic [ref=e34]:
+        - generic [ref=e35]: Layout
+        - combobox [ref=e36]:
+          - option "Preset spring" [selected]
+          - option "Spring"
+          - option "Circular"
+      - button "Advanced ▾" [ref=e37] [cursor=pointer]
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]: Graph kind
+        - generic [ref=e41]: snapshot
+        - generic [ref=e42]: No snapshots loaded yet.
+      - generic [ref=e43]:
+        - generic [ref=e44]: Selection
+        - generic [ref=e45]: all
+        - generic [ref=e46]: All snapshots visible
+      - generic [ref=e47]:
+        - generic [ref=e48]: Nodes
+        - generic [ref=e49]: "0"
+        - generic [ref=e50]: Total nodes in the current session.
+      - generic [ref=e51]:
+        - generic [ref=e52]: Interactions
+        - generic [ref=e53]: "0"
+        - generic [ref=e54]: Interactions visible across all snapshots.
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e59]: Network
+            - heading "Temporal network view" [level=2] [ref=e60]
+          - generic [ref=e61]:
+            - button "Graph" [ref=e62] [cursor=pointer]
+            - generic [ref=e63]: "Density: 0.000"
+            - button "Fullscreen" [ref=e64] [cursor=pointer]
+        - img [ref=e66]:
+          - generic [ref=e67]: No temporal data loaded
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - generic [ref=e71]: Timeline
+            - heading "Interaction count over time" [level=2] [ref=e72]
+          - button "Fullscreen" [ref=e73] [cursor=pointer]
+        - img [ref=e74]:
+          - generic [ref=e75]: No temporal data loaded
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: Statistics
+            - heading "Density over time" [level=2] [ref=e80]
+          - button "Fullscreen" [ref=e81] [cursor=pointer]
+        - img [ref=e82]:
+          - generic [ref=e83]: No temporal data loaded

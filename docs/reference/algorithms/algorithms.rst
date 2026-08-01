@@ -9,3 +9,5 @@ Dynetx implements standard temporal network measures
 
    paths.rst
    temporal.rst
+   community.rst
+   diffusion.rst

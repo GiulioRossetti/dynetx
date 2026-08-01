@@ -12,6 +12,9 @@ from dynetx.readwrite import *
 import dynetx.visualization
 from dynetx.visualization import *
 
+import dynetx.dashboard
+from dynetx.dashboard import *
+
 import dynetx.utils
 from dynetx.utils import *
 

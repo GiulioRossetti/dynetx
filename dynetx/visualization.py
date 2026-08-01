@@ -32,7 +32,7 @@ def _snapshot_graph(G, t=None):
 
 
 def _shared_layout(G, layout="spring", seed=42):
-    nxg = G.to_networkx_graph()
+    nxg = G.to_networkx_graph() if hasattr(G, "to_networkx_graph") else G
     if layout == "circular":
         return nx.circular_layout(nxg)
     if layout == "kamada_kawai":
@@ -62,7 +62,7 @@ def draw_snapshot(G, t=None, ax=None, layout="spring", pos=None, with_labels=Tru
 
     nxg = _snapshot_graph(G, t=t)
     if pos is None:
-        pos = _shared_layout(G if t is None else G.time_slice(t), layout=layout)
+        pos = _shared_layout(nxg, layout=layout)
 
     if title is None:
         title = "Aggregate graph" if t is None else "Snapshot {}".format(t)

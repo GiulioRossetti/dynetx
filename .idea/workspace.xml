@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b9658557-fb63-4e71-ac56-c0284706869a" name="Changes" comment=":bug: pytest">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/reference/algorithms/algorithms.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/reference/algorithms/algorithms.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/reference/reference.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/reference/reference.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dynetx/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dynetx/algorithms/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/algorithms/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dynetx/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/visualization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/rossetti/PycharmProjects/dynetx" value="2IautH8Z9MLyc9puy1KNZeusV5b" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;GiulioRossetti&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/GiulioRossetti/dynetx.git&quot;,
+    &quot;accountId&quot;: &quot;1930d721-7fe0-425e-a445-3eb44e83b50a&quot;
+  }
+}</component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.4241341989538177" />
+      <entry key="MS500" value="2.527395790021174" />
+      <entry key="S2" value="4.416044325390721" />
+      <entry key="S5" value="5.263638887270648" />
+      <entry key="S10" value="5.6119215386811" />
+      <entry key="S30" value="5.86592470520054" />
+      <entry key="S60" value="5.932353467842991" />
+      <entry key="M2" value="5.966570906437518" />
+      <entry key="M5" value="6.388515441967527" />
+      <entry key="M10" value="9.715291234035586" />
+      <entry key="M15" value="13.83731199888511" />
+      <entry key="M30" value="22.549244287830557" />
+      <entry key="H1" value="30.061887090406525" />
+      <entry key="H2" value="35.01848789514323" />
+      <entry key="H4" value="37.86877084285549" />
+      <entry key="D1" value="40.45747129211654" />
+      <entry key="W1" value="40.92197434158642" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="1.171088326E-315" />
+      <entry key="S5" value="1.0652115345239987E-126" />
+      <entry key="S10" value="1.0320908557505957E-63" />
+      <entry key="S30" value="1.0105845244891639E-21" />
+      <entry key="S60" value="3.178969211063804E-11" />
+      <entry key="M2" value="5.638234839968799E-6" />
+      <entry key="M5" value="0.007951650154661698" />
+      <entry key="M10" value="0.0891720256283421" />
+      <entry key="M15" value="0.1995962701817423" />
+      <entry key="M30" value="0.4467619838143598" />
+      <entry key="H1" value="0.6684025611967386" />
+      <entry key="H2" value="0.8175589038086114" />
+      <entry key="H4" value="0.9041896392951044" />
+      <entry key="D1" value="0.9833540732466847" />
+      <entry key="W1" value="0.997604869042764" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.3607994200180231" />
+      <entry key="MS500" value="2.5028987948386856" />
+      <entry key="S2" value="4.406600240751933" />
+      <entry key="S5" value="5.2592854400794815" />
+      <entry key="S10" value="5.609626855015599" />
+      <entry key="S30" value="5.865131154870922" />
+      <entry key="S60" value="5.931952946537807" />
+      <entry key="M2" value="5.966375109212886" />
+      <entry key="M5" value="6.396286541830014" />
+      <entry key="M10" value="9.803892549786273" />
+      <entry key="M15" value="14.036102287949774" />
+      <entry key="M30" value="22.99513355723055" />
+      <entry key="H1" value="30.729644588031185" />
+      <entry key="H2" value="35.8356543569027" />
+      <entry key="H4" value="38.77274400454289" />
+      <entry key="D1" value="41.440786204875494" />
+      <entry key="W1" value="41.91957353710152" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2IautH8Z9MLyc9puy1KNZeusV5b" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests in test.executor": "Run",
+    "Python tests.Python tests in test_assortativity.py.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "v0.4.0",
+    "last_opened_file_path": "/Users/rossetti/PycharmProjects/dynetx",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docs" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python tests.Python tests in test">
+    <configuration name="Python tests in test" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dynetx" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/dynetx/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/dynetx/test&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in test_assortativity.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dynetx" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/dynetx/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/dynetx/test/test_assortativity.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.Python tests in test" />
+        <item itemvalue="Python tests.Python tests in test_assortativity.py" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-PY-261.25134.203" />
+        <option value="bundled-python-sdk-245168a56dbd-c2ffad84badb-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.25134.203" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b9658557-fb63-4e71-ac56-c0284706869a" name="Changes" comment="" />
+      <created>1670432228575</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1670432228575</updated>
+      <workItem from="1670432229681" duration="4000" />
+      <workItem from="1686121328457" duration="2207000" />
+      <workItem from="1686143228942" duration="1222000" />
+      <workItem from="1694180403503" duration="2699000" />
+      <workItem from="1719409454624" duration="3522000" />
+      <workItem from="1785577674287" duration="10941000" />
+    </task>
+    <task id="LOCAL-00001" summary=":new: gh actions conda from pypi">
+      <created>1686122893301</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1686122893301</updated>
+    </task>
+    <task id="LOCAL-00002" summary=":memo: docs">
+      <option name="closed" value="true" />
+      <created>1694180536628</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1694180536628</updated>
+    </task>
+    <task id="LOCAL-00003" summary=":memo: docs">
+      <option name="closed" value="true" />
+      <created>1694181189952</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1694181189952</updated>
+    </task>
+    <task id="LOCAL-00004" summary=":memo: docs">
+      <option name="closed" value="true" />
+      <created>1694181328455</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1694181328455</updated>
+    </task>
+    <task id="LOCAL-00005" summary=":memo: docs">
+      <option name="closed" value="true" />
+      <created>1694181494987</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1694181494987</updated>
+    </task>
+    <task id="LOCAL-00006" summary=":memo: docs">
+      <option name="closed" value="true" />
+      <created>1694183996592</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1694183996592</updated>
+    </task>
+    <task id="LOCAL-00007" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719409513756</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1719409513756</updated>
+    </task>
+    <task id="LOCAL-00008" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719409815140</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1719409815140</updated>
+    </task>
+    <task id="LOCAL-00009" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719409900057</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1719409900057</updated>
+    </task>
+    <task id="LOCAL-00010" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719409947623</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1719409947623</updated>
+    </task>
+    <task id="LOCAL-00011" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719415668085</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1719415668085</updated>
+    </task>
+    <task id="LOCAL-00012" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719415860751</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1719415860751</updated>
+    </task>
+    <task id="LOCAL-00013" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719415993104</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1719415993104</updated>
+    </task>
+    <task id="LOCAL-00014" summary=":art: logo 2024">
+      <option name="closed" value="true" />
+      <created>1719417049876</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1719417049876</updated>
+    </task>
+    <task id="LOCAL-00015" summary=":bug: pytest">
+      <option name="closed" value="true" />
+      <created>1719417473545</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1719417473545</updated>
+    </task>
+    <task id="LOCAL-00016" summary=":bug: pytest">
+      <option name="closed" value="true" />
+      <created>1719417764236</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1719417764236</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=":new: gh actions conda from pypi" />
+    <MESSAGE value=":memo: docs" />
+    <MESSAGE value=":art: logo 2024" />
+    <MESSAGE value=":bug: pytest" />
+    <option name="LAST_COMMIT_MESSAGE" value=":bug: pytest" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/dynetx$.coverage" NAME=" Coverage Results" MODIFIED="1785588118036" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dynetx/test" />
+  </component>
+</project>
