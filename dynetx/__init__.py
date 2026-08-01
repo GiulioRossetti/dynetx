@@ -9,6 +9,9 @@ from dynetx.classes.function import *
 import dynetx.readwrite
 from dynetx.readwrite import *
 
+import dynetx.visualization
+from dynetx.visualization import *
+
 import dynetx.utils
 from dynetx.utils import *
 
