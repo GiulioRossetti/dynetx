@@ -533,28 +533,27 @@ _DASHBOARD_HTML = """
       border: 0;
       border-radius: 8px;
       padding: 10px 14px;
-      background: var(--accent);
+      background: linear-gradient(180deg, var(--accent), var(--accent-hover));
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.22);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.18);
       font-weight: 500;
       transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
     }
     button:hover {
-      background: var(--accent-hover);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.24);
     }
     button.secondary {
-      background: var(--btn-secondary-bg);
+      background: rgba(79, 70, 229, 0.06);
       color: var(--btn-secondary-color);
-      border: 1px solid var(--btn-secondary-border);
+      border: 1px solid rgba(79, 70, 229, 0.14);
       box-shadow: none;
       transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
     button.secondary:hover {
-      background: var(--btn-secondary-hover-bg);
+      background: rgba(79, 70, 229, 0.12);
       color: var(--ink);
-      border-color: var(--btn-secondary-hover-border);
+      border-color: rgba(79, 70, 229, 0.22);
     }
     input[type="number"], input[type="file"], select {
       width: 100%;
@@ -611,9 +610,9 @@ _DASHBOARD_HTML = """
       align-self: start;
       min-height: 100vh;
       border-radius: 0;
-      padding: 24px;
+      padding: 28px;
       display: grid;
-      gap: 24px;
+      gap: 30px;
       align-content: start;
       border-right: 1px solid var(--panel-border);
     }
@@ -651,6 +650,16 @@ _DASHBOARD_HTML = """
       justify-content: center;
       transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
+    .icon-button > span {
+      display: inline-block;
+      line-height: 1;
+      transform: translateY(-0.5px);
+    }
+    .icon-button > span {
+      display: inline-block;
+      line-height: 1;
+      transform: translateY(-0.5px);
+    }
     .icon-button:hover {
       background: var(--btn-secondary-hover-bg);
       color: var(--ink);
@@ -661,19 +670,47 @@ _DASHBOARD_HTML = """
     }
     .stack {
       display: grid;
-      gap: 14px;
+      gap: 22px;
+    }
+    .sidebar-collapsed .app-shell {
+      grid-template-columns: 88px minmax(0, 1fr);
+    }
+    .sidebar-collapsed .sidebar {
+      padding: 20px 10px;
+      justify-items: center;
+      gap: 16px;
+    }
+    .sidebar-collapsed .sidebar .stack {
+      display: none;
+    }
+    .sidebar-collapsed .brand {
+      width: 100%;
+      padding-bottom: 0;
+      border-bottom: 0;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar-collapsed .brand-logo {
+      max-width: 56px;
+      height: auto;
+    }
+    .sidebar-collapsed .sidebar-tools {
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
     }
     .sidebar .card {
-      padding: 0 !important;
-      border: 0 !important;
-      background: transparent !important;
+      padding: 16px !important;
+      border: 1px solid var(--panel-border) !important;
+      background: rgba(255, 255, 255, 0.42) !important;
       box-shadow: none !important;
+      border-radius: 16px !important;
     }
     .sidebar .card-header {
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
     .sidebar .controls {
-      gap: 8px;
+      gap: 10px;
     }
     .sidebar .toolbar {
       gap: 8px;
@@ -695,25 +732,30 @@ _DASHBOARD_HTML = """
       list-style: none;
       cursor: pointer;
       user-select: none;
-      padding: 0;
-      margin: 0 0 8px;
+      padding: 0 0 12px;
+      margin: 0 0 12px;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
+      border-bottom: 1px solid var(--panel-border);
     }
     details.generator > summary::-webkit-details-marker {
       display: none;
     }
     details.generator[open] > summary {
-      border-bottom: 0;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
     .sidebar-subtitle {
       font-size: 12px;
       color: var(--muted);
       line-height: 1.45;
       margin: 0 0 10px;
+    }
+    .generator-advanced {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
     }
     .sidebar-grid {
       display: grid;
@@ -736,8 +778,8 @@ _DASHBOARD_HTML = """
       margin-top: -2px;
     }
     .network-meta {
-      margin-top: 4px;
-      font-size: 12px;
+      margin-top: 6px;
+      font-size: 13px;
       color: var(--muted);
       line-height: 1.35;
     }
@@ -950,8 +992,54 @@ _DASHBOARD_HTML = """
       border: 1px solid var(--card-border);
       border-radius: 8px;
     }
+    body[data-theme="night"] .plot-shell svg {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.84)) !important;
+      border-color: rgba(148, 163, 184, 0.18) !important;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.04);
+    }
     .plot-shell.network svg {
       min-height: 560px;
+    }
+    .timeline-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      align-items: stretch;
+    }
+    .timeline-chart {
+      position: relative;
+      display: grid;
+      gap: 0;
+      min-width: 0;
+    }
+    .timeline-chart svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 980 / 460;
+      min-height: 0;
+      border-radius: 8px;
+      overflow: visible;
+    }
+    .plot-tooltip {
+      position: absolute;
+      z-index: 3;
+      display: none;
+      max-width: 220px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.92);
+      color: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);
+      pointer-events: none;
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    body[data-theme="night"] .plot-tooltip {
+      background: rgba(2, 6, 23, 0.96);
+      border-color: rgba(148, 163, 184, 0.34);
     }
     .mode-toggle.active {
       background: var(--accent-hover);
@@ -1013,6 +1101,25 @@ _DASHBOARD_HTML = """
     }
     body[data-theme="night"] .pill.alt {
       color: #7dd3fc;
+    }
+    body[data-theme="night"] .plot-shell svg text {
+      fill: #e2e8f0;
+    }
+    body[data-theme="night"] .plot-shell svg .plot-axis,
+    body[data-theme="night"] .plot-shell svg .plot-tick {
+      stroke: rgba(203, 213, 225, 0.55);
+    }
+    body[data-theme="night"] .plot-shell svg .plot-label {
+      fill: #cbd5e1;
+    }
+    body[data-theme="night"] .plot-shell svg .plot-line {
+      stroke: #7dd3fc;
+    }
+    body[data-theme="night"] .plot-shell svg .plot-fill {
+      fill: rgba(96, 165, 250, 0.16);
+    }
+    body[data-theme="night"] .plot-shell svg .plot-marker {
+      fill: #fbbf24;
     }
     .card-row {
       display: flex;
@@ -1173,6 +1280,9 @@ _DASHBOARD_HTML = """
       .floating-controls-grid {
         grid-template-columns: 1fr 1fr;
       }
+      .timeline-grid {
+        grid-template-columns: 1fr;
+      }
       .navbar {
         flex-direction: column;
       }
@@ -1204,11 +1314,11 @@ _DASHBOARD_HTML = """
 <body>
   <div class="app-shell">
     <aside class="sidebar glass-panel">
-      <div class="brand">
+        <div class="brand">
         <img class="brand-logo" src="__LOGO_DATA_URI__" alt="DyNetx">
         <div class="sidebar-tools">
           <button class="icon-button" onclick="toggleTheme()" aria-label="Toggle theme">☾</button>
-          <button class="icon-button" onclick="refreshState()" aria-label="Refresh view">⟲</button>
+          <button class="icon-button" onclick="toggleSidebar()" id="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Collapse sidebar">◀</button>
         </div>
       </div>
 
@@ -1228,23 +1338,20 @@ _DASHBOARD_HTML = """
           </div>
         </div>
 
-        <details class="card generator" id="generator-panel">
-          <summary>
-            <div>
-              <h2>Synthetic generator</h2>
-            </div>
-          </summary>
+        <div class="card generator" id="generator-panel">
+          <div class="card-header">
+            <h2>Synthetic generator</h2>
+          </div>
           <div class="controls">
             <div class="sidebar-grid two-col">
-              <label>Graph kind
-                <select id="graph-kind" onchange="updateGeneratorState()">
+              <label>Type
+                <select id="graph-kind" onchange="handleGeneratorSelectionChange()">
                   <option value="stream">Stream graph</option>
                   <option value="snapshot">Snapshot graph</option>
-                  <option value="dynamic">Dynamic mix</option>
                 </select>
               </label>
               <label>Network model
-                <select id="network-model" onchange="updateGeneratorState()">
+                <select id="network-model" onchange="handleGeneratorSelectionChange()">
                   <option value="erdos_renyi">Erdos-Renyi</option>
                   <option value="barabasi_albert">Barabasi-Albert</option>
                   <option value="watts_strogatz">Watts-Strogatz</option>
@@ -1253,71 +1360,74 @@ _DASHBOARD_HTML = """
                 </select>
               </label>
             </div>
-            <div id="model-hint" class="model-hint">Random edges with probability p at each snapshot.</div>
-            <div class="model-param" data-model="erdos_renyi">
-              <label>Edge probability
-                <input id="edge-probability" type="number" min="0" max="1" step="0.05" value="0.2">
-              </label>
-            </div>
-            <div class="model-param" data-model="barabasi_albert">
-              <label>Attachment edges m
-                <input id="ba-m" type="number" min="1" step="1" value="2">
-              </label>
-            </div>
-            <div class="model-param" data-model="watts_strogatz">
-              <div class="sidebar-grid two-col">
-                <label>Neighbors k
-                  <input id="ws-k" type="number" min="2" step="1" value="4">
-                </label>
-                <label>Rewire probability
-                  <input id="ws-beta" type="number" min="0" max="1" step="0.05" value="0.2">
+              <div class="sidebar-subtitle">Choose the type and topology first. The remaining controls appear once you start configuring the generator.</div>
+              <div id="generator-advanced-fields" class="generator-advanced">
+              <div id="model-hint" class="model-hint">Random edges with probability p at each snapshot.</div>
+              <div class="model-param" data-model="erdos_renyi">
+                <label>Edge probability
+                  <input id="edge-probability" type="number" min="0" max="1" step="0.05" value="0.2">
                 </label>
               </div>
-            </div>
-            <div class="model-param" data-model="stochastic_block_model">
-              <div class="sidebar-grid two-col">
-                <label>Communities
-                  <input id="sbm-groups" type="number" min="2" step="1" value="3">
-                </label>
-                <label>Intra p
-                  <input id="sbm-p-in" type="number" min="0" max="1" step="0.05" value="0.5">
-                </label>
-                <label>Inter p
-                  <input id="sbm-p-out" type="number" min="0" max="1" step="0.01" value="0.05">
+              <div class="model-param" data-model="barabasi_albert">
+                <label>Attachment edges m
+                  <input id="ba-m" type="number" min="1" step="1" value="2">
                 </label>
               </div>
-            </div>
-            <div class="model-param" data-model="complete_graph">
-              <div class="model-hint">Complete graphs do not require extra parameters.</div>
-            </div>
-            <div class="sidebar-grid two-col">
-              <label>Node mode
-                <select id="node-mode" onchange="updateGeneratorState()">
-                  <option value="fixed">Fixed nodes</option>
-                  <option value="dynamic">Nodes appear/disappear</option>
-                </select>
+              <div class="model-param" data-model="watts_strogatz">
+                <div class="sidebar-grid two-col">
+                  <label>Neighbors k
+                    <input id="ws-k" type="number" min="2" step="1" value="4">
+                  </label>
+                  <label>Rewire probability
+                    <input id="ws-beta" type="number" min="0" max="1" step="0.05" value="0.2">
+                  </label>
+                </div>
+              </div>
+              <div class="model-param" data-model="stochastic_block_model">
+                <div class="sidebar-grid two-col">
+                  <label>Communities
+                    <input id="sbm-groups" type="number" min="2" step="1" value="3">
+                  </label>
+                  <label>Intra p
+                    <input id="sbm-p-in" type="number" min="0" max="1" step="0.05" value="0.5">
+                  </label>
+                  <label>Inter p
+                    <input id="sbm-p-out" type="number" min="0" max="1" step="0.01" value="0.05">
+                  </label>
+                </div>
+              </div>
+              <div class="model-param" data-model="complete_graph">
+                <div class="model-hint">Complete graphs do not require extra parameters.</div>
+              </div>
+              <div class="sidebar-grid two-col">
+                <label>Node mode
+                  <select id="node-mode" onchange="updateGeneratorState()">
+                    <option value="fixed">Fixed nodes</option>
+                    <option value="dynamic">Nodes appear/disappear</option>
+                  </select>
+                </label>
+                <label>Node churn
+                  <input id="node-churn" type="number" min="0" max="1" step="0.05" value="0.25">
+                </label>
+              </div>
+              <div class="sidebar-grid two-col">
+                <label>Number of nodes
+                  <input id="num-nodes" type="number" min="2" value="12">
+                </label>
+                <label>Snapshots
+                  <input id="snapshots" type="number" min="1" value="3">
+                </label>
+              </div>
+              <label>Seed
+                <input id="seed" type="number" value="42">
               </label>
-              <label>Node churn
-                <input id="node-churn" type="number" min="0" max="1" step="0.05" value="0.25">
-              </label>
-            </div>
-            <div class="sidebar-grid two-col">
-              <label>Number of nodes
-                <input id="num-nodes" type="number" min="2" value="12">
-              </label>
-              <label>Snapshots
-                <input id="snapshots" type="number" min="1" value="3">
-              </label>
-            </div>
-            <label>Seed
-              <input id="seed" type="number" value="42">
-            </label>
-            <div class="toolbar">
-              <button onclick="generateGraph()">Generate</button>
-              <button class="secondary" onclick="document.getElementById('generator-panel').open = !document.getElementById('generator-panel').open">Toggle</button>
+              <div class="toolbar">
+                <button onclick="generateGraph()">Generate</button>
+                <button class="secondary" onclick="document.getElementById('generator-panel').open = !document.getElementById('generator-panel').open">Toggle</button>
+              </div>
             </div>
           </div>
-        </details>
+        </div>
       </div>
     </aside>
 
@@ -1419,11 +1529,18 @@ _DASHBOARD_HTML = """
           <div class="card-row">
             <div>
               <div class="section-label">Timeline</div>
-              <h2>Interaction count over time</h2>
+              <h2>Interaction and node trends</h2>
             </div>
             <button class="secondary fullscreen-toggle compact-icon-button" onclick="toggleFullscreen('timeline-panel', this)" title="Fullscreen" aria-label="Fullscreen">⛶</button>
           </div>
-          <svg id="timeline-svg" viewBox="0 0 980 280" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="timeline-grid">
+            <div class="timeline-chart">
+              <svg id="timeline-interactions-svg" viewBox="0 0 980 460" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+            <div class="timeline-chart">
+              <svg id="timeline-nodes-svg" viewBox="0 0 980 460" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -1436,6 +1553,8 @@ _DASHBOARD_HTML = """
     const layoutPositionCache = new Map();
     let currentNetworkMode = 'graph';
     let currentNetworkModeUserSelected = false;
+    let generatorSelectionMade = false;
+    let sidebarCollapsed = false;
 
     async function getJson(url, opts={}) {
       const res = await fetch(url, opts);
@@ -1480,6 +1599,20 @@ _DASHBOARD_HTML = """
       applyTheme('day');
     }
 
+    function syncSidebarButton() {
+      const button = document.getElementById('sidebar-toggle-btn');
+      if (!button) {
+        return;
+      }
+      setIconButtonState(button, sidebarCollapsed ? '▶' : '◀', sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    }
+
+    function toggleSidebar() {
+      sidebarCollapsed = !sidebarCollapsed;
+      document.body.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+      syncSidebarButton();
+    }
+
     function toggleAdvancedControls() {
       const panel = document.getElementById('advanced-controls-panel');
       const btn = document.getElementById('adv-toggle-btn');
@@ -1520,9 +1653,13 @@ _DASHBOARD_HTML = """
       const hint = document.getElementById('model-hint');
       const graphKind = document.getElementById('graph-kind');
       const nodeMode = document.getElementById('node-mode');
+      const advanced = document.getElementById('generator-advanced-fields');
       document.querySelectorAll('.model-param').forEach(function(panel) {
         panel.classList.toggle('active', panel.dataset.model === model);
       });
+      if (advanced) {
+        advanced.style.display = generatorSelectionMade ? 'flex' : 'none';
+      }
       if (hint) {
         const hints = {
           erdos_renyi: 'Random edges with probability p at each snapshot.',
@@ -1542,6 +1679,15 @@ _DASHBOARD_HTML = """
           edgeProbability.value = '1';
         }
       }
+    }
+
+    function handleGeneratorSelectionChange() {
+      generatorSelectionMade = true;
+      const advanced = document.getElementById('generator-advanced-fields');
+      if (advanced) {
+        advanced.style.display = 'flex';
+      }
+      updateGeneratorState();
     }
 
     function getPlaybackMode() {
@@ -1659,16 +1805,16 @@ _DASHBOARD_HTML = """
         };
       }
       return {
-        axis: 'rgba(148, 163, 184, 0.45)',
-        label: '#cbd5e1',
-        muted: '#94a3b8',
-        node: '#38bdf8',
+        axis: 'rgba(226, 232, 240, 0.66)',
+        label: '#f8fafc',
+        muted: '#e2e8f0',
+        node: '#e2e8f0',
         nodeStroke: '#0f172a',
-        edge: 'rgba(148, 163, 184, 0.55)',
-        line: '#38bdf8',
-        marker: '#f59e0b',
-        windowFill: 'rgba(56, 189, 248, 0.12)',
-        empty: '#94a3b8'
+        edge: 'rgba(226, 232, 240, 0.72)',
+        line: '#93c5fd',
+        marker: '#fbbf24',
+        windowFill: 'rgba(96, 165, 250, 0.16)',
+        empty: '#cbd5e1'
       };
     }
 
@@ -1706,10 +1852,6 @@ _DASHBOARD_HTML = """
       title.textContent = 'Link stream representation';
       svg.appendChild(title);
 
-      const subtitle = createSvgEl('text', {x: 20, y: 42, fill: palette.muted, 'font-size': 11});
-      subtitle.textContent = 'Dotted spans show node presence. Curved contacts mark edge events. Horizontal bars show edge duration.';
-      svg.appendChild(subtitle);
-
       const axis = createSvgEl('g', {'stroke': palette.axis, 'stroke-width': 1});
       axis.appendChild(createSvgEl('line', {
         x1: padding.left,
@@ -1746,7 +1888,7 @@ _DASHBOARD_HTML = """
         svg.appendChild(label);
       });
 
-      const edgeInk = 'rgba(17, 24, 39, 0.58)';
+      const edgeInk = getTheme() === 'day' ? 'rgba(17, 24, 39, 0.58)' : 'rgba(226, 232, 240, 0.72)';
       const highlightEdgeGroup = function(group, active) {
         if (!group) return;
         const edgeStroke = active ? '#dc2626' : edgeInk;
@@ -2207,12 +2349,19 @@ _DASHBOARD_HTML = """
       const svg = document.getElementById(svgId);
       clearSvg(svg);
       const width = 980;
-      const height = 280;
-      const padding = {top: 24, right: 24, bottom: 36, left: 52};
+      const height = 460;
+      const padding = {top: 18, right: 20, bottom: 42, left: 96};
       const palette = themePalette();
       const series = data.snapshots || [];
       const values = data.values || [];
       const maxValue = Math.max(1, ...values);
+      const chartContainer = svg.closest('.timeline-chart');
+      if (chartContainer) {
+        const existingTooltip = chartContainer.querySelector('.plot-tooltip');
+        if (existingTooltip) {
+          existingTooltip.remove();
+        }
+      }
       if (!series.length || !values.length) {
         const empty = createSvgEl('text', {x: width / 2, y: height / 2, fill: palette.empty, 'font-size': 14, 'text-anchor': 'middle'});
         empty.textContent = 'No temporal data loaded';
@@ -2221,15 +2370,90 @@ _DASHBOARD_HTML = """
       }
       drawAxes(svg, width, height, padding);
 
-      const title = createSvgEl('text', {x: 20, y: 20, fill: palette.label, 'font-size': 13});
-      title.textContent = titleText;
-      svg.appendChild(title);
+      const isDensityChart = String(titleText || '').toLowerCase().indexOf('density') >= 0;
+      const yAxisLabel = isDensityChart ? 'Density' : 'Interactions';
+      const xAxisLabel = 'Snapshot';
+      const formatValue = function(value) {
+        return Math.abs(value - Math.round(value)) < 0.001 ? String(Math.round(value)) : value.toFixed(2);
+      };
 
       const points = values.map(function(value, index) {
         const x = scale(series[index], series[0], series[series.length - 1], padding.left, width - padding.right);
         const y = scale(value, 0, maxValue, height - padding.bottom, padding.top);
         return [x, y];
       });
+      const yTicks = [0, maxValue / 2, maxValue];
+      yTicks.forEach(function(tickValue) {
+        const y = scale(tickValue, 0, maxValue, height - padding.bottom, padding.top);
+        svg.appendChild(createSvgEl('line', {
+          x1: padding.left - 4,
+          y1: y,
+          x2: padding.left,
+          y2: y,
+          stroke: palette.axis,
+          'stroke-width': 1,
+          class: 'plot-axis plot-tick'
+        }));
+        const tickLabel = createSvgEl('text', {
+          x: padding.left - 14,
+          y: y + 4,
+          fill: palette.muted,
+          'font-size': 20,
+          'font-weight': 700,
+          'text-anchor': 'end',
+          class: 'plot-label'
+        });
+        tickLabel.textContent = formatValue(tickValue);
+        svg.appendChild(tickLabel);
+      });
+      const xStep = Math.max(1, Math.ceil(series.length / 5));
+      series.forEach(function(snapshot, index) {
+        if (index !== 0 && index !== series.length - 1 && index % xStep !== 0) {
+          return;
+        }
+        const x = scale(snapshot, series[0], series[series.length - 1], padding.left, width - padding.right);
+        svg.appendChild(createSvgEl('line', {
+          x1: x,
+          y1: height - padding.bottom,
+          x2: x,
+          y2: height - padding.bottom + 5,
+          stroke: palette.axis,
+          'stroke-width': 1,
+          class: 'plot-axis plot-tick'
+        }));
+        const tickLabel = createSvgEl('text', {
+          x: x,
+          y: height - padding.bottom + 24,
+          fill: palette.muted,
+          'font-size': 20,
+          'font-weight': 700,
+          'text-anchor': 'middle',
+          class: 'plot-label'
+        });
+        tickLabel.textContent = String(snapshot);
+        svg.appendChild(tickLabel);
+      });
+      svg.appendChild(createSvgEl('text', {
+        x: width / 2,
+        y: height - 8,
+        fill: palette.muted,
+        'font-size': 20,
+        'font-weight': 700,
+        'text-anchor': 'middle',
+        class: 'plot-label'
+      })).textContent = xAxisLabel;
+      const yAxis = createSvgEl('text', {
+        x: 20,
+        y: height / 2,
+        fill: palette.muted,
+        'font-size': 20,
+        'font-weight': 700,
+        'text-anchor': 'middle',
+        transform: 'rotate(-90 20 ' + (height / 2) + ')',
+        class: 'plot-label'
+      });
+      yAxis.textContent = yAxisLabel;
+      svg.appendChild(yAxis);
       if (points.length >= 2) {
         const baseline = height - padding.bottom;
         const areaPoints = points.map(function(point) {
@@ -2239,6 +2463,7 @@ _DASHBOARD_HTML = """
         areaPoints.push(points[0][0] + ',' + baseline);
         svg.appendChild(createSvgEl('polygon', {
           fill: 'rgba(99, 102, 241, 0.14)',
+          class: 'plot-fill',
           points: areaPoints.join(' ')
         }));
       }
@@ -2246,17 +2471,73 @@ _DASHBOARD_HTML = """
         fill: 'none',
         stroke: palette.line,
         'stroke-width': 2.8,
+        class: 'plot-line',
         points: points.map(function(p) { return p[0] + ',' + p[1]; }).join(' ')
       });
       svg.appendChild(polyline);
 
-      points.forEach(function(point) {
-        svg.appendChild(createSvgEl('circle', {
+      points.forEach(function(point, index) {
+        const tooltipText = formatValue(values[index]) + ' at snapshot ' + String(series[index]);
+        const markerGroup = createSvgEl('g', {
+          class: 'plot-marker-group',
+          style: 'cursor: help'
+        });
+        markerGroup.appendChild(createSvgEl('circle', {
           cx: point[0],
           cy: point[1],
-          r: 4,
-          fill: palette.marker
+          r: 11,
+          fill: 'transparent',
+          stroke: 'transparent',
+          class: 'plot-marker-hit',
+          'pointer-events': 'all'
         }));
+        markerGroup.appendChild(createSvgEl('circle', {
+          cx: point[0],
+          cy: point[1],
+          r: 4.5,
+          fill: palette.marker,
+          class: 'plot-marker'
+        }));
+        markerGroup.addEventListener('pointerenter', function(event) {
+          if (!chartContainer) return;
+          let tooltip = chartContainer.querySelector('.plot-tooltip');
+          if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.className = 'plot-tooltip';
+            chartContainer.appendChild(tooltip);
+          }
+          tooltip.textContent = tooltipText;
+          tooltip.style.display = 'block';
+          const rect = chartContainer.getBoundingClientRect();
+          const offset = 14;
+          const maxLeft = Math.max(0, rect.width - 228);
+          const maxTop = Math.max(0, rect.height - 52);
+          const left = Math.min(maxLeft, Math.max(0, event.clientX - rect.left + offset));
+          const top = Math.min(maxTop, Math.max(0, event.clientY - rect.top - 34));
+          tooltip.style.left = left + 'px';
+          tooltip.style.top = top + 'px';
+        });
+        markerGroup.addEventListener('pointermove', function(event) {
+          if (!chartContainer) return;
+          const tooltip = chartContainer.querySelector('.plot-tooltip');
+          if (!tooltip || tooltip.style.display !== 'block') return;
+          const rect = chartContainer.getBoundingClientRect();
+          const offset = 14;
+          const maxLeft = Math.max(0, rect.width - 228);
+          const maxTop = Math.max(0, rect.height - 52);
+          const left = Math.min(maxLeft, Math.max(0, event.clientX - rect.left + offset));
+          const top = Math.min(maxTop, Math.max(0, event.clientY - rect.top - 34));
+          tooltip.style.left = left + 'px';
+          tooltip.style.top = top + 'px';
+        });
+        markerGroup.addEventListener('pointerleave', function() {
+          if (!chartContainer) return;
+          const tooltip = chartContainer.querySelector('.plot-tooltip');
+          if (tooltip) {
+            tooltip.style.display = 'none';
+          }
+        });
+        svg.appendChild(markerGroup);
       });
 
       if (state.selection_mode === 'snapshot' && state.selected_snapshot !== null && state.selected_snapshot !== undefined) {
@@ -2270,7 +2551,8 @@ _DASHBOARD_HTML = """
             y2: height - padding.bottom,
             stroke: palette.marker,
             'stroke-width': 1.5,
-            'stroke-dasharray': '4 4'
+            'stroke-dasharray': '4 4',
+            class: 'plot-axis'
           }));
         }
       }
@@ -2286,17 +2568,22 @@ _DASHBOARD_HTML = """
             y: padding.top,
             width: Math.max(1, Math.abs(x2 - x1)),
             height: height - padding.top - padding.bottom,
-            fill: palette.windowFill
+            fill: palette.windowFill,
+            class: 'plot-fill'
           }));
         }
       }
     }
 
     function renderTimeline(data, state) {
-      renderLineChart('timeline-svg', {
+      renderLineChart('timeline-interactions-svg', {
         snapshots: data.snapshots,
         values: data.interactions
       }, state, 'Interaction count over time');
+      renderLineChart('timeline-nodes-svg', {
+        snapshots: data.snapshots,
+        values: data.active_nodes
+      }, state, 'Active node count over time');
     }
 
     function renderSnapshots(options, selected) {
@@ -2417,6 +2704,7 @@ _DASHBOARD_HTML = """
       }
       syncPlaybackLabel();
       syncFullscreenButtons();
+      syncSidebarButton();
       renderSnapshots(state.snapshots || [], state.selected_snapshot);
       renderWindowOptions(state.snapshots || [], state.selected_window);
       if (currentNetworkMode === 'link-stream' && streamEligible) {
@@ -2616,6 +2904,7 @@ _DASHBOARD_HTML = """
 
     initTheme();
     initLayout();
+    syncSidebarButton();
     updateGeneratorState();
     refreshState().catch(function(err) {
       document.getElementById('state-summary').textContent = 'Dashboard not initialized: ' + err.message;

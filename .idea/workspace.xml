@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9658557-fb63-4e71-ac56-c0284706869a" name="Changes" comment=":bug: pytest">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/reference/algorithms/algorithms.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/reference/algorithms/algorithms.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/reference/reference.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/reference/reference.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dynetx/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dynetx/algorithms/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/algorithms/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dynetx/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/visualization.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dynetx/dashboard/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynetx/dashboard/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,7 +201,7 @@
       <workItem from="1686143228942" duration="1222000" />
       <workItem from="1694180403503" duration="2699000" />
       <workItem from="1719409454624" duration="3522000" />
-      <workItem from="1785577674287" duration="10941000" />
+      <workItem from="1785577674287" duration="12712000" />
     </task>
     <task id="LOCAL-00001" summary=":new: gh actions conda from pypi">
       <created>1686122893301</created>
