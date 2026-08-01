@@ -1,4 +1,5 @@
 from dynetx.utils import make_str
+from dynetx.utils.validation import inclusive_end_to_exclusive
 import dynetx as dn
 from itertools import chain, count
 
@@ -117,7 +118,7 @@ def node_link_graph(data, directed=False, attrs=_attrs):
         attrs = dict((make_str(k), v) for k, v in d.items() if k not in {'source', 'target', 't', 'e', 'time'})
         if 't' in d:
             e = d.get('e')
-            graph.add_interaction(d['source'], d["target"], d['t'], e=(None if e is None else e + 1), **attrs)
+            graph.add_interaction(d['source'], d["target"], d['t'], e=inclusive_end_to_exclusive(e), **attrs)
         else:
             graph.add_interaction(d['source'], d["target"], d['time'], **attrs)
 

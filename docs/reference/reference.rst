@@ -16,4 +16,6 @@ In ``DyNetx`` are implemented the following **Dynamic Graph** models:
    classes/gtypes.rst
    algorithms/algorithms.rst
    functions.rst
+   utils.rst
+   results.rst
    read_write

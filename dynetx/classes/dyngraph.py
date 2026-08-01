@@ -10,6 +10,7 @@ from typing import List, Any
 import networkx as nx
 from collections import defaultdict
 from dynetx.utils import not_implemented
+from dynetx.utils.validation import normalize_time_range, inclusive_end_to_exclusive
 from copy import deepcopy
 from itertools import combinations
 
@@ -995,7 +996,7 @@ class DynGraph(nx.Graph):
             for t in it[2]['t']:
                 events.append((it[0], it[1], t[0], t[1]))
         for u, v, t0, t1 in sorted(events, key=lambda x: (x[2], x[3], x[0], x[1])):
-            G.add_interaction(u, v, t=t0, e=t1 + 1)
+            G.add_interaction(u, v, t=t0, e=inclusive_end_to_exclusive(t1))
 
         G.graph = deepcopy(self.graph)
         G._node = deepcopy(self._node)
@@ -1070,11 +1071,7 @@ class DynGraph(nx.Graph):
         """
         # create new graph and copy subgraph into it
         H = self.__class__()
-        if t_to is not None:
-            if t_to < t_from:
-                raise ValueError("Invalid range: t_to must be grater that t_from")
-        else:
-            t_to = t_from
+        t_from, t_to = normalize_time_range(t_from, t_to)
 
         node_filter = kwargs.pop("node_filter", None)
         edge_filter = kwargs.pop("edge_filter", None)
@@ -1106,13 +1103,13 @@ class DynGraph(nx.Graph):
                     continue
 
                 if f_from >= a and i_to <= b:
-                    H.add_interaction(u, v, f_from, i_to + 1, **edge_attrs)
+                    H.add_interaction(u, v, f_from, inclusive_end_to_exclusive(i_to), **edge_attrs)
                 elif a >= f_from and i_to <= b:
-                    H.add_interaction(u, v, a, i_to + 1, **edge_attrs)
+                    H.add_interaction(u, v, a, inclusive_end_to_exclusive(i_to), **edge_attrs)
                 elif f_from >= a and b <= i_to:
-                    H.add_interaction(u, v, f_from, b + 1, **edge_attrs)
+                    H.add_interaction(u, v, f_from, inclusive_end_to_exclusive(b), **edge_attrs)
                 elif f_from <= a and b <= i_to:
-                    H.add_interaction(u, v, a, b + 1, **edge_attrs)
+                    H.add_interaction(u, v, a, inclusive_end_to_exclusive(b), **edge_attrs)
 
         for n in H.nodes():
             H._node[n] = self._node[n]

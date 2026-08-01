@@ -7,6 +7,7 @@ temporal event schema.
 from collections import defaultdict
 
 import dynetx as dn
+from dynetx.utils.validation import inclusive_end_to_exclusive
 
 __all__ = [
     "to_interaction_dataframe",
@@ -53,7 +54,7 @@ def from_interaction_dataframe(df, directed=False):
         attrs = {k: row[k] for k in df.columns if k not in {"source", "target", "t_start", "t_end", "directed"} and pd.notna(row[k])}
         t0 = row["t_start"]
         t1 = row["t_end"] if "t_end" in df.columns and pd.notna(row["t_end"]) else None
-        graph.add_interaction(row["source"], row["target"], t=t0, e=(None if t1 is None else t1 + 1), **attrs)
+        graph.add_interaction(row["source"], row["target"], t=t0, e=inclusive_end_to_exclusive(t1), **attrs)
     return graph
 
 
