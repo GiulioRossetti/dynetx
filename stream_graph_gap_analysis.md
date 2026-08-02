@@ -78,23 +78,23 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 10 & 11: Cluster Metrics and Quotient Streams
 * **Internal/External Neighborhoods & Degrees of Clusters**:
   * *Paper*: $N_C(v)$, $\overline{N_C}(v)$, $d_C(v)$, $\overline{d_C}(v)$, $d_C(C)$, $d(C)$, $\overline{d}(C)$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.cluster_internal_neighborhood(cluster, v)`, `DynGraph.cluster_external_neighborhood(cluster, v)`, `DynGraph.cluster_internal_degree(cluster, v)`, `DynGraph.cluster_external_degree(cluster, v)`, `DynGraph.cluster_average_internal_degree(cluster)`, and `DynGraph.cluster_average_external_degree(cluster)`.
 * **Quotient Stream ($Q$)**:
   * *Paper*: A stream graph induced by grouping nodes into cluster families $F$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.quotient_stream(partition)`.
 * **Intra-cluster, Inter-cluster, and External Densities**:
   * *Paper*: $\delta(F)$, $\overline{\delta}(F)$, $\overline{\delta}(C)$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.intra_cluster_density(partition)`, `DynGraph.inter_cluster_density(partition)`, and `DynGraph.cluster_external_density(cluster)`.
 
 ### Section 12: Line Streams
 * **Line Stream ($\hat{S}$)**:
   * *Paper*: Link-based dual graph of a stream graph.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.line_stream()`.
 
 ### Section 13: $k$-Cores
 * **Stream $k$-Core, Core Number, and $k$-Shell**:
   * *Paper*: Largest sub-cluster of nodes where all elements maintain instantaneous degree $d_t(v) \ge k$ inside the cluster.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.stream_k_core(k=None)`.
 
 ### Section 14: Paths and Distances
 * **Foremost Path Time-to-Reach ($\mathcal{T}_{\alpha}$)**:
@@ -121,10 +121,10 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 16: Trees and Cascades
 * **Predecessor Mapping ($p(t, v)$)**:
   * *Paper*: Unique parent in a temporal tree.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Represented implicitly via the parent pointers/structure of the path tree.
 * **Shortest/Fastest/Foremost-Path Trees and Cascades**:
   * *Paper*: Tree structures optimized for specific path dimensions.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.stream_path_tree(root_node, root_time, path_type)` and `DynGraph.stream_cascade(root_node, root_time)`.
 
 ### Section 17: Closeness and Betweenness Centralities
 * **Temporal Closeness Centrality ($\mathcal{C}_t(v)$)**:

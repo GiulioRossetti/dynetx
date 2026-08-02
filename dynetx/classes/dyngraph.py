@@ -1981,6 +1981,231 @@ class DynGraph(nx.Graph):
         import dynetx.algorithms as al
         return al.reachability_stream_graph(self)
 
+    def cluster_internal_neighborhood(self, cluster, v):
+        """
+            Return the internal neighborhood of node v involved in cluster as a Cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+            v : node id
+
+            Returns
+            -------
+            c : Cluster
+                The internal neighborhood.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_internal_neighborhood(self, cluster, v)
+
+    def cluster_external_neighborhood(self, cluster, v):
+        """
+            Return the external neighborhood of node v involved in cluster as a Cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+            v : node id
+
+            Returns
+            -------
+            c : Cluster
+                The external neighborhood.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_external_neighborhood(self, cluster, v)
+
+    def cluster_internal_degree(self, cluster, v):
+        """
+            Return the internal degree of node v in cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+            v : node id
+
+            Returns
+            -------
+            deg : int
+                The internal degree.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_internal_degree(self, cluster, v)
+
+    def cluster_external_degree(self, cluster, v):
+        """
+            Return the external degree of node v in cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+            v : node id
+
+            Returns
+            -------
+            deg : int
+                The external degree.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_external_degree(self, cluster, v)
+
+    def cluster_average_internal_degree(self, cluster):
+        """
+            Return the average internal degree of cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+
+            Returns
+            -------
+            avg_deg : float
+                The average internal degree.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_average_internal_degree(self, cluster)
+
+    def cluster_average_external_degree(self, cluster):
+        """
+            Return the average external degree of cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+
+            Returns
+            -------
+            avg_deg : float
+                The average external degree.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_average_external_degree(self, cluster)
+
+    def intra_cluster_density(self, partition):
+        """
+            Intra-cluster density of a partition (list of Clusters).
+
+            Parameters
+            ----------
+            partition : list of Clusters
+
+            Returns
+            -------
+            density : float
+                Intra-cluster density.
+        """
+        import dynetx.algorithms as al
+        return al.intra_cluster_density(self, partition)
+
+    def inter_cluster_density(self, partition):
+        """
+            Inter-cluster density of a partition (list of Clusters).
+
+            Parameters
+            ----------
+            partition : list of Clusters
+
+            Returns
+            -------
+            density : float
+                Inter-cluster density.
+        """
+        import dynetx.algorithms as al
+        return al.inter_cluster_density(self, partition)
+
+    def cluster_external_density(self, cluster):
+        """
+            External density of a cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster
+
+            Returns
+            -------
+            density : float
+                External density.
+        """
+        import dynetx.algorithms as al
+        return al.cluster_external_density(self, cluster)
+
+    def quotient_stream(self, partition):
+        """
+            Return the quotient stream graph of this graph induced by partition.
+
+            Parameters
+            ----------
+            partition : list of Clusters
+
+            Returns
+            -------
+            Q : DynGraph
+                Quotient stream graph.
+        """
+        import dynetx.algorithms as al
+        return al.quotient_stream(self, partition)
+
+    def line_stream(self):
+        """
+            Return the line stream graph of G.
+
+            Returns
+            -------
+            L : DynGraph
+                Line stream graph.
+        """
+        import dynetx.algorithms as al
+        return al.line_stream(self)
+
+    def stream_k_core(self, k=None):
+        """
+            Return the stream k-core or core numbers.
+
+            Parameters
+            ----------
+            k : int, optional
+                If specified, return the k-core. Otherwise, return core numbers dict.
+
+            Returns
+            -------
+            core : Cluster or dict
+        """
+        import dynetx.algorithms as al
+        return al.stream_k_core(self, k=k)
+
+    def stream_path_tree(self, root_node, root_time, path_type='foremost'):
+        """
+            Return foremost/shortest/fastest path trees.
+
+            Parameters
+            ----------
+            root_node : node id
+            root_time : timestamp
+            path_type : str, optional (default='foremost')
+
+            Returns
+            -------
+            Tree : DynGraph
+        """
+        import dynetx.algorithms as al
+        return al.stream_path_tree(self, root_node, root_time, path_type=path_type)
+
+    def stream_cascade(self, root_node, root_time):
+        """
+            Return the cascade of G starting from root.
+
+            Parameters
+            ----------
+            root_node : node id
+            root_time : timestamp
+
+            Returns
+            -------
+            Tree : DynGraph
+        """
+        import dynetx.algorithms as al
+        return al.stream_cascade(self, root_node, root_time)
+
     def pair_density(self, u, v):
         """
             Node pair density.

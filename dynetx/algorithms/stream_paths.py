@@ -12,7 +12,21 @@ __all__ = [
     'constrained_time_respecting_paths',
     'stream_weakly_connected_components',
     'stream_strongly_connected_components',
-    'reachability_stream_graph'
+    'reachability_stream_graph',
+    'cluster_internal_neighborhood',
+    'cluster_external_neighborhood',
+    'cluster_internal_degree',
+    'cluster_external_degree',
+    'cluster_average_internal_degree',
+    'cluster_average_external_degree',
+    'intra_cluster_density',
+    'inter_cluster_density',
+    'cluster_external_density',
+    'quotient_stream',
+    'line_stream',
+    'stream_k_core',
+    'stream_path_tree',
+    'stream_cascade'
 ]
 
 def stream_diameter(G, start=None, end=None):
@@ -234,3 +248,259 @@ def reachability_stream_graph(G):
             t_start = p[0][2]
             R.add_interaction(u, v, t=t_start)
     return R
+
+def cluster_internal_neighborhood(G, cluster, v):
+    """
+        Return the internal neighborhood of node v involved in cluster as a Cluster.
+    """
+    c = Cluster()
+    v_presence_in_cluster = {t for (t, u) in cluster if u == v}
+    for t in v_presence_in_cluster:
+        if G.has_node(v, t):
+            for neighbor in G.neighbors(v, t):
+                if (t, neighbor) in cluster:
+                    c.add((t, neighbor))
+    return c
+
+def cluster_external_neighborhood(G, cluster, v):
+    """
+        Return the external neighborhood of node v involved in cluster as a Cluster.
+    """
+    c = Cluster()
+    v_presence_in_cluster = {t for (t, u) in cluster if u == v}
+    for t in v_presence_in_cluster:
+        if G.has_node(v, t):
+            for neighbor in G.neighbors(v, t):
+                if (t, neighbor) not in cluster:
+                    c.add((t, neighbor))
+    return c
+
+def cluster_internal_degree(G, cluster, v):
+    """
+        Return the internal degree of node v in cluster.
+    """
+    return len(cluster_internal_neighborhood(G, cluster, v))
+
+def cluster_external_degree(G, cluster, v):
+    """
+        Return the external degree of node v in cluster.
+    """
+    return len(cluster_external_neighborhood(G, cluster, v))
+
+def cluster_average_internal_degree(G, cluster):
+    """
+        Return the average internal degree of cluster.
+    """
+    nodes = {u for (t, u) in cluster}
+    if not cluster:
+        return 0.0
+    total_int_deg = sum(cluster_internal_degree(G, cluster, v) for v in nodes)
+    return total_int_deg / len(cluster)
+
+def cluster_average_external_degree(G, cluster):
+    """
+        Return the average external degree of cluster.
+    """
+    nodes = {u for (t, u) in cluster}
+    if not cluster:
+        return 0.0
+    total_ext_deg = sum(cluster_external_degree(G, cluster, v) for v in nodes)
+    return total_ext_deg / len(cluster)
+
+def intra_cluster_density(G, partition):
+    """
+        Intra-cluster density of a partition (list of Clusters).
+    """
+    total_internal_links = 0
+    total_possible_internal_links = 0
+    is_directed = G.is_directed()
+    
+    for C in partition:
+        t_nodes = defaultdict(set)
+        for t, u in C:
+            t_nodes[t].add(u)
+            
+        internal_links = 0
+        for t, nodes in t_nodes.items():
+            for u in nodes:
+                if G.has_node(u, t):
+                    for v in G.neighbors(u, t):
+                        if v in nodes:
+                            internal_links += 1
+        if not is_directed:
+            internal_links //= 2
+            
+        possible = 0
+        for t, nodes in t_nodes.items():
+            n = len(nodes)
+            possible += n * (n - 1)
+        if not is_directed:
+            possible //= 2
+            
+        total_internal_links += internal_links
+        total_possible_internal_links += possible
+        
+    if total_possible_internal_links == 0:
+        return 0.0
+    return total_internal_links / total_possible_internal_links
+
+def inter_cluster_density(G, partition):
+    """
+        Inter-cluster density of a partition (list of Clusters).
+    """
+    total_inter_links = 0
+    total_possible_inter_links = 0
+    is_directed = G.is_directed()
+    
+    cluster_t_nodes = []
+    for C in partition:
+        t_nodes = defaultdict(set)
+        for t, u in C:
+            t_nodes[t].add(u)
+        cluster_t_nodes.append(t_nodes)
+        
+    k = len(partition)
+    for i in range(k):
+        for j in range(k):
+            if i == j:
+                continue
+            C_i_t = cluster_t_nodes[i]
+            C_j_t = cluster_t_nodes[j]
+            
+            common_ts = set(C_i_t.keys()) & set(C_j_t.keys())
+            
+            links = 0
+            for t in common_ts:
+                nodes_i = C_i_t[t]
+                nodes_j = C_j_t[t]
+                for u in nodes_i:
+                    if G.has_node(u, t):
+                        for v in G.neighbors(u, t):
+                            if v in nodes_j:
+                                links += 1
+            
+            possible = 0
+            for t in common_ts:
+                possible += len(C_i_t[t]) * len(C_j_t[t])
+                
+            total_inter_links += links
+            total_possible_inter_links += possible
+            
+    if total_possible_inter_links == 0:
+        return 0.0
+    return total_inter_links / total_possible_inter_links
+
+def cluster_external_density(G, cluster):
+    """
+        External density of a cluster.
+    """
+    tids = G.temporal_snapshots_ids()
+    W = Cluster()
+    for t in tids:
+        for u in G.nodes(t=t):
+            W.add((t, u))
+    comp = Cluster(W - cluster)
+    return inter_cluster_density(G, [cluster, comp])
+
+def quotient_stream(G, partition):
+    """
+        Return the quotient stream graph of G induced by partition.
+    """
+    Q = G.__class__(edge_removal=G.edge_removal)
+    cluster_t_nodes = []
+    for C in partition:
+        t_nodes = defaultdict(set)
+        for t, u in C:
+            t_nodes[t].add(u)
+        cluster_t_nodes.append(t_nodes)
+        
+    k = len(partition)
+    for i in range(k):
+        for j in range(i + 1, k):
+            C_i_t = cluster_t_nodes[i]
+            C_j_t = cluster_t_nodes[j]
+            common_ts = set(C_i_t.keys()) & set(C_j_t.keys())
+            for t in common_ts:
+                has_link = False
+                for u in C_i_t[t]:
+                    if G.has_node(u, t):
+                        for v in G.neighbors(u, t):
+                            if v in C_j_t[t]:
+                                has_link = True
+                                break
+                    if has_link:
+                        break
+                if has_link:
+                    Q.add_interaction(i, j, t=t)
+    return Q
+
+def line_stream(G):
+    """
+        Return the line stream graph of G.
+    """
+    L = G.__class__(edge_removal=G.edge_removal)
+    tids = G.temporal_snapshots_ids()
+    for t in tids:
+        sg = G.to_networkx_graph(t=t)
+        edges = list(sg.edges())
+        for (u1, v1), (u2, v2) in combinations(edges, 2):
+            shared = {u1, v1} & {u2, v2}
+            if shared and len(shared) == 1:
+                node_a = tuple(sorted((u1, v1)))
+                node_b = tuple(sorted((u2, v2)))
+                L.add_interaction(node_a, node_b, t=t)
+    return L
+
+def stream_k_core(G, k=None):
+    """
+        Return the stream k-core or core numbers.
+    """
+    tids = G.temporal_snapshots_ids()
+    if k is not None:
+        c = Cluster()
+        for t in tids:
+            sg = G.to_networkx_graph(t=t)
+            core_nodes = nx.k_core(sg, k=k)
+            for u in core_nodes:
+                c.add((t, u))
+        return c
+    else:
+        core_numbers = {}
+        for t in tids:
+            sg = G.to_networkx_graph(t=t)
+            cores = nx.core_number(sg)
+            for u, val in cores.items():
+                core_numbers[(t, u)] = val
+        return core_numbers
+
+def stream_path_tree(G, root_node, root_time, path_type='foremost'):
+    """
+        Return foremost/shortest/fastest path trees.
+    """
+    from dynetx.algorithms.paths import time_respecting_paths, annotate_paths
+    plist = time_respecting_paths(G, root_node, start=root_time)
+    Tree = G.__class__(edge_removal=G.edge_removal)
+    for (u, v), paths in plist.items():
+        if u != root_node or u == v:
+            continue
+        annotated = annotate_paths(paths)
+        selected_path = None
+        if path_type == 'foremost':
+            if annotated.get('foremost'):
+                selected_path = annotated['foremost'][0]
+        elif path_type == 'shortest':
+            if annotated.get('shortest'):
+                selected_path = annotated['shortest'][0]
+        elif path_type == 'fastest':
+            if annotated.get('fastest'):
+                selected_path = annotated['fastest'][0]
+        if selected_path:
+            for hop in selected_path:
+                Tree.add_interaction(hop[0], hop[1], t=hop[2])
+    return Tree
+
+def stream_cascade(G, root_node, root_time):
+    """
+        Return the cascade of G starting from root.
+    """
+    return stream_path_tree(G, root_node, root_time, path_type='foremost')
