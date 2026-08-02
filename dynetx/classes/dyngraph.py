@@ -1460,9 +1460,79 @@ class DynGraph(nx.Graph):
                 numerator += self.degree([u], t)[u]
 
         for v in self.nodes():
-            denominator += len(self.node_presence(v) & presence_u)
+            if v != u:
+                denominator += len(self.node_presence(v) & presence_u)
 
         return 0 if denominator == 0 else numerator / denominator
+
+    def link_count(self):
+        """
+            Average number of active links over time.
+
+            Returns
+            -------
+            m : float
+                Average number of active links over time (m = |E|/|T|)
+        """
+        T = len(self.snapshots)
+        if T == 0:
+            return 0.0
+        E = sum(self.size(t) for t in self.snapshots)
+        return E / T
+
+    def node_duration(self):
+        """
+            Average duration of presence of a node.
+
+            Returns
+            -------
+            k : float
+                Average duration of presence of a node (k = |W|/|V|)
+        """
+        V = self.nodes()
+        if not V:
+            return 0.0
+        W = sum(len(self.node_presence(v)) for v in V)
+        return W / len(V)
+
+    def link_duration(self):
+        r"""
+            Average duration of presence of a link.
+
+            Returns
+            -------
+            l : float
+                Average duration of presence of a link (l = |E|/|V \otimes V|)
+        """
+        n = self.number_of_nodes()
+        if n <= 1:
+            return 0.0
+        E = sum(self.size(t) for t in self.snapshots)
+        if self.is_directed():
+            V_otimes_V = n * (n - 1)
+        else:
+            V_otimes_V = n * (n - 1) / 2.0
+        return E / V_otimes_V
+
+    def compactness(self):
+        """
+            Compactness of the stream graph.
+
+            Returns
+            -------
+            c : float
+                Compactness of the stream graph (c = |W| / (|T'| * |V'|))
+        """
+        V = self.nodes()
+        if not V or not self.snapshots:
+            return 0.0
+        tids = self.temporal_snapshots_ids()
+        if not tids:
+            return 0.0
+        T_prime = max(tids) - min(tids) + 1
+        V_prime = len(V)
+        W = sum(len(self.node_presence(v)) for v in V)
+        return W / (T_prime * V_prime)
 
     def pair_density(self, u, v):
         """

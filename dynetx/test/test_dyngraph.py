@@ -71,7 +71,7 @@ class DynGraphTestCase(unittest.TestCase):
         self.assertEqual(G.pair_density(0, 3), 0)
         G.add_interaction(0, 3, t=2)
         self.assertEqual(G.pair_density(0, 1), 2/3)
-        self.assertAlmostEqual(G.node_density(0), 0.5555555555555556)
+        self.assertAlmostEqual(G.node_density(0), 5/6)
         self.assertEqual(G.node_presence(0), set([0, 1, 2]))
 
     def test_self_loop(self):

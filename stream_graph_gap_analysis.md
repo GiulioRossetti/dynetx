@@ -9,21 +9,21 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 4: Size, Duration, Uniformity, and Compactness
 * **Number of links ($m$)**: 
   * *Paper*: $m = \frac{|E|}{|T|}$ (average number of active links over time).
-  * *DyNetx*: Not implemented. `size(t=None)` returns the size of the flattened graph.
+  * *DyNetx*: Implemented as `DynGraph.link_count()`.
 * **Node duration ($k$)**: 
   * *Paper*: $k = \frac{|W|}{|V|}$ (average duration of presence of a node).
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.node_duration()`.
 * **Link duration ($l$)**: 
   * *Paper*: $l = \frac{|E|}{|V \otimes V|}$ (average duration of presence of a link).
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.link_duration()`.
 * **Compactness ($c(S)$)**: 
   * *Paper*: $c(S) = \frac{|W|}{|T' \times V'|} = \text{cov}(S')$, where $T'$ is the active time interval and $V'$ is the set of nodes active at least once.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.compactness()`.
 
 ### Section 5: Density
 * **Node Density ($\delta(v)$)**: 
   * *Paper*: $\delta(v) = \frac{\sum_{u \neq v} |T_{vu}|}{\sum_{u \neq v} |T_v \cap T_u|}$.
-  * *DyNetx*: Implemented as `node_density(self, u)` in `dyngraph.py`. However, **it contains a bug**: the denominator includes $u = v$, dividing by an inflated overlap sum.
+  * *DyNetx*: Implemented as `node_density(self, u)` in `dyngraph.py`. The denominator bug where $u = v$ was included has been fixed.
 
 ### Section 6: Substreams and Clusters
 * **Cluster & Substream Representations**:
