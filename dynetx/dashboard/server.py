@@ -20,7 +20,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from dynetx.dashboard import TemporalDashboard, build_dashboard, generate_synthetic_graph
+from dynetx.dashboard import TemporalDashboard, build_dashboard
+from dynetx.generation import generate_synthetic_graph
 from dynetx.readwrite import json_graph
 
 DEFAULT_HOST = "127.0.0.1"
@@ -92,7 +93,7 @@ class DashboardServerState:
             self._default_selection()
             return self.summary()
 
-    def generate_graph(self, kind="stream", num_nodes=12, snapshots=3, edge_probability=0.2, seed=42, topologies=None, dynamic_nodes=False, node_churn=0.25, ba_m=None, ws_k=None, ws_beta=0.2, sbm_groups=None, sbm_p_in=None, sbm_p_out=None):
+    def generate_graph(self, kind="stream", num_nodes=12, snapshots=3, edge_probability=0.2, seed=42, topologies=None, dynamic_nodes=False, node_churn=0.25, ba_m=None, ws_k=None, ws_beta=0.2, sbm_groups=None, sbm_p_in=None, sbm_p_out=None, activity_m=2, activity_min=0.18, activity_max=0.65, activity_exponent=2.2, contact_duration=1, memory_alpha=1.0):
         with self.lock:
             self.dashboard.set_graph(
                 generate_synthetic_graph(
@@ -110,6 +111,12 @@ class DashboardServerState:
                     sbm_groups=sbm_groups,
                     sbm_p_in=sbm_p_in,
                     sbm_p_out=sbm_p_out,
+                    activity_m=activity_m,
+                    activity_min=activity_min,
+                    activity_max=activity_max,
+                    activity_exponent=activity_exponent,
+                    contact_duration=contact_duration,
+                    memory_alpha=memory_alpha,
                 )
             )
             self._default_selection()
@@ -182,8 +189,11 @@ class DashboardServerState:
         with self.lock:
             stats = self.dashboard.summary_statistics()
             tids = stats["snapshots"]
+            graph_kind = self.dashboard.graph.graph.get("generator_kind")
+            if graph_kind not in {"stream", "snapshot"}:
+                graph_kind = "snapshot" if len(tids) <= 1 else "stream"
             return {
-                "graph_kind": "snapshot" if len(tids) <= 1 else "stream",
+                "graph_kind": graph_kind,
                 "selected_snapshot": self.dashboard.selected_snapshot,
                 "selected_window": self.dashboard.selected_window,
                 "selection_mode": "window" if self.dashboard.selected_window is not None else ("snapshot" if self.dashboard.selected_snapshot is not None else "all"),
@@ -344,6 +354,12 @@ def _make_handler():
                             sbm_groups=int(payload.get("sbm_groups")) if payload.get("sbm_groups") not in {None, ""} else None,
                             sbm_p_in=float(payload.get("sbm_p_in")) if payload.get("sbm_p_in") not in {None, ""} else None,
                             sbm_p_out=float(payload.get("sbm_p_out")) if payload.get("sbm_p_out") not in {None, ""} else None,
+                            activity_m=int(payload.get("activity_m", 2)),
+                            activity_min=float(payload.get("activity_min", 0.18)),
+                            activity_max=float(payload.get("activity_max", 0.65)),
+                            activity_exponent=float(payload.get("activity_exponent", 2.2)),
+                            contact_duration=int(payload.get("contact_duration", 1)),
+                            memory_alpha=float(payload.get("memory_alpha", 1.0)),
                         ),
                     )
                 if parsed.path == "/api/select":
@@ -1357,6 +1373,13 @@ _DASHBOARD_HTML = """
                   <option value="watts_strogatz">Watts-Strogatz</option>
                   <option value="complete_graph">Complete</option>
                   <option value="stochastic_block_model">Stochastic block</option>
+                  <option value="activity_driven">Activity driven</option>
+                  <option value="activity_driven_memory">Activity + memory</option>
+                  <option value="event_shuffling">Event shuffling</option>
+                  <option value="timeline_shuffling">Timeline shuffling</option>
+                  <option value="link_shuffling">Link shuffling</option>
+                  <option value="inter_event_shuffling">Inter-event shuffling</option>
+                  <option value="degree_constrained_link_shuffling">Degree-constrained link shuffling</option>
                 </select>
               </label>
             </div>
@@ -1398,6 +1421,47 @@ _DASHBOARD_HTML = """
               </div>
               <div class="model-param" data-model="complete_graph">
                 <div class="model-hint">Complete graphs do not require extra parameters.</div>
+              </div>
+              <div class="model-param" data-model="activity_driven">
+                <div class="sidebar-grid two-col">
+                  <label>Activation links m
+                    <input id="activity-m" type="number" min="1" step="1" value="2">
+                  </label>
+                  <label>Contact duration
+                    <input id="contact-duration" type="number" min="1" step="1" value="1">
+                  </label>
+                  <label>Activity min
+                    <input id="activity-min" type="number" min="0.01" max="1" step="0.01" value="0.18">
+                  </label>
+                  <label>Activity max
+                    <input id="activity-max" type="number" min="0.01" max="1" step="0.01" value="0.65">
+                  </label>
+                  <label>Activity exponent
+                    <input id="activity-exponent" type="number" min="1" max="5" step="0.1" value="2.2">
+                  </label>
+                </div>
+              </div>
+              <div class="model-param" data-model="activity_driven_memory">
+                <div class="sidebar-grid two-col">
+                  <label>Activation links m
+                    <input id="activity-m-memory" type="number" min="1" step="1" value="2">
+                  </label>
+                  <label>Contact duration
+                    <input id="contact-duration-memory" type="number" min="1" step="1" value="1">
+                  </label>
+                  <label>Activity min
+                    <input id="activity-min-memory" type="number" min="0.01" max="1" step="0.01" value="0.18">
+                  </label>
+                  <label>Activity max
+                    <input id="activity-max-memory" type="number" min="0.01" max="1" step="0.01" value="0.65">
+                  </label>
+                  <label>Activity exponent
+                    <input id="activity-exponent-memory" type="number" min="1" max="5" step="0.1" value="2.2">
+                  </label>
+                  <label>Memory alpha
+                    <input id="memory-alpha" type="number" min="0" max="5" step="0.1" value="1">
+                  </label>
+                </div>
               </div>
               <div class="sidebar-grid two-col">
                 <label>Node mode
@@ -1648,6 +1712,23 @@ _DASHBOARD_HTML = """
       return select ? select.value : 'erdos_renyi';
     }
 
+    function isStreamOnlyModel(model) {
+      return model === 'activity_driven'
+        || model === 'activity_driven_memory'
+        || model === 'event_shuffling'
+        || model === 'timeline_shuffling'
+        || model === 'link_shuffling'
+        || model === 'inter_event_shuffling';
+    }
+
+    function isSnapshotOnlyModel(model) {
+      return model === 'degree_constrained_link_shuffling';
+    }
+
+    function activityFieldId(base, model) {
+      return model === 'activity_driven_memory' ? base + '-memory' : base;
+    }
+
     function updateGeneratorState() {
       const model = selectedNetworkModel();
       const hint = document.getElementById('model-hint');
@@ -1660,13 +1741,35 @@ _DASHBOARD_HTML = """
       if (advanced) {
         advanced.style.display = generatorSelectionMade ? 'flex' : 'none';
       }
+      if (graphKind) {
+        const streamOption = graphKind.querySelector('option[value="stream"]');
+        const snapshotOption = graphKind.querySelector('option[value="snapshot"]');
+        if (streamOption) {
+          streamOption.disabled = isSnapshotOnlyModel(model);
+        }
+        if (snapshotOption) {
+          snapshotOption.disabled = isStreamOnlyModel(model);
+        }
+        if (isStreamOnlyModel(model)) {
+          graphKind.value = 'stream';
+        } else if (isSnapshotOnlyModel(model)) {
+          graphKind.value = 'snapshot';
+        }
+      }
       if (hint) {
         const hints = {
           erdos_renyi: 'Random edges with probability p at each snapshot.',
           barabasi_albert: 'Preferential attachment with m links from each new node.',
           watts_strogatz: 'Small-world graph with local degree k and rewiring probability beta.',
           complete_graph: 'All nodes are connected at every snapshot.',
-          stochastic_block_model: 'Block structure with separate intra- and inter-community probabilities.'
+          stochastic_block_model: 'Block structure with separate intra- and inter-community probabilities.',
+          activity_driven: 'Activity-driven stream graph with heterogeneous activation rates.',
+          activity_driven_memory: 'Activity-driven stream graph with memory and social reinforcement.',
+          event_shuffling: 'Stream graph null model with randomized event times.',
+          timeline_shuffling: 'Stream graph null model that permutes full edge timelines.',
+          link_shuffling: 'Stream graph null model that rewires timelines across links.',
+          inter_event_shuffling: 'Stream graph null model that shuffles inter-event gaps on each link.',
+          degree_constrained_link_shuffling: 'Snapshot null model that randomizes each snapshot while preserving degrees.'
         };
         hint.textContent = hints[model] || hints.erdos_renyi;
       }
@@ -2752,6 +2855,16 @@ _DASHBOARD_HTML = """
           payload.sbm_groups = Number(document.getElementById('sbm-groups').value);
           payload.sbm_p_in = Number(document.getElementById('sbm-p-in').value);
           payload.sbm_p_out = Number(document.getElementById('sbm-p-out').value);
+        } else if (model === 'activity_driven' || model === 'activity_driven_memory') {
+          const suffix = model === 'activity_driven_memory' ? '-memory' : '';
+          payload.activity_m = Number(document.getElementById('activity-m' + suffix).value);
+          payload.contact_duration = Number(document.getElementById('contact-duration' + suffix).value);
+          payload.activity_min = Number(document.getElementById('activity-min' + suffix).value);
+          payload.activity_max = Number(document.getElementById('activity-max' + suffix).value);
+          payload.activity_exponent = Number(document.getElementById('activity-exponent' + suffix).value);
+          if (model === 'activity_driven_memory') {
+            payload.memory_alpha = Number(document.getElementById('memory-alpha').value);
+          }
         }
         await getJson('/api/generate_graph', {
           method: 'POST',

@@ -4,6 +4,7 @@ import math
 import dynetx as dn
 import dynetx.algorithms as al
 from dynetx import dashboard as db
+from dynetx import generation as dg
 from dynetx.dashboard.server import DashboardServerState
 
 
@@ -81,6 +82,84 @@ class DashboardTestCase(unittest.TestCase):
         self.assertTrue(graph.graph.get("dynamic_nodes"))
         self.assertGreater(graph.number_of_interactions(), 0)
         self.assertEqual(graph.temporal_snapshots_ids(), [0, 1, 2, 3])
+
+    def test_generate_activity_driven_stream_graph(self):
+        graph = db.generate_synthetic_graph(
+            kind="stream",
+            num_nodes=8,
+            snapshots=4,
+            seed=7,
+            topologies=["activity_driven"],
+            activity_m=2,
+            activity_min=0.25,
+            activity_max=0.7,
+            activity_exponent=2.0,
+            contact_duration=1,
+        )
+
+        self.assertEqual(graph.graph.get("generator"), "activity_driven")
+        self.assertEqual(graph.graph.get("topologies"), ["activity_driven"])
+        self.assertEqual(graph.temporal_snapshots_ids(), [0, 1, 2, 3])
+        self.assertTrue(any(op == "-" for _, _, op, _ in graph.stream_interactions()))
+
+    def test_generate_activity_driven_memory_stream_graph(self):
+        graph = db.generate_synthetic_graph(
+            kind="stream",
+            num_nodes=8,
+            snapshots=4,
+            seed=7,
+            topologies=["activity_driven_memory"],
+            activity_m=2,
+            activity_min=0.25,
+            activity_max=0.7,
+            activity_exponent=2.0,
+            contact_duration=1,
+            memory_alpha=1.5,
+        )
+
+        self.assertEqual(graph.graph.get("generator"), "activity_driven_memory")
+        self.assertEqual(graph.graph.get("topologies"), ["activity_driven_memory"])
+        self.assertEqual(graph.temporal_snapshots_ids(), [0, 1, 2, 3])
+        self.assertTrue(any(len(attrs["t"]) > 1 for _, _, attrs in graph.interactions_iter()))
+
+    def test_generate_reference_models(self):
+        event = dg.generate_event_shuffling_graph(num_nodes=8, snapshots=4, seed=11)
+        self.assertEqual(event.graph.get("generator"), "event_shuffling")
+        self.assertEqual(event.graph.get("generator_kind"), "stream")
+        self.assertGreater(event.number_of_interactions(), 0)
+
+        timeline = db.generate_synthetic_graph(
+            kind="stream",
+            num_nodes=8,
+            snapshots=4,
+            seed=11,
+            topologies=["timeline_shuffling"],
+        )
+        self.assertEqual(timeline.graph.get("generator"), "timeline_shuffling")
+        self.assertEqual(timeline.graph.get("topologies"), ["timeline_shuffling"])
+        self.assertEqual(timeline.graph.get("generator_kind"), "stream")
+
+        inter_event = dn.generate_inter_event_shuffling_graph(num_nodes=8, snapshots=4, seed=11)
+        self.assertEqual(inter_event.graph.get("generator"), "inter_event_shuffling")
+        self.assertTrue(any(len(attrs["t"]) > 1 for _, _, attrs in inter_event.interactions_iter()))
+
+        degree = db.generate_synthetic_graph(
+            kind="snapshot",
+            num_nodes=8,
+            snapshots=4,
+            seed=11,
+            topologies=["degree_constrained_link_shuffling"],
+        )
+        self.assertEqual(degree.graph.get("generator"), "degree_constrained_link_shuffling")
+        self.assertEqual(degree.graph.get("generator_kind"), "snapshot")
+        self.assertGreater(degree.number_of_interactions(), 0)
+
+    def test_generation_submodule_and_package_exports(self):
+        graph = dg.generate_activity_driven_graph(num_nodes=6, snapshots=3, seed=5)
+        self.assertEqual(graph.graph.get("generator"), "activity_driven")
+        self.assertEqual(dn.generate_activity_driven_graph(num_nodes=6, snapshots=3, seed=5).graph.get("generator"), "activity_driven")
+        memory = dn.generate_activity_driven_memory_graph(num_nodes=6, snapshots=3, seed=5)
+        self.assertEqual(memory.graph.get("generator"), "activity_driven_memory")
 
 
 class DashboardServerTestCase(unittest.TestCase):

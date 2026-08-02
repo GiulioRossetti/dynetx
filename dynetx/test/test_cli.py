@@ -45,13 +45,17 @@ class DashboardServerTestCase(unittest.TestCase):
             with request.urlopen(base_url + "/", timeout=10) as resp:
                 html = resp.read().decode("utf-8")
                 self.assertIn("network-svg", html)
-                self.assertIn("timeline-svg", html)
-                self.assertIn("stats-svg", html)
+                self.assertIn("timeline-interactions-svg", html)
+                self.assertIn("timeline-nodes-svg", html)
                 self.assertIn("theme-select", html)
                 self.assertIn("playback-label", html)
                 self.assertIn("generator-panel", html)
                 self.assertIn("node-mode", html)
                 self.assertIn("node-churn", html)
+                self.assertIn("activity_driven", html)
+                self.assertIn("activity_driven_memory", html)
+                self.assertIn("event_shuffling", html)
+                self.assertIn("degree_constrained_link_shuffling", html)
 
             state = self._request_json(base_url + "/api/state")
             self.assertEqual(state["total_nodes"], 0)
@@ -121,6 +125,20 @@ class DashboardServerTestCase(unittest.TestCase):
             current_graph = self._request_json(base_url + "/api/current_graph")
             self.assertTrue(current_graph["graph"].get("dynamic_nodes"))
             self.assertEqual(current_graph["graph"].get("topologies"), ["dynamic_er", "dynamic_ba", "dynamic_sbm"])
+
+            state = self._request_json(
+                base_url + "/api/generate_graph",
+                {
+                    "kind": "snapshot",
+                    "num_nodes": 5,
+                    "snapshots": 3,
+                    "edge_probability": 0.8,
+                    "seed": 2,
+                    "topologies": ["degree_constrained_link_shuffling"],
+                },
+            )
+            self.assertEqual(state["graph_kind"], "snapshot")
+            self.assertGreater(state["total_interactions"], 0)
         finally:
             server.shutdown()
             server.server_close()

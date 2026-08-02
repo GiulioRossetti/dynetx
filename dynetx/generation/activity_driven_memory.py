@@ -1,0 +1,112 @@
+"""Activity-driven synthetic temporal graph generator with memory."""
+
+from __future__ import annotations
+
+from collections import defaultdict
+
+from ._shared import copy_nodes, new_graph, sample_power_law, stream_contact_end
+
+__all__ = ["generate_activity_driven_memory_graph"]
+
+
+def generate_activity_driven_memory_graph(
+    num_nodes=12,
+    snapshots=3,
+    seed=42,
+    dynamic_nodes=False,
+    node_churn=0.25,
+    activity_m=2,
+    activity_min=0.18,
+    activity_max=0.65,
+    activity_exponent=2.2,
+    contact_duration=1,
+    memory_alpha=1.0,
+):
+    """Generate a stream graph with activity-driven contacts and reinforcement."""
+    import random
+
+    if num_nodes <= 1:
+        raise ValueError("num_nodes must be greater than 1")
+    if snapshots <= 0:
+        raise ValueError("snapshots must be a positive integer")
+    if not 0 <= node_churn <= 1:
+        raise ValueError("node_churn must be between 0 and 1")
+
+    rng = random.Random(seed)
+    graph = new_graph()
+    nodes = list(range(num_nodes))
+    copy_nodes(graph, nodes)
+
+    activity_min = max(1e-3, min(0.99, float(activity_min)))
+    activity_max = max(activity_min, min(0.99, float(activity_max)))
+    activity_m = max(1, int(activity_m))
+    contact_duration = max(1, int(round(contact_duration)))
+    memory_alpha = max(0.0, float(memory_alpha))
+    activity_rates = {
+        node: min(0.99, sample_power_law(rng, activity_min, activity_max, activity_exponent))
+        for node in nodes
+    }
+    partner_weights = {node: defaultdict(int) for node in nodes}
+    partner_history = {node: set() for node in nodes}
+
+    def _active_nodes():
+        if not dynamic_nodes:
+            return list(nodes)
+        active = [node for node in nodes if rng.random() >= node_churn]
+        if len(active) < 2:
+            active = rng.sample(nodes, k=min(2, len(nodes)))
+        return sorted(active)
+
+    def _choose_partner(source, available, chosen_pairs):
+        pool = [node for node in available if node != source and tuple(sorted((source, node))) not in chosen_pairs]
+        if not pool:
+            return None
+        past = [node for node in pool if node in partner_history[source]]
+        fresh = [node for node in pool if node not in partner_history[source]]
+        explore_probability = 1.0 if not partner_history[source] else min(0.95, max(0.05, (len(partner_history[source]) + 1) ** (-memory_alpha)))
+        if fresh and (not past or rng.random() < explore_probability):
+            return rng.choice(fresh)
+        if past:
+            weights = [partner_weights[source][node] + 1 for node in past]
+            return rng.choices(past, weights=weights, k=1)[0]
+        return rng.choice(pool)
+
+    max_snapshot = snapshots
+    for t in range(snapshots):
+        present = _active_nodes()
+        active = [node for node in present if rng.random() < activity_rates[node]]
+        if not active and present:
+            active = [rng.choice(present)]
+        seen_pairs = set()
+        for source in active:
+            available = [node for node in present if node != source]
+            if not available:
+                continue
+            for _ in range(min(activity_m, len(available))):
+                target = _choose_partner(source, available, seen_pairs)
+                if target is None:
+                    break
+                pair = tuple(sorted((source, target)))
+                if pair in seen_pairs:
+                    continue
+                seen_pairs.add(pair)
+                partner_history[source].add(target)
+                partner_history[target].add(source)
+                partner_weights[source][target] += 1
+                partner_weights[target][source] += 1
+                graph.add_interaction(pair[0], pair[1], t=t, e=stream_contact_end(t, contact_duration, max_snapshot))
+
+    graph.graph["generator"] = "activity_driven_memory"
+    graph.graph["activity_parameters"] = {
+        "m": activity_m,
+        "activity_min": activity_min,
+        "activity_max": activity_max,
+        "activity_exponent": activity_exponent,
+        "contact_duration": contact_duration,
+        "memory_alpha": memory_alpha,
+    }
+    graph.graph["dynamic_nodes"] = bool(dynamic_nodes)
+    graph.graph["topologies"] = ["activity_driven_memory"]
+    graph.graph["generator_kind"] = "stream"
+    return graph
+
