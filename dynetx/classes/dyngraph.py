@@ -1534,6 +1534,189 @@ class DynGraph(nx.Graph):
         W = sum(len(self.node_presence(v)) for v in V)
         return W / (T_prime * V_prime)
 
+    def induced_substream(self, cluster):
+        """
+            Return the induced substream of the graph by the given cluster.
+
+            Parameters
+            ----------
+            cluster : Cluster or iterable of (t, node) tuples
+                The cluster inducing the substream.
+
+            Returns
+            -------
+            subG : DynGraph
+                The induced substream graph.
+        """
+        C = set(cluster)
+        subG = self.__class__(edge_removal=self.edge_removal)
+        for t, u in C:
+            if self.has_node(u, t):
+                for v in self.neighbors(u, t):
+                    if (t, v) in C:
+                        subG.add_interaction(u, v, t=t)
+        for n in subG.nodes():
+            if n in self._node:
+                subG._node[n] = dict(self._node[n])
+        return subG
+
+    def temporal_neighborhood(self, u):
+        """
+            Return the temporal neighborhood of node u as a Cluster of (t, neighbor) pairs.
+
+            Parameters
+            ----------
+            u : node id
+
+            Returns
+            -------
+            neighborhood : Cluster
+                The temporal neighborhood of node u.
+        """
+        from dynetx.classes.cluster import Cluster
+        neighborhood = Cluster()
+        for t in self.snapshots:
+            if self.has_node(u, t):
+                for v in self.neighbors(u, t):
+                    neighborhood.add((t, v))
+        return neighborhood
+
+    def stream_degree(self, u):
+        """
+            Node degree d(u) = |N(u)|/|T|.
+
+            Parameters
+            ----------
+            u : node id
+
+            Returns
+            -------
+            deg : float
+                The node stream degree.
+        """
+        T = len(self.snapshots)
+        if T == 0:
+            return 0.0
+        return len(self.temporal_neighborhood(u)) / T
+
+    def average_stream_degree(self):
+        """
+            Average node degree d(V) = (1/n) * sum(d(v)).
+
+            Returns
+            -------
+            avg_deg : float
+                The average node degree over all nodes active at least once.
+        """
+        V = self.nodes()
+        if not V:
+            return 0.0
+        return sum(self.stream_degree(v) for v in V) / len(V)
+
+    def expected_stream_degree(self, u):
+        """
+            Expected degree of node u when present.
+
+            Parameters
+            ----------
+            u : node id
+
+            Returns
+            -------
+            exp_deg : float
+                The expected degree when present.
+        """
+        T_u = self.node_presence(u)
+        if not T_u:
+            return 0.0
+        total_degree = sum(self.degree([u], t)[u] for t in T_u)
+        return total_degree / len(T_u)
+
+    def degree_at_time(self, u, t):
+        """
+            Instantaneous degree of node u at time t.
+
+            Parameters
+            ----------
+            u : node id
+            t : timestamp
+
+            Returns
+            -------
+            deg : int
+                Instantaneous degree of node u at time t.
+        """
+        if not self.has_node(u, t):
+            return 0
+        return self.degree([u], t)[u]
+
+    def expected_degree_at_time(self, t):
+        """
+            Average degree of nodes active at time t.
+
+            Parameters
+            ----------
+            t : timestamp
+
+            Returns
+            -------
+            exp_deg : float
+                The average degree of active nodes at time t.
+        """
+        V_t = [v for v in self.nodes() if self.has_node(v, t)]
+        if not V_t:
+            return 0.0
+        total_deg = sum(self.degree([v], t)[v] for v in V_t)
+        return total_deg / len(V_t)
+
+    def global_stream_degree(self):
+        """
+            Global stream degree d(S).
+
+            Returns
+            -------
+            glob_deg : float
+                The global stream degree.
+        """
+        V = self.nodes()
+        T = len(self.snapshots)
+        if not V or T == 0:
+            return 0.0
+        E = sum(self.size(t) for t in self.snapshots)
+        denom = T * len(V)
+        factor = 1.0 if self.is_directed() else 2.0
+        return factor * E / denom
+
+    def average_expected_stream_degree(self):
+        """
+            Average expected degree of the stream graph (d_hat(S) = 2|E|/|W|).
+
+            Returns
+            -------
+            avg_exp_deg : float
+                The average expected degree of the stream graph.
+        """
+        V = self.nodes()
+        if not V:
+            return 0.0
+        W = sum(len(self.node_presence(v)) for v in V)
+        if W == 0:
+            return 0.0
+        E = sum(self.size(t) for t in self.snapshots)
+        factor = 1.0 if self.is_directed() else 2.0
+        return factor * E / W
+
+    def average_time_degree(self):
+        """
+            Average time degree d(T).
+
+            Returns
+            -------
+            avg_time_deg : float
+                The average time degree.
+        """
+        return self.average_expected_stream_degree()
+
     def pair_density(self, u, v):
         """
             Node pair density.

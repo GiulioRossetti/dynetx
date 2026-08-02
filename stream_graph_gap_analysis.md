@@ -28,7 +28,7 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 6: Substreams and Clusters
 * **Cluster & Substream Representations**:
   * *Paper*: A cluster $C \subseteq W$ is a set of (time, node) pairs. An induced substream $S(C) = (T, V, C, E(C))$ represents the interactions between elements of $C$.
-  * *DyNetx*: Lacks formal `Cluster` or `Substream` classes or data structures.
+  * *DyNetx*: Implemented as `Cluster` in `classes/cluster.py` and `DynGraph.induced_substream(cluster)`.
 
 ### Section 7: Cliques
 * **Stream Cliques**:
@@ -38,28 +38,28 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 8: Neighborhood and Degree
 * **Neighborhood ($N(v)$)**:
   * *Paper*: $N(v) = \{(t, u), (t, uv) \in E\}$ (a temporal cluster representing $v$'s active connections).
-  * *DyNetx*: Not implemented. `neighbors()` returns neighbors in the flattened graph or a single snapshot.
+  * *DyNetx*: Implemented as `DynGraph.temporal_neighborhood(node)`.
 * **Node Degree ($d(v)$)**:
   * *Paper*: $d(v) = \frac{|N(v)|}{|T|} = \sum_{u \neq v} m_{uv}$.
-  * *DyNetx*: Not implemented. `temporal_degree()` returns node active snapshot counts, not average neighborhood size over time.
+  * *DyNetx*: Implemented as `DynGraph.stream_degree(node)`.
 * **Average Node Degree ($d(V)$)**:
   * *Paper*: $d(V) = \frac{1}{n} \sum n_v d(v)$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.average_stream_degree()`.
 * **Expected Degree ($\bar{d}(v)$)**:
   * *Paper*: Average instantaneous degree of $v$ when present.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.expected_stream_degree(node)`.
 * **Expected Degree at time $t$ ($\hat{d}(t)$)**:
   * *Paper*: Average degree of nodes active at time $t$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.expected_degree_at_time(t)`.
 * **Average Time Degree ($d(T)$)**:
   * *Paper*: Time-weighted average of degrees.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.average_time_degree()`.
 * **Global Stream Degree ($d(S)$)**:
   * *Paper*: $d(S) = \frac{2|E|}{|T \times V|}$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.global_stream_degree()`.
 * **Average Expected Degree ($\hat{d}(S)$)**:
   * *Paper*: $\hat{d}(S) = \frac{2|E|}{|W|}$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.average_expected_stream_degree()`.
 
 ### Section 9: Clustering Coefficient and Transitivity Ratio
 * **Clustering Coefficient ($cc(v)$)**:
