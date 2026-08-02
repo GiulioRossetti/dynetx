@@ -1718,6 +1718,7 @@ class DynDiGraph(nx.DiGraph):
         return dist
 
     def remove_edge(self, u, v):
+        """Remove directed edge ``(u, v)`` from the graph."""
         if u not in self._succ or v not in self._succ[u]:
             return
         datadict = self._succ[u][v]
@@ -1737,10 +1738,12 @@ class DynDiGraph(nx.DiGraph):
         del self._pred[v][u]
 
     def remove_edges_from(self, ebunch):
+        """Remove every directed edge in ``ebunch``."""
         for e in ebunch:
             self.remove_edge(e[0], e[1])
 
     def remove_node(self, u):
+        """Remove node ``u`` and all incoming and outgoing interactions."""
         if u not in self._node:
             return
         for v in list(self._succ.get(u, {}).keys()):
@@ -1755,10 +1758,12 @@ class DynDiGraph(nx.DiGraph):
             del self._node[u]
 
     def remove_nodes_from(self, nbunch):
+        """Remove every node in ``nbunch``."""
         for n in list(nbunch):
             self.remove_node(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
+        """Add a directed interaction using the NetworkX edge API."""
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -1770,6 +1775,7 @@ class DynDiGraph(nx.DiGraph):
         self.add_interaction(u, v, t=t, e=e, **attrs)
 
     def add_edges_from(self, ebunch, attr_dict=None, **attr):
+        """Add multiple directed interactions using the NetworkX edge API."""
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -1785,6 +1791,7 @@ class DynDiGraph(nx.DiGraph):
                 raise nx.NetworkXError("Each interaction must be a 2-tuple or 3-tuple with attribute dict.")
 
     def edges_iter(self, nbunch=None, data=False, default=None):
+        """Iterate over directed interactions."""
         for u, v, d in self.interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -1792,6 +1799,7 @@ class DynDiGraph(nx.DiGraph):
                 yield u, v
 
     def in_edges_iter(self, nbunch=None, data=False, default=None):
+        """Iterate over incoming interactions."""
         for u, v, d in self.in_interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -1799,6 +1807,7 @@ class DynDiGraph(nx.DiGraph):
                 yield u, v
 
     def out_edges_iter(self, nbunch=None, data=False, default=None):
+        """Iterate over outgoing interactions."""
         for u, v, d in self.out_interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -1806,9 +1815,11 @@ class DynDiGraph(nx.DiGraph):
                 yield u, v
 
     def in_edges(self, nbunch=None, data=False):
+        """Return incoming interactions as a list."""
         return list(self.in_edges_iter(nbunch=nbunch, data=data))
 
     def out_edges(self, nbunch=None, data=False):
+        """Return outgoing interactions as a list."""
         return list(self.out_edges_iter(nbunch=nbunch, data=data))
 
     def node_presence(self, u):
@@ -1828,6 +1839,7 @@ class DynDiGraph(nx.DiGraph):
         return set(pres)
 
     def temporal_degree(self, nbunch=None, t=None):
+        """Return the temporal support of one or more nodes."""
         if t is not None:
             return self.degree(nbunch, t=t)
         if nbunch is None:
@@ -1839,10 +1851,12 @@ class DynDiGraph(nx.DiGraph):
         return {n: len(self.node_presence(n)) for n in nodes}
 
     def avg_temporal_degree(self):
+        """Return the average temporal support across all nodes."""
         vals = list(self.temporal_degree().values())
         return 0.0 if len(vals) == 0 else sum(vals) / len(vals)
 
     def has_node_in_range(self, n, t_from, t_to=None, mode='any'):
+        """Check whether node ``n`` is present in a time interval."""
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -1850,6 +1864,7 @@ class DynDiGraph(nx.DiGraph):
         return any(checks) if mode != 'all' else all(checks)
 
     def has_interaction_in_range(self, u, v, t_from, t_to=None, mode='any'):
+        """Check whether interaction ``(u, v)`` is present in a time interval."""
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -1857,6 +1872,7 @@ class DynDiGraph(nx.DiGraph):
         return any(checks) if mode != 'all' else all(checks)
 
     def neighbors_in_range(self, n, t_from, t_to=None, mode='any'):
+        """Return the neighbors of ``n`` observed in a time interval."""
         if t_to is None:
             t_to = t_from
         nbrs = set()
@@ -1867,6 +1883,7 @@ class DynDiGraph(nx.DiGraph):
         return list(nbrs)
 
     def interactions_in_range(self, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
+        """Return interactions observed in a time interval."""
         if t_from is None:
             t_from = min(self.temporal_snapshots_ids() or [0])
         if t_to is None:
@@ -1886,6 +1903,7 @@ class DynDiGraph(nx.DiGraph):
         return res
 
     def window_slices(self, window, step=1, include_partial=False):
+        """Yield subgraphs extracted with a sliding temporal window."""
         tids = self.temporal_snapshots_ids()
         if len(tids) == 0:
             return
@@ -1900,6 +1918,7 @@ class DynDiGraph(nx.DiGraph):
             cur += step
 
     def to_networkx_graph(self, t=None):
+        """Return a NetworkX graph for a snapshot or for the aggregate graph."""
         if self.is_directed():
             nxg = nx.DiGraph()
         else:

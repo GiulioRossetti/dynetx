@@ -43,6 +43,11 @@ def node_link_data(G, attrs=_attrs):
     attribute keys will be converted to strings in order to comply with
     JSON.
 
+    References
+    ----------
+    No external publication is required for this adapter; it follows the
+    standard node-link JSON convention used by NetworkX-compatible tools.
+
     See Also
     --------
     node_link_graph
@@ -102,6 +107,11 @@ def node_link_graph(data, directed=False, attrs=_attrs):
     See Also
     --------
     node_link_data
+
+    References
+    ----------
+    No external publication is required for this adapter; it follows the
+    standard node-link JSON convention used by NetworkX-compatible tools.
     """
 
     directed = data.get('directed', directed)

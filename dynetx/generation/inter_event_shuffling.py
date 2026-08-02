@@ -1,4 +1,9 @@
-"""Inter-event shuffling temporal reference model."""
+"""Inter-event shuffling temporal reference model.
+
+This generator implements the inter-event shuffling null model from Gauvin
+et al. (2022), preserving edge lifetimes while reshuffling the gaps between
+their events.
+"""
 
 from __future__ import annotations
 
@@ -21,7 +26,18 @@ def generate_inter_event_shuffling_graph(
     activity_max=0.65,
     activity_exponent=2.2,
 ):
-    """Generate a stream graph by shuffling inter-event gaps on each link."""
+    """Generate a stream graph by shuffling inter-event gaps on each link.
+
+    Returns
+    -------
+    DynGraph
+        Stream graph with preserved edge durations and shuffled gaps.
+
+    References
+    ----------
+    Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
+    models for temporal networks. *SIAM Review*, 64(4), 763-830.
+    """
     rng = random.Random(seed)
     base = base_stream_graph(
         num_nodes=num_nodes,
@@ -62,4 +78,3 @@ def generate_inter_event_shuffling_graph(
     graph.graph["reference_parameters"] = dict(base.graph.get("reference_parameters", {}))
     graph.graph["topologies"] = ["inter_event_shuffling"]
     return graph
-

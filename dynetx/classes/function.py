@@ -316,7 +316,18 @@ def degree_histogram(G, t=None):
 
 
 def is_directed(G):
-    """ Return True if graph is directed."""
+    """Return ``True`` if ``G`` is directed.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Dynamic graph to inspect.
+
+    Returns
+    -------
+    bool
+        ``True`` when the graph stores directed interactions.
+    """
     return G.is_directed()
 
 
@@ -604,6 +615,20 @@ def set_edge_attributes(G, values, name=None):
 
 
 def get_edge_attributes(G, name):
+    """Return edge attributes from a dynamic graph.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Dynamic graph to inspect.
+    name : str or None
+        Attribute name to extract. If ``None``, return the full edge payload.
+
+    Returns
+    -------
+    dict
+        Mapping from edge tuples to attribute values or dictionaries.
+    """
     attrs = {}
     if name is None:
         for u, v, d in G.interactions_iter():
@@ -794,34 +819,71 @@ def stream_interactions(G):
 
 
 def temporal_degree(G, nbunch=None, t=None):
+    """Return the temporal support of one or more nodes.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Dynamic graph to inspect.
+    nbunch : node or iterable, optional
+        Node or node collection to query.
+    t : snapshot id, optional
+        If provided, return the snapshot degree instead of the support count.
+
+    Returns
+    -------
+    dict or int
+        Mapping from nodes to support counts, or a single degree value when
+        ``nbunch`` identifies one node and ``t`` is supplied.
+    """
     return G.temporal_degree(nbunch=nbunch, t=t)
 
 
 def avg_temporal_degree(G):
+    """Return the average temporal support across all nodes."""
     return G.avg_temporal_degree()
 
 
 def has_node_in_range(G, n, t_from, t_to=None, mode='any'):
+    """Check whether node ``n`` appears within a time interval."""
     return G.has_node_in_range(n, t_from, t_to=t_to, mode=mode)
 
 
 def has_interaction_in_range(G, u, v, t_from, t_to=None, mode='any'):
+    """Check whether interaction ``(u, v)`` appears within a time interval."""
     return G.has_interaction_in_range(u, v, t_from, t_to=t_to, mode=mode)
 
 
 def neighbors_in_range(G, n, t_from, t_to=None, mode='any'):
+    """Return the neighbors of ``n`` observed over a time interval."""
     return G.neighbors_in_range(n, t_from, t_to=t_to, mode=mode)
 
 
 def interactions_in_range(G, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
+    """Return interactions observed within a time interval."""
     return G.interactions_in_range(nbunch=nbunch, t_from=t_from, t_to=t_to, mode=mode, min_count=min_count)
 
 
 def window_slices(G, window, step=1, include_partial=False):
+    """Iterate over sliding temporal subgraphs."""
     return G.window_slices(window, step=step, include_partial=include_partial)
 
 
 def to_networkx_graph(G, t=None):
+    """Convert ``G`` to a static NetworkX graph.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Dynamic graph to export.
+    t : snapshot id, optional
+        If provided, export only the selected snapshot.
+
+    Returns
+    -------
+    networkx.Graph
+        Static graph representation of the dynamic graph.
+    """
     return G.to_networkx_graph(t=t)
 
 

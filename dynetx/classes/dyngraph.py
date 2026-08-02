@@ -2383,6 +2383,13 @@ class DynGraph(nx.Graph):
         return {n: len(self.node_presence(n)) for n in nodes}
 
     def avg_temporal_degree(self):
+        """Return the average temporal support across all nodes.
+
+        Returns
+        -------
+        float
+            Mean number of snapshots in which a node is active.
+        """
         vals = list(self.temporal_degree().values())
         return 0.0 if len(vals) == 0 else sum(vals) / len(vals)
 
@@ -2410,13 +2417,16 @@ class DynGraph(nx.Graph):
             del self._adj[v][u]
 
     def remove_edge(self, u, v):
+        """Remove edge ``(u, v)`` from the graph."""
         self._remove_edge_instance(u, v)
 
     def remove_edges_from(self, ebunch):
+        """Remove every edge in ``ebunch``."""
         for e in ebunch:
             self.remove_edge(e[0], e[1])
 
     def remove_node(self, u):
+        """Remove node ``u`` and all of its incident interactions."""
         if u not in self._node:
             return
         for v in list(self._adj.get(u, {}).keys()):
@@ -2427,10 +2437,12 @@ class DynGraph(nx.Graph):
             del self._node[u]
 
     def remove_nodes_from(self, nbunch):
+        """Remove every node in ``nbunch``."""
         for n in list(nbunch):
             self.remove_node(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
+        """Add an interaction using the NetworkX edge API."""
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -2442,6 +2454,7 @@ class DynGraph(nx.Graph):
         self.add_interaction(u, v, t=t, e=e, **attrs)
 
     def add_edges_from(self, ebunch, attr_dict=None, **attr):
+        """Add multiple interactions using the NetworkX edge API."""
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -2457,6 +2470,7 @@ class DynGraph(nx.Graph):
                 raise nx.NetworkXError("Each edge must be a 2-tuple or 3-tuple with attribute dict.")
 
     def edges_iter(self, nbunch=None, data=False, default=None):
+        """Iterate over the interactions of the graph."""
         for u, v, d in self.interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -2464,9 +2478,11 @@ class DynGraph(nx.Graph):
                 yield u, v
 
     def edges(self, nbunch=None, data=False, default=None):
+        """Return the interactions of the graph as a list."""
         return list(self.edges_iter(nbunch=nbunch, data=data, default=default))
 
     def has_node_in_range(self, n, t_from, t_to=None, mode='any'):
+        """Check whether node ``n`` is present in a time interval."""
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -2474,6 +2490,7 @@ class DynGraph(nx.Graph):
         return any(checks) if mode != 'all' else all(checks)
 
     def has_interaction_in_range(self, u, v, t_from, t_to=None, mode='any'):
+        """Check whether interaction ``(u, v)`` is present in a time interval."""
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -2481,6 +2498,7 @@ class DynGraph(nx.Graph):
         return any(checks) if mode != 'all' else all(checks)
 
     def neighbors_in_range(self, n, t_from, t_to=None, mode='any'):
+        """Return the neighbors of ``n`` observed in a time interval."""
         if t_to is None:
             t_to = t_from
         nbrs = set()
@@ -2491,6 +2509,7 @@ class DynGraph(nx.Graph):
         return list(nbrs)
 
     def interactions_in_range(self, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
+        """Return interactions observed in a time interval."""
         if t_from is None:
             t_from = min(self.temporal_snapshots_ids() or [0])
         if t_to is None:
@@ -2510,6 +2529,7 @@ class DynGraph(nx.Graph):
         return res
 
     def window_slices(self, window, step=1, include_partial=False):
+        """Yield subgraphs extracted with a sliding temporal window."""
         tids = self.temporal_snapshots_ids()
         if len(tids) == 0:
             return
@@ -2524,7 +2544,18 @@ class DynGraph(nx.Graph):
             cur += step
 
     def to_networkx_graph(self, t=None):
-        """Return a NetworkX graph for a snapshot or the aggregate dynamic graph."""
+        """Return a NetworkX graph for a snapshot or for the aggregate graph.
+
+        Parameters
+        ----------
+        t : snapshot id, optional
+            If provided, export only the selected snapshot.
+
+        Returns
+        -------
+        networkx.Graph
+            Static representation of the dynamic graph.
+        """
         if self.is_directed():
             nxg = nx.DiGraph()
         else:

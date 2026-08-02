@@ -32,6 +32,18 @@ REFERENCE_SNAPSHOT_MODELS = {
 
 
 def normalize_reference_model_name(name):
+    """Resolve user-facing aliases to a canonical reference-model name.
+
+    Parameters
+    ----------
+    name : object
+        Model name or alias supplied by the caller.
+
+    Returns
+    -------
+    str
+        Canonical generator identifier used by the registry.
+    """
     normalized = normalize_name(name)
     aliases = {
         "event": "event_shuffling",
@@ -51,4 +63,3 @@ def normalize_reference_model_name(name):
         "degree_constrained_link_shuffling_graph": "degree_constrained_link_shuffling",
     }
     return aliases.get(normalized, normalized)
-

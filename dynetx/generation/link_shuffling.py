@@ -1,4 +1,9 @@
-"""Link shuffling temporal reference model."""
+"""Link shuffling temporal reference model.
+
+This generator implements the link-shuffling null model from Gauvin et al.
+(2022), preserving edge timelines while rewiring them to different node
+pairs.
+"""
 
 from __future__ import annotations
 
@@ -21,7 +26,18 @@ def generate_link_shuffling_graph(
     activity_max=0.65,
     activity_exponent=2.2,
 ):
-    """Generate a stream graph by rewiring timelines to fresh links."""
+    """Generate a stream graph by rewiring timelines to fresh links.
+
+    Returns
+    -------
+    DynGraph
+        Stream graph with preserved edge timelines but shuffled endpoints.
+
+    References
+    ----------
+    Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
+    models for temporal networks. *SIAM Review*, 64(4), 763-830.
+    """
     rng = random.Random(seed)
     base = base_stream_graph(
         num_nodes=num_nodes,
@@ -54,4 +70,3 @@ def generate_link_shuffling_graph(
     graph.graph["reference_parameters"] = dict(base.graph.get("reference_parameters", {}))
     graph.graph["topologies"] = ["link_shuffling"]
     return graph
-

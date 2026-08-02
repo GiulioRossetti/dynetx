@@ -20,6 +20,7 @@ __all__ = [
 
 
 def _require_matplotlib():
+    """Import Matplotlib lazily and raise a clear error if unavailable."""
     try:
         import matplotlib.pyplot as plt  # noqa: F401
         return plt
@@ -28,10 +29,12 @@ def _require_matplotlib():
 
 
 def _snapshot_graph(G, t=None):
+    """Return the NetworkX graph for a snapshot or for the full time span."""
     return G.to_networkx_graph(t=t)
 
 
 def _shared_layout(G, layout="spring", seed=42):
+    """Compute a layout once and reuse it across snapshot comparisons."""
     nxg = G.to_networkx_graph() if hasattr(G, "to_networkx_graph") else G
     if layout == "circular":
         return nx.circular_layout(nxg)
@@ -55,6 +58,16 @@ def draw_snapshot(G, t=None, ax=None, layout="spring", pos=None, with_labels=Tru
         Layout used when ``pos`` is not provided.
     pos : dict, optional
         Precomputed node positions to reuse across multiple plots.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes used for rendering.
+
+    References
+    ----------
+    No publication is associated with this rendering helper; it is a
+    convenience function for the DyNetx documentation and dashboard.
     """
     plt = _require_matplotlib()
     if ax is None:
@@ -79,7 +92,23 @@ def draw_snapshot(G, t=None, ax=None, layout="spring", pos=None, with_labels=Tru
 def plot_temporal_summary(G, ax=None, kind="interactions", title=None, color="tab:blue", **kwargs):
     """Plot a simple temporal summary series.
 
-    kind can be ``interactions``, ``nodes``, or ``both``.
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Temporal graph to summarize.
+    ax : matplotlib.axes.Axes, optional
+        Existing axes to draw on.
+    kind : {"interactions", "nodes", "both"}, optional
+        Series to render.
+    title : str, optional
+        Plot title.
+    color : str, optional
+        Matplotlib color for the primary series.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes used for rendering.
     """
     plt = _require_matplotlib()
     if ax is None:
@@ -115,7 +144,27 @@ def plot_temporal_summary(G, ax=None, kind="interactions", title=None, color="ta
 
 
 def plot_activity_heatmap(G, ax=None, title=None, cmap="Blues", sort_nodes=True, **kwargs):
-    """Plot a node-by-time activity heatmap."""
+    """Plot a node-by-time activity heatmap.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Temporal graph to summarize.
+    ax : matplotlib.axes.Axes, optional
+        Existing axes to draw on.
+    title : str, optional
+        Plot title.
+    cmap : str, optional
+        Matplotlib colormap name.
+    sort_nodes : bool, optional
+        If ``True``, order nodes deterministically by their string
+        representation.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes used for rendering.
+    """
     plt = _require_matplotlib()
     if ax is None:
         _, ax = plt.subplots(figsize=kwargs.pop("figsize", (9, 5)))
@@ -148,7 +197,13 @@ def plot_activity_heatmap(G, ax=None, title=None, cmap="Blues", sort_nodes=True,
 
 
 def compare_snapshots(G, t1, t2, layout="spring", title=None, **kwargs):
-    """Draw two snapshots side by side using a shared layout."""
+    """Draw two snapshots side by side using a shared layout.
+
+    Returns
+    -------
+    tuple
+        Matplotlib figure and axes array.
+    """
     plt = _require_matplotlib()
     fig, axes = plt.subplots(1, 2, figsize=kwargs.pop("figsize", (12, 5)))
     shared = _shared_layout(G, layout=layout)

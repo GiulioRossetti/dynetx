@@ -4,31 +4,44 @@ from dynetx.classes.dyngraph import DynGraph
 
 class BipartiteDynGraph(DynGraph):
     """
-    Represent bipartite stream graphs, consisting of two disjoint sets of nodes: top and bottom.
+    Represent bipartite stream graphs with top and bottom node partitions.
+
+    The class extends :class:`dynetx.classes.dyngraph.DynGraph` with simple
+    partition management helpers and bipartite-specific summary methods.
     """
     def __init__(self, top_nodes=None, bottom_nodes=None, **kwargs):
+        """Create a bipartite dynamic graph.
+
+        Parameters
+        ----------
+        top_nodes : iterable, optional
+            Initial nodes assigned to the top partition.
+        bottom_nodes : iterable, optional
+            Initial nodes assigned to the bottom partition.
+        **kwargs
+            Additional keyword arguments forwarded to ``DynGraph``.
+
+        Returns
+        -------
+        BipartiteDynGraph
+            Empty bipartite dynamic graph with the requested partitions.
+        """
         super().__init__(**kwargs)
         self.top = set(top_nodes) if top_nodes is not None else set()
         self.bottom = set(bottom_nodes) if bottom_nodes is not None else set()
 
     def add_node_to_top(self, node):
-        """
-        Add a node to the top set.
-        """
+        """Add a node to the top partition."""
         self.top.add(node)
         self.bottom.discard(node)
 
     def add_node_to_bottom(self, node):
-        """
-        Add a node to the bottom set.
-        """
+        """Add a node to the bottom partition."""
         self.bottom.add(node)
         self.top.discard(node)
 
     def is_bipartite(self):
-        """
-        Check if the graph is bipartite.
-        """
+        """Return ``True`` when every active interaction crosses partitions."""
         tids = self.temporal_snapshots_ids()
         for t in tids:
             for u, v, _ in self.interactions(t=t):
@@ -41,9 +54,7 @@ class BipartiteDynGraph(DynGraph):
         return True
 
     def bipartite_density(self):
-        """
-        Return the bipartite density of the bipartite stream graph.
-        """
+        """Return the temporal bipartite density of the graph."""
         tids = self.temporal_snapshots_ids()
         if not tids:
             return 0.0
@@ -61,8 +72,18 @@ class BipartiteDynGraph(DynGraph):
         return total_edges / total_possible
 
     def bipartite_projection(self, target='top'):
-        """
-        Return the projection of the bipartite stream graph onto the target set.
+        """Return the temporal projection of the graph onto one partition.
+
+        Parameters
+        ----------
+        target : {"top", "bottom"}, optional
+            Partition to project onto.
+
+        Returns
+        -------
+        DynGraph
+            Projection graph with temporal interactions induced by shared
+            neighbors.
         """
         proj = DynGraph(edge_removal=self.edge_removal)
         nodes = self.top if target == 'top' else self.bottom
@@ -83,9 +104,7 @@ class BipartiteDynGraph(DynGraph):
         return proj
 
     def bipartite_redundancy(self, v):
-        """
-        Return the average bipartite redundancy of node v.
-        """
+        """Return the average bipartite redundancy of node ``v``."""
         tids = self.temporal_snapshots_ids()
         total_red = 0.0
         count = 0

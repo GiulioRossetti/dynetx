@@ -1,4 +1,9 @@
-"""Event shuffling temporal reference model."""
+"""Event shuffling temporal reference model.
+
+This generator implements the event-shuffling null model discussed by
+Gauvin et al. (2022), preserving link identities while randomizing the event
+times assigned to them.
+"""
 
 from __future__ import annotations
 
@@ -21,7 +26,42 @@ def generate_event_shuffling_graph(
     activity_max=0.65,
     activity_exponent=2.2,
 ):
-    """Generate a stream graph by randomly shuffling event timestamps."""
+    """Generate a stream graph by randomly shuffling event timestamps.
+
+    Parameters
+    ----------
+    num_nodes : int, optional
+        Number of nodes in the generated graph.
+    snapshots : int, optional
+        Number of temporal snapshots.
+    seed : int, optional
+        Random seed used for reproducibility.
+    edge_probability : float, optional
+        Density parameter used when building the reference stream.
+    dynamic_nodes : bool, optional
+        If ``True``, apply node churn across snapshots.
+    node_churn : float, optional
+        Probability that a node is absent from a snapshot when churn is
+        enabled.
+    contact_duration : int, optional
+        Duration assigned to each interaction.
+    activity_min : float, optional
+        Lower bound of the activity-rate distribution.
+    activity_max : float, optional
+        Upper bound of the activity-rate distribution.
+    activity_exponent : float, optional
+        Exponent of the bounded power-law activity distribution.
+
+    Returns
+    -------
+    DynGraph
+        Stream graph with shuffled event times.
+
+    References
+    ----------
+    Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
+    models for temporal networks. *SIAM Review*, 64(4), 763-830.
+    """
     rng = random.Random(seed)
     base = base_stream_graph(
         num_nodes=num_nodes,
@@ -58,4 +98,3 @@ def generate_event_shuffling_graph(
     graph.graph["reference_parameters"] = dict(base.graph.get("reference_parameters", {}))
     graph.graph["topologies"] = ["event_shuffling"]
     return graph
-

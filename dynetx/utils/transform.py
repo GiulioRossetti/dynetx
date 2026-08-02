@@ -7,17 +7,27 @@ __all__ = [
 ]
 
 
-# @todo: define remapping snapshot methods
 def compact_timeslot(sind_list):
-    """
-    Test method. Compact all snapshots into a single one.
+    """Remap sparse snapshot identifiers to a compact zero-based index.
 
-    :param sind_list:
-    :return:
+    Parameters
+    ----------
+    sind_list : iterable
+        Iterable of snapshot identifiers.
+
+    Returns
+    -------
+    dict
+        Mapping from the original snapshot identifiers to contiguous indices.
+
+    Example
+    -------
+    >>> from dynetx.utils.transform import compact_timeslot
+    >>> compact_timeslot([10, 20, 30])
+    {10: 0, 20: 1, 30: 2}
     """
     tls = sorted(sind_list)
     conversion = {val: idx for idx, val in enumerate(tls)}
     return conversion
-
 
 

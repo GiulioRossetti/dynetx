@@ -8,7 +8,30 @@ __all__ = ["write_graphml", "read_graphml"]
 
 
 def write_graphml(G, path, t=None):
-    """Write a snapshot or aggregate graph to GraphML."""
+    """Write a snapshot or aggregate graph to GraphML.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Graph to export.
+    path : str or file-like
+        Destination path.
+    t : snapshot id, optional
+        If provided, export the selected snapshot instead of the aggregate
+        graph.
+
+    Returns
+    -------
+    None
+
+    Example
+    -------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.graphml import write_graphml
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(1, 2, t=0)
+    >>> write_graphml(G, "graph.graphml", t=0)
+    """
     nxg = G.to_networkx_graph(t=t)
     nx.write_graphml(nxg, path)
 

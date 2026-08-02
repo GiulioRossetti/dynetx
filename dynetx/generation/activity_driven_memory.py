@@ -1,4 +1,8 @@
-"""Activity-driven synthetic temporal graph generator with memory."""
+"""Activity-driven synthetic temporal graph generator with memory.
+
+This model extends the activity-driven process with social reinforcement, in
+line with the memory-enhanced formulation described by Karsai et al. (2014).
+"""
 
 from __future__ import annotations
 
@@ -22,7 +26,56 @@ def generate_activity_driven_memory_graph(
     contact_duration=1,
     memory_alpha=1.0,
 ):
-    """Generate a stream graph with activity-driven contacts and reinforcement."""
+    """Generate a stream graph with activity-driven contacts and reinforcement.
+
+    Parameters
+    ----------
+    num_nodes : int, optional
+        Number of nodes in the generated graph.
+    snapshots : int, optional
+        Number of temporal snapshots.
+    seed : int, optional
+        Random seed used for reproducibility.
+    dynamic_nodes : bool, optional
+        If ``True``, apply node churn across snapshots.
+    node_churn : float, optional
+        Probability that a node is absent from a snapshot when churn is
+        enabled.
+    activity_m : int, optional
+        Number of partners contacted by each active node.
+    activity_min : float, optional
+        Lower bound of the activity-rate distribution.
+    activity_max : float, optional
+        Upper bound of the activity-rate distribution.
+    activity_exponent : float, optional
+        Exponent of the bounded power-law activity distribution.
+    contact_duration : int, optional
+        Duration assigned to each interaction.
+    memory_alpha : float, optional
+        Reinforcement strength controlling the balance between exploration and
+        repeated contacts.
+
+    Returns
+    -------
+    DynGraph
+        Stream graph whose edge attributes encode contact spans.
+
+    References
+    ----------
+    Perra, N., Gonçalves, B., Pastor-Satorras, R., & Vespignani, A. (2012).
+    Activity driven modeling of time varying networks. *Scientific Reports*,
+    2, 469.
+
+    Karsai, M., Perra, N., & Vespignani, A. (2014). Time varying networks and
+    the weakness of strong ties. *Scientific Reports*, 4, 4001.
+
+    Example
+    -------
+    >>> from dynetx.generation.activity_driven_memory import generate_activity_driven_memory_graph
+    >>> G = generate_activity_driven_memory_graph(num_nodes=5, snapshots=3, seed=7)
+    >>> G.graph["generator"]
+    'activity_driven_memory'
+    """
     import random
 
     if num_nodes <= 1:
@@ -109,4 +162,3 @@ def generate_activity_driven_memory_graph(
     graph.graph["topologies"] = ["activity_driven_memory"]
     graph.graph["generator_kind"] = "stream"
     return graph
-

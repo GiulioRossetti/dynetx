@@ -84,16 +84,19 @@ class DashboardServerState:
     """In-memory dashboard session state shared by the HTTP handlers."""
 
     def __init__(self, dashboard=None):
+        """Initialize the shared state object."""
         self.dashboard = dashboard if dashboard is not None else build_dashboard()
         self.lock = threading.RLock()
 
     def load_graph(self, graph_data):
+        """Load graph data and reset the current selection."""
         with self.lock:
             self.dashboard.load_graph_data(graph_data)
             self._default_selection()
             return self.summary()
 
     def generate_graph(self, kind="stream", num_nodes=12, snapshots=3, edge_probability=0.2, seed=42, topologies=None, dynamic_nodes=False, node_churn=0.25, ba_m=None, ws_k=None, ws_beta=0.2, sbm_groups=None, sbm_p_in=None, sbm_p_out=None, activity_m=2, activity_min=0.18, activity_max=0.65, activity_exponent=2.2, contact_duration=1, memory_alpha=1.0):
+        """Generate a synthetic graph and load it into the dashboard."""
         with self.lock:
             self.dashboard.set_graph(
                 generate_synthetic_graph(
@@ -123,6 +126,7 @@ class DashboardServerState:
             return self.summary()
 
     def select(self, snapshot=None, window=None):
+        """Update the active dashboard selection."""
         with self.lock:
             if window is not None:
                 self.dashboard.select_window(*window)
@@ -131,12 +135,14 @@ class DashboardServerState:
             return self.summary()
 
     def clear_selection(self):
+        """Clear any active snapshot or window selection."""
         with self.lock:
             self.dashboard.selected_snapshot = None
             self.dashboard.selected_window = None
             return self.summary()
 
     def step_snapshot(self, delta=1):
+        """Advance the current snapshot selection by ``delta`` steps."""
         with self.lock:
             tids = self.dashboard.graph.temporal_snapshots_ids()
             if not tids:
@@ -153,6 +159,7 @@ class DashboardServerState:
             return self.summary()
 
     def step_window(self, delta=1):
+        """Advance the current window selection by ``delta`` steps."""
         with self.lock:
             tids = self.dashboard.graph.temporal_snapshots_ids()
             if not tids:
@@ -178,6 +185,7 @@ class DashboardServerState:
             return self.summary()
 
     def _default_selection(self):
+        """Select a deterministic default snapshot when data is available."""
         tids = self.dashboard.graph.temporal_snapshots_ids()
         if tids:
             self.dashboard.select_snapshot(tids[0])
@@ -186,6 +194,7 @@ class DashboardServerState:
             self.dashboard.selected_window = None
 
     def summary(self):
+        """Return the dashboard state as a JSON-serializable dictionary."""
         with self.lock:
             stats = self.dashboard.summary_statistics()
             tids = stats["snapshots"]
@@ -207,10 +216,12 @@ class DashboardServerState:
             }
 
     def export_state(self):
+        """Return the current dashboard export payload."""
         with self.lock:
             return self.dashboard.export_state()
 
     def current_graph_data(self):
+        """Return the serialized graph and stream-view payload."""
         with self.lock:
             payload = json_graph.node_link_data(self.dashboard.current_graph())
             payload["graph"] = dict(self.dashboard.graph.graph)
@@ -220,11 +231,13 @@ class DashboardServerState:
             return payload
 
     def _graph_signature(self):
+        """Return a stable hash of the loaded graph."""
         payload = json_graph.node_link_data(self.dashboard.graph)
         raw = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         return hashlib.sha1(raw).hexdigest()
 
     def _build_stream_view(self):
+        """Build the stream-graph payload used by the browser renderer."""
         graph = self.dashboard.graph
         graph_payload = json_graph.node_link_data(graph)
         tids = list(graph.temporal_snapshots_ids())
@@ -276,6 +289,7 @@ class DashboardServerState:
         }
 
     def chart_data(self):
+        """Return the time-series data used by the dashboard charts."""
         with self.lock:
             stats = self.dashboard.summary_statistics()
             snapshots = stats["snapshots"]
@@ -290,14 +304,17 @@ class DashboardServerState:
             }
 
     def render_page(self):
+        """Render the dashboard HTML page."""
         return _DASHBOARD_HTML.replace("__LOGO_DATA_URI__", _LOGO_DATA_URI)
 
 
 def _dashboard_context(handler):
+    """Return the dashboard state object attached to the HTTP server."""
     return handler.server.app
 
 
 def _make_handler():
+    """Build the request-handler class used by the dashboard server."""
     class DashboardRequestHandler(BaseHTTPRequestHandler):
         server_version = "DyNetxDashboard/0.1"
 
@@ -387,6 +404,21 @@ def _make_handler():
 
 
 def create_server(host=DEFAULT_HOST, port=DEFAULT_PORT):
+    """Create a dashboard HTTP server and its shared state.
+
+    Parameters
+    ----------
+    host : str, optional
+        Interface to bind.
+    port : int, optional
+        TCP port to bind.
+
+    Returns
+    -------
+    tuple
+        ``(server, state)`` where ``server`` is a ``ThreadingHTTPServer``
+        instance and ``state`` is the shared ``DashboardServerState``.
+    """
     app = DashboardServerState()
     handler = _make_handler()
     server = ThreadingHTTPServer((host, port), handler)
@@ -395,6 +427,7 @@ def create_server(host=DEFAULT_HOST, port=DEFAULT_PORT):
 
 
 def _launch_server(host, port):
+    """Create the server, falling back to an ephemeral port when needed."""
     try:
         return create_server(host=host, port=port), port
     except OSError as exc:
@@ -404,6 +437,7 @@ def _launch_server(host, port):
 
 
 def build_parser():
+    """Return the command-line parser for the dashboard entry point."""
     parser = argparse.ArgumentParser(
         prog="dynetx_dashboard",
         description="Launch the DyNetx browser dashboard.",
@@ -415,6 +449,18 @@ def build_parser():
 
 
 def main(argv=None):
+    """Run the dashboard server from the command line.
+
+    Parameters
+    ----------
+    argv : list[str], optional
+        Argument vector to parse instead of ``sys.argv``.
+
+    Returns
+    -------
+    int
+        Process exit status.
+    """
     parser = build_parser()
     args = parser.parse_args(argv)
     bind_host = args.host

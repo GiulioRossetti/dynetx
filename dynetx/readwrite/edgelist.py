@@ -40,6 +40,20 @@ __all__ = ['write_interactions',
 
 
 def generate_interactions(G, delimiter=' '):
+    """Yield the interaction-list representation of ``G`` line by line.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Temporal graph to serialize.
+    delimiter : str, optional
+        Separator used between fields.
+
+    Returns
+    -------
+    iterator[str]
+        Text lines representing temporal interaction events.
+    """
     for e in G.stream_interactions():
         yield delimiter.join(map(make_str, e))
 
@@ -62,7 +76,11 @@ def write_interactions(G, path, delimiter=' ', encoding='utf-8'):
             Column delimiter
 
         encoding: str
-            Text enconding, default utf-8
+            Text encoding, default utf-8.
+
+        Returns
+        -------
+        None
         """
     for line in generate_interactions(G, delimiter):
         line += '\n'
@@ -72,7 +90,7 @@ def write_interactions(G, path, delimiter=' ', encoding='utf-8'):
 @open_file(0, mode='rb')
 def read_interactions(path, comments="#", directed=False, delimiter=None,
                       nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
-    """Read a DyNetx graph from interaction list format.
+    """Read a DyNetx graph from interaction-list format.
 
 
         Parameters
@@ -100,6 +118,12 @@ def read_interactions(path, comments="#", directed=False, delimiter=None,
             File encoding, default utf-8
 
         keys: bool
+            If ``True``, remap time identifiers to a compact index.
+
+    Returns
+    -------
+    DynGraph or DynDiGraph
+        Temporal graph reconstructed from the edge list.
 
     """
     ids = None
@@ -113,6 +137,30 @@ def read_interactions(path, comments="#", directed=False, delimiter=None,
 
 def parse_interactions(lines, comments='#', directed=False, delimiter=None, nodetype=None, timestamptype=None,
                        keys=None):
+    """Parse interaction-list lines into a DyNetx graph.
+
+    Parameters
+    ----------
+    lines : iterable[str]
+        Text lines to parse.
+    comments : str, optional
+        Comment marker.
+    directed : bool, optional
+        If ``True``, create a directed graph.
+    delimiter : str, optional
+        Field separator.
+    nodetype : callable, optional
+        Converter applied to node identifiers.
+    timestamptype : callable, optional
+        Converter applied to timestamps.
+    keys : mapping, optional
+        Optional compact-time mapping returned by :func:`read_ids`.
+
+    Returns
+    -------
+    DynGraph or DynDiGraph
+        Parsed temporal graph.
+    """
     if not directed:
         G = DynGraph()
     else:
@@ -164,6 +212,13 @@ def parse_interactions(lines, comments='#', directed=False, delimiter=None, node
 
 
 def generate_snapshots(G, delimiter=' '):
+    """Yield the snapshot-list representation of ``G`` line by line.
+
+    Returns
+    -------
+    iterator[str]
+        Text lines describing every active interaction at every timestamp.
+    """
     for u, v, d in G.interactions():
         if 't' not in d:
             raise NotImplementedError("Snapshot export requires temporal data.")
@@ -198,7 +253,11 @@ def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
             Column delimiter
 
         encoding: str
-            Encoding string, default utf-8
+            Encoding string, default utf-8.
+
+        Returns
+        -------
+        None
         """
     for line in generate_snapshots(G, delimiter):
         line += '\n'
@@ -206,6 +265,13 @@ def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
 
 
 def parse_snapshots(lines, comments='#', directed=False, delimiter=None, nodetype=None, timestamptype=None, keys=None):
+    """Parse snapshot-list lines into a DyNetx graph.
+
+    Returns
+    -------
+    DynGraph or DynDiGraph
+        Temporal graph reconstructed from the snapshot list.
+    """
     if not directed:
         G = DynGraph()
     else:
@@ -258,7 +324,7 @@ def parse_snapshots(lines, comments='#', directed=False, delimiter=None, nodetyp
 @open_file(0, mode='rb')
 def read_snapshots(path, comments="#", directed=False, delimiter=None,
                    nodetype=None, timestamptype=None, encoding='utf-8', keys=False):
-    """Read a DyNetx graph from snapshot graph list format.
+    """Read a DyNetx graph from snapshot-list format.
 
 
         Parameters
@@ -286,6 +352,12 @@ def read_snapshots(path, comments="#", directed=False, delimiter=None,
             File encoding, default utf-8
 
         keys: bool
+            If ``True``, remap time identifiers to a compact index.
+
+    Returns
+    -------
+    DynGraph or DynDiGraph
+        Temporal graph reconstructed from the file.
     """
     ids = None
     lines = (line.decode(encoding) for line in path)
@@ -297,6 +369,22 @@ def read_snapshots(path, comments="#", directed=False, delimiter=None,
 
 
 def read_ids(path, delimiter=None, timestamptype=None):
+    """Extract and compact the time identifiers present in an edge list.
+
+    Parameters
+    ----------
+    path : str
+        Path to an edge-list file.
+    delimiter : str, optional
+        Field separator.
+    timestamptype : callable, optional
+        Converter applied to timestamps.
+
+    Returns
+    -------
+    dict
+        Mapping from original time identifiers to compact indices.
+    """
     ids = {}
     with open(path) as f:
         for line in f:

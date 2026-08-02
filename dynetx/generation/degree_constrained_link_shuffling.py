@@ -1,4 +1,8 @@
-"""Degree-constrained link shuffling temporal reference model."""
+"""Degree-constrained link shuffling temporal reference model.
+
+This generator implements a snapshot-wise degree-preserving randomization in
+the spirit of the reference models surveyed by Gauvin et al. (2022).
+"""
 
 from __future__ import annotations
 
@@ -23,7 +27,19 @@ def generate_degree_constrained_link_shuffling_graph(
     activity_max=0.65,
     activity_exponent=2.2,
 ):
-    """Generate a snapshot graph by randomizing each snapshot under degree constraints."""
+    """Generate a snapshot graph by randomizing each snapshot under degree constraints.
+
+    Returns
+    -------
+    DynGraph
+        Snapshot-based dynamic graph with preserved per-snapshot degree
+        sequences.
+
+    References
+    ----------
+    Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
+    models for temporal networks. *SIAM Review*, 64(4), 763-830.
+    """
     rng = random.Random(seed)
     base = base_stream_graph(
         num_nodes=num_nodes,
@@ -66,4 +82,3 @@ def generate_degree_constrained_link_shuffling_graph(
     graph.graph["reference_parameters"] = dict(base.graph.get("reference_parameters", {}))
     graph.graph["topologies"] = ["degree_constrained_link_shuffling"]
     return graph
-

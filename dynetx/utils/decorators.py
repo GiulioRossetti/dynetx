@@ -12,27 +12,34 @@ __all__ = [
 
 
 def not_implemented():
-    """Decorator to mark methods as not implemented
+    """Return a decorator that raises ``NetworkXNotImplemented``.
 
+    This is used on APIs that are intentionally unavailable for a specific
+    graph family.
 
     Returns
     -------
-    _require : function
-        The decorated function.
+    function
+        A decorator that raises ``networkx.NetworkXNotImplemented`` when the
+        wrapped function is called.
 
     Raises
     ------
-    NetworkXNotImplemented
-    If any of the packages cannot be imported
+    networkx.NetworkXNotImplemented
+        Always raised by the wrapped function.
 
     Examples
     --------
-    Decorate functions like this::
+    Decorate functions like this:
 
-       @not_implemented()
-       def sp_function():
-           pass
-
+    >>> from dynetx.utils.decorators import not_implemented
+    >>> @not_implemented()
+    ... def sp_function():
+    ...     return 1
+    >>> sp_function()  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    NetworkXNotImplemented: Method not implemented for dynamic graphs
     """
     @decorator
     def _not_implemented(f, *args, **kwargs):
@@ -73,8 +80,17 @@ def open_file(path_arg, mode='r'):
 
     Returns
     -------
-    _open_file : function
-        Function which cleanly executes the io.
+    function
+        Decorator that opens the designated argument as a file object when a
+        path-like value is passed and closes it automatically on exit.
+
+    Example
+    -------
+    >>> from dynetx.utils.decorators import open_file
+    >>> @open_file(0, mode="w")
+    ... def write_lines(path):
+    ...     path.write("ok")
+    >>> write_lines("example.txt")
 
     Examples
     --------

@@ -1,4 +1,9 @@
-"""Timeline shuffling temporal reference model."""
+"""Timeline shuffling temporal reference model.
+
+This generator implements the timeline-shuffling null model from Gauvin et
+al. (2022), preserving each edge's temporal profile while reassigning it to a
+different node pair.
+"""
 
 from __future__ import annotations
 
@@ -21,7 +26,18 @@ def generate_timeline_shuffling_graph(
     activity_max=0.65,
     activity_exponent=2.2,
 ):
-    """Generate a stream graph by permuting full interaction timelines."""
+    """Generate a stream graph by permuting full interaction timelines.
+
+    Returns
+    -------
+    DynGraph
+        Stream graph with edge timelines reassigned to new node pairs.
+
+    References
+    ----------
+    Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
+    models for temporal networks. *SIAM Review*, 64(4), 763-830.
+    """
     rng = random.Random(seed)
     base = base_stream_graph(
         num_nodes=num_nodes,
@@ -55,4 +71,3 @@ def generate_timeline_shuffling_graph(
     graph.graph["reference_parameters"] = dict(base.graph.get("reference_parameters", {}))
     graph.graph["topologies"] = ["timeline_shuffling"]
     return graph
-

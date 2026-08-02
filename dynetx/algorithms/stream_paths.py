@@ -398,8 +398,19 @@ def inter_cluster_density(G, partition):
     return total_inter_links / total_possible_inter_links
 
 def cluster_external_density(G, cluster):
-    """
-        External density of a cluster.
+    """Return the external density of a cluster.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    cluster : Cluster or iterable
+        Cluster encoded as temporal node occurrences.
+
+    Returns
+    -------
+    float
+        Fraction of potential external contacts that are present.
     """
     tids = G.temporal_snapshots_ids()
     W = Cluster()
@@ -442,8 +453,18 @@ def quotient_stream(G, partition):
     return Q
 
 def line_stream(G):
-    """
-        Return the line stream graph of G.
+    """Return the line stream graph of ``G``.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to transform.
+
+    Returns
+    -------
+    DynDiGraph
+        Stream graph whose nodes are temporal edge occurrences and whose
+        edges connect edge occurrences that share exactly one endpoint.
     """
     L = G.__class__(edge_removal=G.edge_removal)
     tids = G.temporal_snapshots_ids()

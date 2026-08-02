@@ -35,7 +35,59 @@ def generate_synthetic_graph(
     contact_duration=1,
     memory_alpha=1.0,
 ):
-    """Generate a synthetic DyNetx graph for dashboard exploration."""
+    """Generate a synthetic DyNetx graph for dashboard exploration.
+
+    Parameters
+    ----------
+    kind : str, optional
+        High-level graph family, such as ``"stream"`` or ``"snapshot"``.
+    num_nodes : int, optional
+        Number of nodes in the generated graph.
+    snapshots : int, optional
+        Number of temporal snapshots.
+    edge_probability : float, optional
+        Density parameter for Erdős-Rényi-style generation.
+    seed : int, optional
+        Random seed used for reproducibility.
+    topologies : str or iterable[str], optional
+        Optional topology mix to apply across snapshots.
+    dynamic_nodes : bool, optional
+        If ``True``, apply node churn across snapshots.
+    node_churn : float, optional
+        Probability that a node is absent from a snapshot when churn is
+        enabled.
+    ba_m : int, optional
+        Number of edges per new node for Barabási-Albert generation.
+    ws_k : int, optional
+        Neighborhood size for Watts-Strogatz generation.
+    ws_beta : float, optional
+        Rewiring probability for Watts-Strogatz generation.
+    sbm_groups : int, optional
+        Number of blocks for stochastic block model generation.
+    sbm_p_in : float, optional
+        Intra-block connection probability.
+    sbm_p_out : float, optional
+        Inter-block connection probability.
+    activity_m : int, optional
+        Number of partners contacted by each active node in activity-driven
+        generators.
+    activity_min : float, optional
+        Lower bound of the activity-rate distribution.
+    activity_max : float, optional
+        Upper bound of the activity-rate distribution.
+    activity_exponent : float, optional
+        Exponent of the bounded power-law activity distribution.
+    contact_duration : int, optional
+        Duration assigned to each interaction.
+    memory_alpha : float, optional
+        Reinforcement strength used by the memory-enhanced activity-driven
+        generator.
+
+    Returns
+    -------
+    DynGraph
+        Synthetic dynamic graph ready for dashboard visualization.
+    """
     from dynetx import DynGraph
 
     if num_nodes <= 1:

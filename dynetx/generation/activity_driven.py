@@ -1,4 +1,9 @@
-"""Activity-driven synthetic temporal graph generator."""
+"""Activity-driven synthetic temporal graph generator.
+
+This implementation follows the activity-driven model introduced by
+Perra et al. (2012), where each node is assigned an activity rate and active
+nodes initiate time-stamped contacts.
+"""
 
 from __future__ import annotations
 
@@ -19,7 +24,50 @@ def generate_activity_driven_graph(
     activity_exponent=2.2,
     contact_duration=1,
 ):
-    """Generate a stream graph with activity-driven temporal contacts."""
+    """Generate a stream graph with activity-driven temporal contacts.
+
+    Parameters
+    ----------
+    num_nodes : int, optional
+        Number of nodes in the generated graph.
+    snapshots : int, optional
+        Number of temporal snapshots.
+    seed : int, optional
+        Random seed used for reproducibility.
+    dynamic_nodes : bool, optional
+        If ``True``, apply node churn across snapshots.
+    node_churn : float, optional
+        Probability that a node is absent from a snapshot when churn is
+        enabled.
+    activity_m : int, optional
+        Number of partners contacted by each active node.
+    activity_min : float, optional
+        Lower bound of the activity-rate distribution.
+    activity_max : float, optional
+        Upper bound of the activity-rate distribution.
+    activity_exponent : float, optional
+        Exponent of the bounded power-law activity distribution.
+    contact_duration : int, optional
+        Duration assigned to each interaction.
+
+    Returns
+    -------
+    DynGraph
+        Stream graph whose edge attributes encode contact spans.
+
+    References
+    ----------
+    Perra, N., Gonçalves, B., Pastor-Satorras, R., & Vespignani, A. (2012).
+    Activity driven modeling of time varying networks. *Scientific Reports*,
+    2, 469.
+
+    Example
+    -------
+    >>> from dynetx.generation.activity_driven import generate_activity_driven_graph
+    >>> G = generate_activity_driven_graph(num_nodes=5, snapshots=3, seed=7)
+    >>> G.graph["generator"]
+    'activity_driven'
+    """
     import random
 
     if num_nodes <= 1:
@@ -82,4 +130,3 @@ def generate_activity_driven_graph(
     graph.graph["topologies"] = ["activity_driven"]
     graph.graph["generator_kind"] = "stream"
     return graph
-

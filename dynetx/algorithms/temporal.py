@@ -85,7 +85,21 @@ def temporal_transitivity(G, t=None):
 
 
 def temporal_connected_components(G, t=None):
-    """Return connected components over time."""
+    """Return connected components over time.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Temporal graph to analyze.
+    t : snapshot id, optional
+        If provided, return the connected components of that snapshot. If
+        omitted, return a mapping from snapshot id to component list.
+
+    Returns
+    -------
+    list[set] or dict
+        Connected components for the selected snapshot or for all snapshots.
+    """
     if t is not None:
         sg = _snapshot_graph(G, t)
         base = sg.to_undirected() if sg.is_directed() else sg

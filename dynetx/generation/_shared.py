@@ -1,4 +1,9 @@
-"""Shared helpers for synthetic dynamic graph generators."""
+"""Shared helpers for synthetic dynamic graph generators.
+
+The functions in this module are internal building blocks used by the
+dedicated synthetic generators. They keep the model implementations small and
+make the generation submodule easier to extend.
+"""
 
 from __future__ import annotations
 
@@ -7,16 +12,53 @@ import random
 
 
 def new_graph():
+    """Return a fresh ``DynGraph`` instance for synthetic generation.
+
+    Returns
+    -------
+    DynGraph
+        Empty dynamic graph ready to receive synthetic interactions.
+    """
     from dynetx import DynGraph
 
     return DynGraph()
 
 
 def normalize_name(name):
+    """Normalize a human-readable model name to a canonical identifier.
+
+    Parameters
+    ----------
+    name : object
+        Name or label to normalize.
+
+    Returns
+    -------
+    str
+        Lowercase identifier with spaces and hyphens replaced by underscores.
+    """
     return str(name).strip().lower().replace("-", "_").replace(" ", "_")
 
 
 def sample_power_law(rng, minimum, maximum, exponent):
+    """Sample a value from a bounded power-law distribution.
+
+    Parameters
+    ----------
+    rng : random.Random
+        Random number generator used for sampling.
+    minimum : float
+        Lower bound of the support.
+    maximum : float
+        Upper bound of the support.
+    exponent : float
+        Power-law exponent.
+
+    Returns
+    -------
+    float
+        Sampled value in the requested interval.
+    """
     minimum = float(minimum)
     maximum = float(maximum)
     exponent = float(exponent)
@@ -35,11 +77,45 @@ def sample_power_law(rng, minimum, maximum, exponent):
 
 
 def stream_contact_end(start, duration, max_snapshot):
+    """Return the inclusive end timestamp of a stream contact.
+
+    Parameters
+    ----------
+    start : int
+        Contact start time.
+    duration : int
+        Contact duration.
+    max_snapshot : int
+        Maximum snapshot identifier available in the stream.
+
+    Returns
+    -------
+    int
+        Inclusive end timestamp clipped to the available range.
+    """
     duration = max(1, int(round(duration)))
     return min(start + duration, max_snapshot)
 
 
 def active_nodes(rng, nodes, dynamic_nodes, node_churn):
+    """Select the nodes active at a given snapshot.
+
+    Parameters
+    ----------
+    rng : random.Random
+        Random number generator.
+    nodes : iterable
+        All candidate nodes.
+    dynamic_nodes : bool
+        If ``True``, apply node churn to produce a varying active set.
+    node_churn : float
+        Probability that a node disappears from a snapshot.
+
+    Returns
+    -------
+    list
+        Active node identifiers sorted for deterministic output.
+    """
     if not dynamic_nodes:
         return list(nodes)
     active = [node for node in nodes if rng.random() >= node_churn]
@@ -49,6 +125,7 @@ def active_nodes(rng, nodes, dynamic_nodes, node_churn):
 
 
 def copy_nodes(graph, nodes):
+    """Add ``nodes`` to ``graph`` preserving their identifiers."""
     for node in nodes:
         graph.add_node(node)
 
@@ -65,6 +142,37 @@ def base_stream_graph(
     activity_max=0.65,
     activity_exponent=2.2,
 ):
+    """Build a baseline random stream graph used by reference models.
+
+    Parameters
+    ----------
+    num_nodes : int, optional
+        Number of nodes to create.
+    snapshots : int, optional
+        Number of temporal snapshots.
+    seed : int, optional
+        Random seed.
+    edge_probability : float, optional
+        Probability of creating a candidate interaction.
+    dynamic_nodes : bool, optional
+        Whether nodes may temporarily disappear.
+    node_churn : float, optional
+        Probability that a node is absent from a snapshot when node churn is
+        enabled.
+    contact_duration : int, optional
+        Duration assigned to each interaction.
+    activity_min : float, optional
+        Lower bound of the activity-rate distribution.
+    activity_max : float, optional
+        Upper bound of the activity-rate distribution.
+    activity_exponent : float, optional
+        Power-law exponent controlling activity heterogeneity.
+
+    Returns
+    -------
+    DynGraph
+        Synthetic dynamic graph storing temporal interaction spans.
+    """
     if num_nodes <= 1:
         raise ValueError("num_nodes must be greater than 1")
     if snapshots <= 0:
@@ -123,6 +231,14 @@ def base_stream_graph(
 
 
 def edge_timelines(graph):
+    """Return the interaction timelines stored in ``graph``.
+
+    Returns
+    -------
+    list[tuple]
+        List of ``(u, v, spans)`` tuples where ``spans`` is the temporal
+        support attached to the edge.
+    """
     timelines = []
     for u, v, attrs in graph.interactions_iter():
         spans = [tuple(span) for span in attrs.get("t", [])]
@@ -132,6 +248,13 @@ def edge_timelines(graph):
 
 
 def event_rows(graph):
+    """Expand a stream graph into per-event rows.
+
+    Returns
+    -------
+    list[tuple]
+        Tuples of ``(u, v, start, duration)``.
+    """
     events = []
     for u, v, attrs in graph.interactions_iter():
         for start, end in attrs.get("t", []):
@@ -140,11 +263,28 @@ def event_rows(graph):
 
 
 def add_spans(graph, u, v, spans):
+    """Add a sequence of inclusive spans to ``graph`` for edge ``(u, v)``."""
     for start, end in spans:
         graph.add_interaction(u, v, t=int(start), e=int(end) + 1)
 
 
 def rewired_pair_list(rng, nodes, count):
+    """Return ``count`` node pairs, reusing pairs when necessary.
+
+    Parameters
+    ----------
+    rng : random.Random
+        Random number generator.
+    nodes : iterable
+        Candidate node identifiers.
+    count : int
+        Number of pairs to return.
+
+    Returns
+    -------
+    list[tuple]
+        Pairs sampled without replacement when possible.
+    """
     pairs = [(nodes[i], nodes[j]) for i in range(len(nodes)) for j in range(i + 1, len(nodes))]
     if not pairs:
         return []
@@ -155,4 +295,3 @@ def rewired_pair_list(rng, nodes, count):
     while len(result) < count:
         result.append(rng.choice(pairs))
     return result
-
