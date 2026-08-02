@@ -99,27 +99,24 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 14: Paths and Distances
 * **Foremost Path Time-to-Reach ($\mathcal{T}_{\alpha}$)**:
   * *Paper*: Minimum time difference $\omega - \alpha$ to reach a target.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.stream_time_to_reach(u, v, alpha)`.
 * **Lapse, Diameter, and Flood Time**:
   * *Paper*: Maximum latency, maximum topological distance, and maximum arrival time over all pairs.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.stream_lapse()`, `DynGraph.stream_diameter()`, and `DynGraph.stream_flood_time()`.
 * **$\gamma$-paths and Forwarding Delays**:
   * *Paper*: Paths accounting for transmission delay $\gamma$ and forwarding delay $\gamma'$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.constrained_time_respecting_paths(u, v, gamma, gamma_prime)`.
 
 ### Section 15: Connectedness and Connected Components
 * **Weak Connectedness**:
   * *Paper*: Reachability $(\alpha, u) \sim (\omega, v)$ without time-respecting ordering constraints.
-  * *DyNetx*: Not implemented. `temporal_connected_components` returns components per snapshot, not across time.
-* **Strong Connectedness**:
-  * *Paper*: Evolving paths exist for all pairs with $\alpha \le \omega$.
-  * *DyNetx*: Not implemented.
-* **Strongly Connected Components**:
-  * *Paper*: Partition of W into maximal compact strongly connected clusters.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.stream_weakly_connected_components()`.
+* **Strong Connectedness / Strongly Connected Components**:
+  * *Paper*: Partition of W into maximal compact strongly connected clusters $I \times X$.
+  * *DyNetx*: Implemented as `DynGraph.stream_strongly_connected_components()`.
 * **Reachability Stream Graph ($R$)**:
   * *Paper*: Graph showing reachability links at each time step.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.reachability_stream_graph()`.
 
 ### Section 16: Trees and Cascades
 * **Predecessor Mapping ($p(t, v)$)**:

@@ -1857,6 +1857,130 @@ class DynGraph(nx.Graph):
             total += sum(cc_dict.get(v, 0.0) for v in V)
         return total / (len(tids) * len(V))
 
+    def stream_diameter(self, start=None, end=None):
+        """
+            Return the diameter of the stream graph (largest finite distance).
+
+            Parameters
+            ----------
+            start, end : timestamps, optional
+                Temporal window.
+
+            Returns
+            -------
+            diam : int
+                The stream diameter.
+        """
+        import dynetx.algorithms as al
+        return al.stream_diameter(self, start=start, end=end)
+
+    def stream_lapse(self, start=None, end=None):
+        """
+            Return the lapse of the stream graph (largest finite latency).
+
+            Parameters
+            ----------
+            start, end : timestamps, optional
+                Temporal window.
+
+            Returns
+            -------
+            lapse : int
+                The stream lapse.
+        """
+        import dynetx.algorithms as al
+        return al.stream_lapse(self, start=start, end=end)
+
+    def stream_flood_time(self, start=None, end=None):
+        """
+            Return the flood time of the stream graph.
+
+            Parameters
+            ----------
+            start, end : timestamps, optional
+                Temporal window.
+
+            Returns
+            -------
+            ft : int
+                The stream flood time.
+        """
+        import dynetx.algorithms as al
+        return al.stream_flood_time(self, start=start, end=end)
+
+    def stream_time_to_reach(self, u, v, alpha, start=None, end=None):
+        """
+            Minimum arrival time difference to reach target v from source u starting at or after alpha.
+
+            Parameters
+            ----------
+            u, v : node ids
+            alpha : timestamp
+            start, end : timestamps, optional
+
+            Returns
+            -------
+            t_to_reach : float
+                Foremost time-to-reach.
+        """
+        import dynetx.algorithms as al
+        return al.stream_time_to_reach(self, u, v, alpha, start=start, end=end)
+
+    def constrained_time_respecting_paths(self, u, v=None, start=None, end=None, gamma=1, gamma_prime=None):
+        """
+            Find all simple paths from u to v under transmission delay gamma and forwarding delay gamma_prime.
+
+            Parameters
+            ----------
+            u, v : node ids
+            start, end : timestamps, optional
+            gamma : int, optional (default=1)
+            gamma_prime : int, optional (default=None)
+
+            Returns
+            -------
+            paths : dict
+                A dictionary mapping node pairs to lists of paths.
+        """
+        import dynetx.algorithms as al
+        return al.constrained_time_respecting_paths(self, u, v=v, start=start, end=end, gamma=gamma, gamma_prime=gamma_prime)
+
+    def stream_weakly_connected_components(self):
+        """
+            Return the weakly connected components of the stream graph as a list of Clusters.
+
+            Returns
+            -------
+            comp : list of Clusters
+                The weakly connected components.
+        """
+        import dynetx.algorithms as al
+        return al.stream_weakly_connected_components(self)
+
+    def stream_strongly_connected_components(self):
+        """
+            Return the strongly connected components of the stream graph as a list of Clusters.
+
+            Returns
+            -------
+            comp : list of Clusters
+                The strongly connected components.
+        """
+        import dynetx.algorithms as al
+        return al.stream_strongly_connected_components(self)
+
+    def reachability_stream_graph(self):
+        """
+            Return the reachability stream graph of this graph.
+
+            Returns
+            -------
+            R : DynDiGraph
+                The reachability stream graph.
+        """
+        import dynetx.algorithms as al
+        return al.reachability_stream_graph(self)
+
     def pair_density(self, u, v):
         """
             Node pair density.
