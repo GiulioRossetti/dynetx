@@ -1717,6 +1717,146 @@ class DynGraph(nx.Graph):
         """
         return self.average_expected_stream_degree()
 
+    def interaction_presence(self, u, v):
+        """
+            Return the set of snapshot IDs in which interaction (u, v) is active.
+
+            Parameters
+            ----------
+            u, v : node ids
+
+            Returns
+            -------
+            presence : set
+                Set of snapshot IDs.
+        """
+        if u not in self._adj or v not in self._adj[u]:
+            return set()
+        spans = self._adj[u][v]['t']
+        tids = self.temporal_snapshots_ids()
+        res = set()
+        for t in tids:
+            for s in spans:
+                if s[0] <= t <= s[1]:
+                    res.add(t)
+                    break
+        return res
+
+    def stream_clustering_coefficient(self, u):
+        """
+            Clustering coefficient of node u.
+
+            Parameters
+            ----------
+            u : node id
+
+            Returns
+            -------
+            cc : float
+                Clustering coefficient of node u.
+        """
+        neighbors_u = self.neighbors(u)
+        if len(neighbors_u) < 2:
+            return 0.0
+        numerator = 0
+        denominator = 0
+        presences = {v: self.interaction_presence(u, v) for v in neighbors_u}
+        for v, w in combinations(neighbors_u, 2):
+            common_uv_uw = presences[v] & presences[w]
+            if not common_uv_uw:
+                continue
+            denominator += len(common_uv_uw)
+            T_vw = self.interaction_presence(v, w)
+            numerator += len(common_uv_uw & T_vw)
+        return 0.0 if denominator == 0 else numerator / denominator
+
+    def average_stream_clustering_coefficient(self):
+        """
+            Weighted average clustering coefficient over all nodes.
+
+            Returns
+            -------
+            avg_cc : float
+                Weighted average clustering coefficient.
+        """
+        V = self.nodes()
+        if not V:
+            return 0.0
+        W = sum(len(self.node_presence(v)) for v in V)
+        if W == 0:
+            return 0.0
+        total = 0.0
+        for v in V:
+            total += len(self.node_presence(v)) * self.stream_clustering_coefficient(v)
+        return total / W
+
+    def stream_transitivity(self):
+        """
+            Global transitivity ratio tr(S).
+
+            Returns
+            -------
+            tr : float
+                Global transitivity ratio.
+        """
+        V = self.nodes()
+        if len(V) < 3:
+            return 0.0
+        total_triangles = 0
+        total_triplets = 0
+        for u in V:
+            neighbors_u = self.neighbors(u)
+            if len(neighbors_u) < 2:
+                continue
+            presences = {v: self.interaction_presence(u, v) for v in neighbors_u}
+            for v, w in combinations(neighbors_u, 2):
+                common_uv_uw = presences[v] & presences[w]
+                if not common_uv_uw:
+                    continue
+                total_triplets += len(common_uv_uw)
+                T_vw = self.interaction_presence(v, w)
+                total_triangles += len(common_uv_uw & T_vw)
+        return 0.0 if total_triplets == 0 else total_triangles / total_triplets
+
+    def time_clustering_coefficient(self):
+        """
+            Time clustering coefficient of the stream graph.
+
+            Returns
+            -------
+            time_cc : float
+                Time clustering coefficient.
+        """
+        tids = self.temporal_snapshots_ids()
+        if not tids:
+            return 0.0
+        total = 0.0
+        for t in tids:
+            sg = self.to_networkx_graph(t=t)
+            total += nx.average_clustering(sg.to_undirected() if sg.is_directed() else sg)
+        return total / len(tids)
+
+    def stream_clustering_coefficient_global(self):
+        """
+            Clustering coefficient of the stream graph.
+
+            Returns
+            -------
+            stream_cc : float
+                Clustering coefficient of the stream graph.
+        """
+        V = self.nodes()
+        tids = self.temporal_snapshots_ids()
+        if not V or not tids:
+            return 0.0
+        total = 0.0
+        for t in tids:
+            sg = self.to_networkx_graph(t=t)
+            base = sg.to_undirected() if sg.is_directed() else sg
+            cc_dict = nx.clustering(base)
+            total += sum(cc_dict.get(v, 0.0) for v in V)
+        return total / (len(tids) * len(V))
+
     def pair_density(self, u, v):
         """
             Node pair density.

@@ -64,16 +64,16 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 9: Clustering Coefficient and Transitivity Ratio
 * **Clustering Coefficient ($cc(v)$)**:
   * *Paper*: Density of the neighborhood $N(v)$: $cc(v) = \frac{\sum_{uw} |T_{vu} \cap T_{vw} \cap T_{uw}|}{\sum_{uw} |T_{vu} \cap T_{vw}|}$.
-  * *DyNetx*: The function `temporal_clustering` in `algorithms/temporal.py` computes the time-average of standard NetworkX clustering coefficients: $\frac{1}{|T|}\sum cc_t(v)$. This is conceptually distinct from the neighborhood-density definition of the paper.
+  * *DyNetx*: Implemented as `DynGraph.stream_clustering_coefficient(node)`.
 * **Node Clustering Coefficient ($cc(V)$)**:
   * *Paper*: $cc(V) = \sum \frac{|T_v|}{|W|} cc(v)$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.average_stream_clustering_coefficient()`.
 * **Transitivity Ratio ($\text{tr}(S)$)**:
   * *Paper*: Ratio of triangles to connected triplets across the stream: $\text{tr}(S) = \frac{|\Delta|}{|\lor|}$.
-  * *DyNetx*: `temporal_transitivity` averages snapshot transitivities over time, which is different from the paper's global ratio.
+  * *DyNetx*: Implemented as `DynGraph.stream_transitivity()`.
 * **Time Clustering Coefficient ($cc(T)$)** and **Stream Clustering Coefficient ($cc(S)$)**:
   * *Paper*: Area-normalized variants of the clustering coefficient.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.time_clustering_coefficient()` and `DynGraph.stream_clustering_coefficient_global()`.
 
 ### Section 10 & 11: Cluster Metrics and Quotient Streams
 * **Internal/External Neighborhoods & Degrees of Clusters**:
