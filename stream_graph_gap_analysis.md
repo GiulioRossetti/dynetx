@@ -129,23 +129,23 @@ This document identifies the measures, definitions, and analytical elements desc
 ### Section 17: Closeness and Betweenness Centralities
 * **Temporal Closeness Centrality ($\mathcal{C}_t(v)$)**:
   * *Paper*: $\mathcal{C}_t(v) = \sum_{u} \int_{T} \frac{1}{c_t(v, (s, u))} ds$.
-  * *DyNetx*: Lacks the continuous/discrete integral formulation. Only a simple heuristic `temporal_earliest_arrival_closeness` is provided.
+  * *DyNetx*: Implemented as `DynGraph.stream_closeness_centrality(v, t)`.
 * **Temporal Betweenness Centrality ($\mathcal{B}(t, v)$)**:
   * *Paper*: $\mathcal{B}(t, v) = \sum_{u, w} \int \frac{\sigma((i, u), (j, w), (t, v))}{\sigma((i, u), (j, w))} di dj$.
-  * *DyNetx*: Lacks temporal resolution. `temporal_betweenness_centrality` returns a flat dictionary of node scores rather than time-indexed centrality values.
+  * *DyNetx*: Implemented as `DynGraph.stream_betweenness_centrality()` returning a dictionary keyed by `(t, v)`.
 * **Betweenness of Clusters, Nodes, and Times**:
   * *Paper*: $\mathcal{B}(X)$, $\mathcal{B}(v)$, $\mathcal{B}(t)$.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.stream_node_betweenness_centrality()` and `DynGraph.stream_time_betweenness_centrality()`.
 
 ### Section 19: $\Delta$-Analysis
 * **$\Delta$-density, $\Delta$-degree, $\Delta$-stream graph ($S_{\Delta}$)**:
   * *Paper*: Windowed structural properties.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as `DynGraph.delta_substream(t, delta)`, `DynGraph.delta_density(t, delta)`, and `DynGraph.delta_degree(v, t, delta)`.
 
 ### Section 20: Bipartite Streams
 * **Bipartite Stream Graph, Bipartite Density, Projections, Redundancy**:
   * *Paper*: Extensions for two-mode interaction streams.
-  * *DyNetx*: Not implemented.
+  * *DyNetx*: Implemented as the subclass `BipartiteDynGraph(DynGraph)` with methods `is_bipartite()`, `bipartite_density()`, `bipartite_projection(target)`, and `bipartite_redundancy(v)`.
 
 ---
 

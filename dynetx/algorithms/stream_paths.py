@@ -26,7 +26,14 @@ __all__ = [
     'line_stream',
     'stream_k_core',
     'stream_path_tree',
-    'stream_cascade'
+    'stream_cascade',
+    'stream_closeness_centrality',
+    'stream_betweenness_centrality',
+    'stream_node_betweenness_centrality',
+    'stream_time_betweenness_centrality',
+    'delta_substream',
+    'delta_density',
+    'delta_degree'
 ]
 
 def stream_diameter(G, start=None, end=None):
@@ -504,3 +511,103 @@ def stream_cascade(G, root_node, root_time):
         Return the cascade of G starting from root.
     """
     return stream_path_tree(G, root_node, root_time, path_type='foremost')
+
+def stream_closeness_centrality(G, v, t):
+    """
+        Return the closeness centrality of node v at time t.
+    """
+    total = 0.0
+    for u in G.nodes():
+        if u == v:
+            continue
+        lat = stream_time_to_reach(G, v, u, t)
+        if lat != float('inf') and lat > 0:
+            total += 1.0 / lat
+        elif lat == 0:
+            total += 1.0
+    return total
+
+def stream_betweenness_centrality(G):
+    """
+        Return the temporal betweenness centrality of all (t, v) in G.
+    """
+    from dynetx.algorithms.paths import all_time_respecting_paths
+    paths = all_time_respecting_paths(G)
+    
+    tids = G.temporal_snapshots_ids()
+    bc = {}
+    for t in tids:
+        for v in G.nodes(t=t):
+            bc[(t, v)] = 0.0
+            
+    for (u, w), plist in paths.items():
+        if u == w:
+            continue
+        grouped = defaultdict(list)
+        for p in plist:
+            grouped[(p[0][2], p[-1][2])].append(p)
+            
+        for (i, j), paths_ij in grouped.items():
+            min_len = min(len(p) for p in paths_ij)
+            optimal_paths = [p for p in paths_ij if len(p) == min_len]
+            sigma = len(optimal_paths)
+            for p in optimal_paths:
+                for hop in p[:-1]:
+                    t_hop, node = hop[2], hop[1]
+                    if (t_hop, node) in bc:
+                        bc[(t_hop, node)] += 1.0 / sigma
+    return bc
+
+def stream_node_betweenness_centrality(G):
+    """
+        Return the node betweenness centrality for all nodes in G.
+    """
+    bc = stream_betweenness_centrality(G)
+    node_bc = defaultdict(float)
+    for u in G.nodes():
+        node_bc[u] = 0.0
+    for (t, v), val in bc.items():
+        node_bc[v] += val
+    return dict(node_bc)
+
+def stream_time_betweenness_centrality(G):
+    """
+        Return the time betweenness centrality for all snapshots in G.
+    """
+    bc = stream_betweenness_centrality(G)
+    time_bc = defaultdict(float)
+    for t in G.temporal_snapshots_ids():
+        time_bc[t] = 0.0
+    for (t, v), val in bc.items():
+        time_bc[t] += val
+    return dict(time_bc)
+
+def delta_substream(G, t, delta):
+    """
+        Return the substream of G restricted to the temporal window [t, t + delta].
+    """
+    tids = G.temporal_snapshots_ids()
+    sub = G.__class__(edge_removal=G.edge_removal)
+    start = t
+    end = t + delta
+    for s in tids:
+        if start <= s <= end:
+            for u, v, _ in G.interactions(t=s):
+                sub.add_interaction(u, v, t=s)
+    return sub
+
+def delta_density(G, t, delta):
+    """
+        Return the density of G in the window [t, t + delta].
+    """
+    sub = delta_substream(G, t, delta)
+    return sub.density()
+
+def delta_degree(G, v, t, delta):
+    """
+        Return the degree of node v in the window [t, t + delta].
+    """
+    sub = delta_substream(G, t, delta)
+    if sub.has_node(v):
+        return sub.stream_degree(v)
+    return 0.0

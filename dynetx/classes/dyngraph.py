@@ -120,7 +120,7 @@ class DynGraph(nx.Graph):
         >>> G = dn.DynGraph()
         >>> G1 = dn.DynGraph(edge_removal=True)
         """
-        super(self.__class__, self).__init__(data, **attr)
+        super(DynGraph, self).__init__(data, **attr)
         self.time_to_edge = defaultdict(int)
         self.snapshots = {}
         self.edge_removal = edge_removal
@@ -2205,6 +2205,110 @@ class DynGraph(nx.Graph):
         """
         import dynetx.algorithms as al
         return al.stream_cascade(self, root_node, root_time)
+
+    def stream_closeness_centrality(self, v, t):
+        """
+            Return the closeness centrality of node v at time t.
+
+            Parameters
+            ----------
+            v : node id
+            t : timestamp
+
+            Returns
+            -------
+            closeness : float
+        """
+        import dynetx.algorithms as al
+        return al.stream_closeness_centrality(self, v, t)
+
+    def stream_betweenness_centrality(self):
+        """
+            Return the temporal betweenness centrality of all (t, v) in G.
+
+            Returns
+            -------
+            bc : dict
+                Mapping (t, v) -> betweenness centrality.
+        """
+        import dynetx.algorithms as al
+        return al.stream_betweenness_centrality(self)
+
+    def stream_node_betweenness_centrality(self):
+        """
+            Return the node betweenness centrality for all nodes in G.
+
+            Returns
+            -------
+            node_bc : dict
+                Mapping node -> betweenness centrality.
+        """
+        import dynetx.algorithms as al
+        return al.stream_node_betweenness_centrality(self)
+
+    def stream_time_betweenness_centrality(self):
+        """
+            Return the time betweenness centrality for all snapshots in G.
+
+            Returns
+            -------
+            time_bc : dict
+                Mapping snapshot -> betweenness centrality.
+        """
+        import dynetx.algorithms as al
+        return al.stream_time_betweenness_centrality(self)
+
+    def delta_substream(self, t, delta):
+        """
+            Return the substream of G restricted to the temporal window [t, t + delta].
+
+            Parameters
+            ----------
+            t : timestamp
+            delta : float/int
+                Window size.
+
+            Returns
+            -------
+            sub : DynGraph
+        """
+        import dynetx.algorithms as al
+        return al.delta_substream(self, t, delta)
+
+    def delta_density(self, t, delta):
+        """
+            Return the density of G in the window [t, t + delta].
+
+            Parameters
+            ----------
+            t : timestamp
+            delta : float/int
+                Window size.
+
+            Returns
+            -------
+            density : float
+        """
+        import dynetx.algorithms as al
+        return al.delta_density(self, t, delta)
+
+    def delta_degree(self, v, t, delta):
+        """
+            Return the degree of node v in the window [t, t + delta].
+
+            Parameters
+            ----------
+            v : node id
+            t : timestamp
+            delta : float/int
+                Window size.
+
+            Returns
+            -------
+            deg : float
+        """
+        import dynetx.algorithms as al
+        return al.delta_degree(self, v, t, delta)
 
     def pair_density(self, u, v):
         """

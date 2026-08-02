@@ -4,6 +4,7 @@ import dynetx.classes
 from dynetx.classes import DynGraph
 from dynetx.classes import DynDiGraph
 from dynetx.classes import Cluster
+from dynetx.classes import BipartiteDynGraph
 
 from dynetx.classes.function import *
 
