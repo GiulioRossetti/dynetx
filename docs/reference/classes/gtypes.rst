@@ -15,6 +15,7 @@ Dynamic Graph Type  DyNetx Class
 ==================  ========================
 Undirected          DynGraph
 Directed            DynDiGraph
+Bipartite           BipartiteDynGraph
 ==================  ========================
 
 Basic graph types
@@ -25,4 +26,5 @@ Basic graph types
 
    dynetx.rst
    dydinetx.rst
+   bipartite.rst
 

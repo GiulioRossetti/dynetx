@@ -8,6 +8,7 @@ Dynetx implements standard temporal network measures
    :maxdepth: 2
 
    paths.rst
+   stream.rst
    temporal.rst
    community.rst
    diffusion.rst

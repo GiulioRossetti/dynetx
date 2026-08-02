@@ -73,3 +73,55 @@ Dynamic Representation: Access Snapshots and Interactions
 	DynGraph.interactions_in_range
 	DynGraph.window_slices
 	DynGraph.to_networkx_graph
+
+
+Stream Graph Measures and Algorithms
+------------------------------------
+
+.. autosummary::
+	:toctree: generated/
+
+	DynGraph.link_count
+	DynGraph.node_duration
+	DynGraph.link_duration
+	DynGraph.compactness
+	DynGraph.stream_degree
+	DynGraph.expected_stream_degree
+	DynGraph.stream_node_density
+	DynGraph.stream_degree_density
+	DynGraph.stream_neighborhood
+	DynGraph.stream_neighborhood_density
+	DynGraph.cluster_internal_neighborhood
+	DynGraph.cluster_external_neighborhood
+	DynGraph.cluster_internal_degree
+	DynGraph.cluster_external_degree
+	DynGraph.cluster_average_internal_degree
+	DynGraph.cluster_average_external_degree
+	DynGraph.stream_clustering_coefficient
+	DynGraph.average_stream_clustering_coefficient
+	DynGraph.stream_transitivity
+	DynGraph.time_clustering_coefficient
+	DynGraph.stream_clustering_coefficient_global
+	DynGraph.stream_diameter
+	DynGraph.stream_lapse
+	DynGraph.stream_flood_time
+	DynGraph.stream_time_to_reach
+	DynGraph.constrained_time_respecting_paths
+	DynGraph.stream_weakly_connected_components
+	DynGraph.stream_strongly_connected_components
+	DynGraph.reachability_stream_graph
+	DynGraph.intra_cluster_density
+	DynGraph.inter_cluster_density
+	DynGraph.cluster_external_density
+	DynGraph.quotient_stream
+	DynGraph.line_stream
+	DynGraph.stream_k_core
+	DynGraph.stream_path_tree
+	DynGraph.stream_cascade
+	DynGraph.stream_closeness_centrality
+	DynGraph.stream_betweenness_centrality
+	DynGraph.stream_node_betweenness_centrality
+	DynGraph.stream_time_betweenness_centrality
+	DynGraph.delta_substream
+	DynGraph.delta_density
+	DynGraph.delta_degree
