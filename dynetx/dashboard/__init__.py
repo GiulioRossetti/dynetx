@@ -115,9 +115,31 @@ def _compose_edge_filter(edges, predicate):
 
     return _filter
 class TemporalDashboard:
-    """Stateful dashboard for temporal graphs, communities, and diffusion."""
+    """Stateful dashboard for temporal graphs, communities, and diffusion.
+
+    The object stores a graph, an optional temporal selection, and optional
+    community and diffusion results. It is used both by the browser dashboard
+    and by programmatic consumers that want a compact rendering or export API.
+    """
 
     def __init__(self, graph=None, t=None, communities=None, diffusion=None, layout="spring", seed=42):
+        """Initialize a dashboard session.
+
+        Parameters
+        ----------
+        graph : DynGraph or DynDiGraph, optional
+            Graph to attach to the dashboard.
+        t : snapshot id or 2-sequence, optional
+            Initial temporal selection.
+        communities : object, optional
+            Optional community result payload.
+        diffusion : object, optional
+            Optional diffusion result payload.
+        layout : str, optional
+            Default layout name used for rendering.
+        seed : int, optional
+            Random seed used for layout generation.
+        """
         from dynetx import DynGraph
 
         self.graph = graph if graph is not None else DynGraph()
@@ -141,44 +163,148 @@ class TemporalDashboard:
         self.metadata_filter = {}
 
     def set_graph(self, graph):
+        """Replace the active graph and clear the current selection.
+
+        Parameters
+        ----------
+        graph : DynGraph or DynDiGraph
+            New graph to store.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.graph = graph
         self.selected_snapshot = None
         self.selected_window = None
         return self
 
     def load_graph_data(self, data):
+        """Load a graph from node-link data and set it as active.
+
+        Parameters
+        ----------
+        data : dict
+            Node-link payload produced by :mod:`dynetx.readwrite.json_graph`.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.set_graph(json_graph.node_link_graph(data))
         return self
 
     def select_snapshot(self, t):
+        """Select a single snapshot for rendering and summary methods.
+
+        Parameters
+        ----------
+        t : snapshot id
+            Snapshot identifier to select.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.selected_snapshot = t
         self.selected_window = None
         return self
 
     def select_window(self, start, end):
+        """Select an inclusive temporal window for rendering.
+
+        Parameters
+        ----------
+        start : snapshot id
+            Inclusive lower bound.
+        end : snapshot id
+            Inclusive upper bound.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.selected_snapshot = None
         self.selected_window = (start, end)
         return self
 
     def set_node_filter(self, nodes=None, predicate=None):
+        """Restrict rendered graphs to a subset of nodes.
+
+        Parameters
+        ----------
+        nodes : iterable, optional
+            Explicit set of nodes to keep.
+        predicate : callable, optional
+            Callback returning ``True`` for nodes that should be kept.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.node_filter_nodes = None if nodes is None else set(nodes)
         self.node_filter_predicate = predicate
         return self
 
     def set_edge_filter(self, edges=None, predicate=None):
+        """Restrict rendered graphs to a subset of edges.
+
+        Parameters
+        ----------
+        edges : iterable, optional
+            Explicit set of edges to keep.
+        predicate : callable, optional
+            Callback returning ``True`` for edges that should be kept.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.edge_filter_edges = None if edges is None else {tuple(edge) for edge in edges}
         self.edge_filter_predicate = predicate
         return self
 
     def set_community_filter(self, community_ids=None):
+        """Restrict community summaries to the requested ids.
+
+        Parameters
+        ----------
+        community_ids : iterable, optional
+            Identifiers of the communities to keep.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.community_filter_ids = None if community_ids is None else set(community_ids)
         return self
 
     def set_metadata_filter(self, **metadata):
+        """Store metadata constraints used by the dashboard state.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.metadata_filter = dict(metadata)
         return self
 
     def clear_filters(self):
+        """Clear node, edge, community, and metadata filters.
+
+        Returns
+        -------
+        TemporalDashboard
+            The updated dashboard instance.
+        """
         self.node_filter_nodes = None
         self.node_filter_predicate = None
         self.edge_filter_edges = None
@@ -188,6 +314,13 @@ class TemporalDashboard:
         return self
 
     def current_graph(self):
+        """Return the graph slice corresponding to the current selection.
+
+        Returns
+        -------
+        DynGraph or DynDiGraph
+            Graph slice matching the current temporal and entity filters.
+        """
         kwargs = {}
         node_filter = _compose_node_filter(self.node_filter_nodes, self.node_filter_predicate)
         edge_filter = _compose_edge_filter(self.edge_filter_edges, self.edge_filter_predicate)
@@ -208,6 +341,13 @@ class TemporalDashboard:
         return self.graph
 
     def timeline_frames(self, window=1, step=1, include_partial=False):
+        """Return the temporal windows used by playback.
+
+        Returns
+        -------
+        list[tuple]
+            Inclusive ``(start, end)`` window boundaries.
+        """
         tids = self.graph.temporal_snapshots_ids()
         if len(tids) == 0:
             return []
@@ -228,12 +368,26 @@ class TemporalDashboard:
         return frames
 
     def playback(self, window=1, step=1, include_partial=False):
-        """Iterate through selected timeline windows and their current slices."""
+        """Iterate through temporal windows and their graph slices.
+
+        Yields
+        ------
+        tuple
+            Pairs of ``(dashboard, graph_slice)`` for each selected window.
+        """
         for start, end in self.timeline_frames(window=window, step=step, include_partial=include_partial):
             self.select_window(start, end) if window > 1 else self.select_snapshot(start)
             yield self, self.current_graph()
 
     def summary_statistics(self):
+        """Return a compact summary of the loaded temporal graph.
+
+        Returns
+        -------
+        dict
+            Snapshot ids, active-node counts, interaction counts, densities,
+            and total graph sizes.
+        """
         tids = self.graph.temporal_snapshots_ids()
         nodes = [self.graph.number_of_nodes(t) for t in tids] if tids else []
         interactions = [self.graph.interactions_per_snapshots(t) for t in tids] if tids else []
@@ -248,6 +402,7 @@ class TemporalDashboard:
         }
 
     def _snapshot_density(self, t):
+        """Return the density of snapshot ``t``."""
         try:
             n = self.graph.number_of_nodes(t)
             if n < 2:
@@ -263,6 +418,13 @@ class TemporalDashboard:
             return 0.0
 
     def current_density(self):
+        """Return the density of the currently selected graph slice.
+
+        Returns
+        -------
+        float
+            Density of the currently selected graph or temporal window.
+        """
         current = self.current_graph()
         try:
             n = current.number_of_nodes()
@@ -277,6 +439,7 @@ class TemporalDashboard:
             return 0.0
 
     def _select_mapped_result(self, results):
+        """Select the result object matching the current temporal selection."""
         if results is None:
             return None
         if not isinstance(results, Mapping):
@@ -296,6 +459,13 @@ class TemporalDashboard:
         return result
 
     def community_summary(self):
+        """Return the communities associated with the current selection.
+
+        Returns
+        -------
+        list
+            Selected communities or an empty list when no result is present.
+        """
         result = self._select_mapped_result(self.communities)
         if result is None:
             return []
@@ -305,19 +475,47 @@ class TemporalDashboard:
         return communities
 
     def diffusion_summary(self):
+        """Return the diffusion timeline associated with the current selection.
+
+        Returns
+        -------
+        list
+            Timeline entries for the active diffusion result.
+        """
         result = self._select_mapped_result(self.diffusion)
         if result is None:
             return []
         return list(result.timeline)
 
     def render_snapshot(self, t=None, ax=None):
+        """Render the current snapshot or slice onto ``ax``.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            Axes used for the rendering.
+        """
         graph = self.graph if t is None else self.graph.time_slice(t)
         return vz.draw_snapshot(graph, t=None, ax=ax)
 
     def render_timeline(self, ax=None):
+        """Render the timeline summary plot.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            Axes used for the rendering.
+        """
         return vz.plot_temporal_summary(self.graph, ax=ax, kind="both")
 
     def render_statistics(self, ax=None):
+        """Render a compact plot of interactions and active nodes.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            Axes used for the rendering.
+        """
         plt = _require_matplotlib()
         if ax is None:
             _, ax = plt.subplots(figsize=(8, 4))
@@ -336,6 +534,13 @@ class TemporalDashboard:
         return ax
 
     def render(self, figsize=(14, 10)):
+        """Render the dashboard into a Matplotlib figure.
+
+        Returns
+        -------
+        tuple
+            Matplotlib figure and axes array.
+        """
         plt = _require_matplotlib()
         fig, axes = plt.subplots(2, 2, figsize=figsize)
         axes = axes.ravel()
@@ -375,6 +580,13 @@ class TemporalDashboard:
         return fig, axes
 
     def export_state(self):
+        """Serialize the dashboard into a JSON-friendly dictionary.
+
+        Returns
+        -------
+        dict
+            Serializable dashboard state.
+        """
         return {
             "graph": json_graph.node_link_data(self.graph),
             "layout": self.layout,
@@ -393,6 +605,18 @@ class TemporalDashboard:
 
     @classmethod
     def from_state(cls, state):
+        """Reconstruct a dashboard from a serialized state dictionary.
+
+        Parameters
+        ----------
+        state : dict
+            State dictionary returned by :meth:`export_state`.
+
+        Returns
+        -------
+        TemporalDashboard
+            Reconstructed dashboard instance.
+        """
         graph = json_graph.node_link_graph(state["graph"])
         dashboard = cls(
             graph,
@@ -411,5 +635,26 @@ class TemporalDashboard:
 
 
 def build_dashboard(graph=None, t=None, communities=None, diffusion=None, layout="spring", seed=42):
-    """Return a :class:`TemporalDashboard` instance for the given graph."""
+    """Return a configured :class:`TemporalDashboard` instance.
+
+    Parameters
+    ----------
+    graph : DynGraph or DynDiGraph, optional
+        Graph to attach to the dashboard.
+    t : snapshot id or 2-sequence, optional
+        Initial temporal selection.
+    communities : object, optional
+        Optional community result payload.
+    diffusion : object, optional
+        Optional diffusion result payload.
+    layout : str, optional
+        Default layout name used for rendering.
+    seed : int, optional
+        Random seed used for layout generation.
+
+    Returns
+    -------
+    TemporalDashboard
+        Configured dashboard object.
+    """
     return TemporalDashboard(graph, t=t, communities=communities, diffusion=diffusion, layout=layout, seed=seed)

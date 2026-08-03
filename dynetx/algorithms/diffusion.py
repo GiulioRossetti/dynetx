@@ -280,6 +280,7 @@ def simulate_diffusion(G, model="SIModel", t=None, as_undirected=True, steps=10,
     Parameters
     ----------
     G : DynGraph or DynDiGraph
+        Dynamic graph to simulate on.
     model : str or callable
         NDlib model class or its name.
     t : int or 2-sequence, optional
@@ -296,8 +297,28 @@ def simulate_diffusion(G, model="SIModel", t=None, as_undirected=True, steps=10,
         ``nodes``, and ``edges`` entries.
     model_parameters, initial_status, node_parameters, edge_parameters : optional
         Convenience overrides merged into the NDlib configuration.
-    **kwargs :
-        Passed through to ``iteration_bunch``.
+    kwargs : dict
+        Additional keyword arguments passed through to ``iteration_bunch``.
+
+    Returns
+    -------
+    DiffusionResult
+        Normalized diffusion timeline and per-node state history.
+
+    References
+    ----------
+    No single publication is tied to this wrapper; the underlying dynamics are
+    delegated to the selected NDlib model.
+
+    Example
+    -------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.diffusion import simulate_diffusion
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> result = simulate_diffusion(G, steps=1)
+    >>> isinstance(result.timeline, list)
+    True
     """
     return _run_diffusion(
         G,
@@ -319,7 +340,56 @@ def simulate_diffusion(G, model="SIModel", t=None, as_undirected=True, steps=10,
 def simulate_epidemic(G, model="SIModel", t=None, as_undirected=True, steps=10, seed=None,
                       configuration=None, model_parameters=None, initial_status=None,
                       node_parameters=None, edge_parameters=None, **kwargs):
-    """Run an NDlib epidemic model on a DyNetx graph."""
+    """Run an NDlib epidemic model on a DyNetx graph.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Dynamic graph to simulate on.
+    model : str or NDlib model class, optional
+        Epidemic model to run.
+    t : snapshot id or 2-sequence, optional
+        Snapshot or temporal window to analyze.
+    as_undirected : bool, optional
+        If ``True``, convert directed graphs to undirected graphs before
+        running the simulation.
+    steps : int, optional
+        Number of NDlib iterations.
+    seed : int, optional
+        Random seed used by the simulation backend.
+    configuration : mapping or NDlib Configuration, optional
+        Prebuilt model configuration.
+    model_parameters : mapping, optional
+        Model parameter overrides.
+    initial_status : mapping, optional
+        Explicit initial node status assignment.
+    node_parameters : mapping, optional
+        Node-level NDlib parameter assignments.
+    edge_parameters : mapping, optional
+        Edge-level NDlib parameter assignments.
+    kwargs : dict
+        Additional keyword arguments passed through to the NDlib iteration API.
+
+    Returns
+    -------
+    DiffusionResult
+        Normalized diffusion timeline and per-node state history.
+
+    References
+    ----------
+    No single publication is tied to this wrapper; the underlying dynamics are
+    delegated to the selected NDlib model.
+
+    Example
+    -------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.diffusion import simulate_epidemic
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> result = simulate_epidemic(G, steps=1)
+    >>> isinstance(result.timeline, list)
+    True
+    """
     return _run_diffusion(
         G,
         model,
@@ -340,7 +410,56 @@ def simulate_epidemic(G, model="SIModel", t=None, as_undirected=True, steps=10, 
 def simulate_opinion(G, model="VoterModel", t=None, as_undirected=True, steps=10, seed=None,
                      configuration=None, model_parameters=None, initial_status=None,
                      node_parameters=None, edge_parameters=None, **kwargs):
-    """Run an NDlib opinion-dynamics model on a DyNetx graph."""
+    """Run an NDlib opinion-dynamics model on a DyNetx graph.
+
+    Parameters
+    ----------
+    G : DynGraph or DynDiGraph
+        Dynamic graph to simulate on.
+    model : str or NDlib model class, optional
+        Opinion-dynamics model to run.
+    t : snapshot id or 2-sequence, optional
+        Snapshot or temporal window to analyze.
+    as_undirected : bool, optional
+        If ``True``, convert directed graphs to undirected graphs before
+        running the simulation.
+    steps : int, optional
+        Number of NDlib iterations.
+    seed : int, optional
+        Random seed used by the simulation backend.
+    configuration : mapping or NDlib Configuration, optional
+        Prebuilt model configuration.
+    model_parameters : mapping, optional
+        Model parameter overrides.
+    initial_status : mapping, optional
+        Explicit initial node status assignment.
+    node_parameters : mapping, optional
+        Node-level NDlib parameter assignments.
+    edge_parameters : mapping, optional
+        Edge-level NDlib parameter assignments.
+    kwargs : dict
+        Additional keyword arguments passed through to the NDlib iteration API.
+
+    Returns
+    -------
+    DiffusionResult
+        Normalized diffusion timeline and per-node state history.
+
+    References
+    ----------
+    No single publication is tied to this wrapper; the underlying dynamics are
+    delegated to the selected NDlib model.
+
+    Example
+    -------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.diffusion import simulate_opinion
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> result = simulate_opinion(G, steps=1)
+    >>> isinstance(result.timeline, list)
+    True
+    """
     return _run_diffusion(
         G,
         model,
@@ -368,6 +487,16 @@ def simulate_diffusion_over_time(G, model="SIModel", window=1, step=1, include_p
     -------
     OrderedDict
         Mapping ``(start, end)`` tuples to :class:`DiffusionResult` objects.
+
+    Example
+    -------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.diffusion import simulate_diffusion_over_time
+    >>> G = dn.DynGraph()
+    >>> G.add_path([0, 1, 2], t=0)
+    >>> out = simulate_diffusion_over_time(G, steps=1)
+    >>> list(out.keys())
+    [(0, 0)]
     """
     if window <= 0:
         raise ValueError("window must be a positive integer")
@@ -408,5 +537,23 @@ def simulate_diffusion_over_time(G, model="SIModel", window=1, step=1, include_p
 
 
 def diffusion_timeline_records(result):
-    """Return a serializable list of diffusion timeline records."""
+    """Return a serializable list of diffusion timeline records.
+
+    Parameters
+    ----------
+    result : DiffusionResult
+        Result returned by one of the diffusion helpers.
+
+    Returns
+    -------
+    list
+        Timeline records ready for JSON serialization or tabular export.
+
+    Example
+    -------
+    >>> from dynetx.results import DiffusionResult
+    >>> from dynetx.algorithms.diffusion import diffusion_timeline_records
+    >>> diffusion_timeline_records(DiffusionResult(timeline=[{"iteration": 0}]))
+    [{'iteration': 0}]
+    """
     return list(result.timeline)
