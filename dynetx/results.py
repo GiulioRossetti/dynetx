@@ -38,8 +38,8 @@ class SnapshotAnalyticsResult:
     SnapshotAnalyticsResult
         A serializable result object.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.results import SnapshotAnalyticsResult
     >>> result = SnapshotAnalyticsResult(snapshot=0, metrics={"density": 0.25})
     >>> result.to_dict()["metrics"]["density"]
@@ -56,6 +56,13 @@ class SnapshotAnalyticsResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self):
+        """Return the result as a plain dictionary.
+
+        Examples
+        --------
+        >>> from dynetx.results import SnapshotAnalyticsResult
+        >>> SnapshotAnalyticsResult(snapshot=0, metrics={"density": 0.0}).to_dict()
+"""
         return asdict(self)
 
 
@@ -80,8 +87,8 @@ class WindowAnalyticsResult:
     WindowAnalyticsResult
         A serializable result object.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.results import WindowAnalyticsResult
     >>> result = WindowAnalyticsResult(start=0, end=3, metrics={"avg_degree": 2})
     >>> result.to_dict()["end"]
@@ -99,6 +106,13 @@ class WindowAnalyticsResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self):
+        """Return the result as a plain dictionary.
+
+        Examples
+        --------
+        >>> from dynetx.results import WindowAnalyticsResult
+        >>> WindowAnalyticsResult(start=0, end=1, metrics={"density": 0.0}).to_dict()
+"""
         return asdict(self)
 
 
@@ -121,8 +135,8 @@ class CommunityAssignmentResult:
     CommunityAssignmentResult
         A serializable result object.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.results import CommunityAssignmentResult
     >>> result = CommunityAssignmentResult(communities=[[1, 2], [3, 4]])
     >>> len(result.communities)
@@ -139,6 +153,13 @@ class CommunityAssignmentResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self):
+        """Return the result as a plain dictionary.
+
+        Examples
+        --------
+        >>> from dynetx.results import CommunityAssignmentResult
+        >>> CommunityAssignmentResult(communities=[[0, 1]]).to_dict()
+"""
         return asdict(self)
 
 
@@ -161,8 +182,8 @@ class DiffusionResult:
     DiffusionResult
         A serializable result object.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.results import DiffusionResult
     >>> result = DiffusionResult(timeline=[{"t": 0, "infected": 1}])
     >>> result.to_dict()["timeline"][0]["t"]
@@ -179,4 +200,11 @@ class DiffusionResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self):
+        """Return the result as a plain dictionary.
+
+        Examples
+        --------
+        >>> from dynetx.results import DiffusionResult
+        >>> DiffusionResult(timeline=[{"iteration": 0}]).to_dict()
+"""
         return asdict(self)

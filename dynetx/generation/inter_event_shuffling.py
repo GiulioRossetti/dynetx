@@ -37,7 +37,13 @@ def generate_inter_event_shuffling_graph(
     ----------
     Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
     models for temporal networks. *SIAM Review*, 64(4), 763-830.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation.inter_event_shuffling import generate_inter_event_shuffling_graph
+    >>> generate_inter_event_shuffling_graph(num_nodes=5, snapshots=2, seed=1)
+"""
     rng = random.Random(seed)
     base = base_stream_graph(
         num_nodes=num_nodes,

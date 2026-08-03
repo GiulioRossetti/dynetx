@@ -43,7 +43,13 @@ def normalize_reference_model_name(name):
     -------
     str
         Canonical generator identifier used by the registry.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation.registry import normalize_reference_model_name
+    >>> normalize_reference_model_name("timeline shuffling")
+"""
     normalized = normalize_name(name)
     aliases = {
         "event": "event_shuffling",

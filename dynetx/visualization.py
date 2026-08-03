@@ -68,7 +68,16 @@ def draw_snapshot(G, t=None, ax=None, layout="spring", pos=None, with_labels=Tru
     ----------
     No publication is associated with this rendering helper; it is a
     convenience function for the DyNetx documentation and dashboard.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.visualization import draw_snapshot
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> draw_snapshot(G, t=0)
+"""
     plt = _require_matplotlib()
     if ax is None:
         _, ax = plt.subplots(figsize=kwargs.pop("figsize", (7, 5)))
@@ -109,7 +118,16 @@ def plot_temporal_summary(G, ax=None, kind="interactions", title=None, color="ta
     -------
     matplotlib.axes.Axes
         The axes used for rendering.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.visualization import plot_temporal_summary
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> plot_temporal_summary(G)
+"""
     plt = _require_matplotlib()
     if ax is None:
         _, ax = plt.subplots(figsize=kwargs.pop("figsize", (8, 4)))
@@ -164,7 +182,16 @@ def plot_activity_heatmap(G, ax=None, title=None, cmap="Blues", sort_nodes=True,
     -------
     matplotlib.axes.Axes
         The axes used for rendering.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.visualization import plot_activity_heatmap
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> plot_activity_heatmap(G)
+"""
     plt = _require_matplotlib()
     if ax is None:
         _, ax = plt.subplots(figsize=kwargs.pop("figsize", (9, 5)))
@@ -203,7 +230,16 @@ def compare_snapshots(G, t1, t2, layout="spring", title=None, **kwargs):
     -------
     tuple
         Matplotlib figure and axes array.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.visualization import compare_snapshots
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> compare_snapshots(G, 0, 0)
+"""
     plt = _require_matplotlib()
     fig, axes = plt.subplots(1, 2, figsize=kwargs.pop("figsize", (12, 5)))
     shared = _shared_layout(G, layout=layout)

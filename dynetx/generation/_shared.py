@@ -18,7 +18,13 @@ def new_graph():
     -------
     DynGraph
         Empty dynamic graph ready to receive synthetic interactions.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import new_graph
+    >>> new_graph(num_nodes=5, snapshots=2, seed=1)
+"""
     from dynetx import DynGraph
 
     return DynGraph()
@@ -36,7 +42,13 @@ def normalize_name(name):
     -------
     str
         Lowercase identifier with spaces and hyphens replaced by underscores.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import normalize_name
+    >>> normalize_name(num_nodes=5, snapshots=2, seed=1)
+"""
     return str(name).strip().lower().replace("-", "_").replace(" ", "_")
 
 
@@ -58,7 +70,13 @@ def sample_power_law(rng, minimum, maximum, exponent):
     -------
     float
         Sampled value in the requested interval.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import sample_power_law
+    >>> sample_power_law(num_nodes=5, snapshots=2, seed=1)
+"""
     minimum = float(minimum)
     maximum = float(maximum)
     exponent = float(exponent)
@@ -92,7 +110,13 @@ def stream_contact_end(start, duration, max_snapshot):
     -------
     int
         Inclusive end timestamp clipped to the available range.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import stream_contact_end
+    >>> stream_contact_end(num_nodes=5, snapshots=2, seed=1)
+"""
     duration = max(1, int(round(duration)))
     return min(start + duration, max_snapshot)
 
@@ -115,7 +139,13 @@ def active_nodes(rng, nodes, dynamic_nodes, node_churn):
     -------
     list
         Active node identifiers sorted for deterministic output.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import active_nodes
+    >>> active_nodes(num_nodes=5, snapshots=2, seed=1)
+"""
     if not dynamic_nodes:
         return list(nodes)
     active = [node for node in nodes if rng.random() >= node_churn]
@@ -125,7 +155,13 @@ def active_nodes(rng, nodes, dynamic_nodes, node_churn):
 
 
 def copy_nodes(graph, nodes):
-    """Add ``nodes`` to ``graph`` preserving their identifiers."""
+    """Add ``nodes`` to ``graph`` preserving their identifiers.
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import copy_nodes
+    >>> copy_nodes(num_nodes=5, snapshots=2, seed=1)
+"""
     for node in nodes:
         graph.add_node(node)
 
@@ -172,7 +208,13 @@ def base_stream_graph(
     -------
     DynGraph
         Synthetic dynamic graph storing temporal interaction spans.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import base_stream_graph
+    >>> base_stream_graph(num_nodes=5, snapshots=2, seed=1)
+"""
     if num_nodes <= 1:
         raise ValueError("num_nodes must be greater than 1")
     if snapshots <= 0:
@@ -238,7 +280,13 @@ def edge_timelines(graph):
     list[tuple]
         List of ``(u, v, spans)`` tuples where ``spans`` is the temporal
         support attached to the edge.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import edge_timelines
+    >>> edge_timelines(num_nodes=5, snapshots=2, seed=1)
+"""
     timelines = []
     for u, v, attrs in graph.interactions_iter():
         spans = [tuple(span) for span in attrs.get("t", [])]
@@ -254,7 +302,13 @@ def event_rows(graph):
     -------
     list[tuple]
         Tuples of ``(u, v, start, duration)``.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import event_rows
+    >>> event_rows(num_nodes=5, snapshots=2, seed=1)
+"""
     events = []
     for u, v, attrs in graph.interactions_iter():
         for start, end in attrs.get("t", []):
@@ -263,7 +317,13 @@ def event_rows(graph):
 
 
 def add_spans(graph, u, v, spans):
-    """Add a sequence of inclusive spans to ``graph`` for edge ``(u, v)``."""
+    """Add a sequence of inclusive spans to ``graph`` for edge ``(u, v)``.
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import add_spans
+    >>> add_spans(num_nodes=5, snapshots=2, seed=1)
+"""
     for start, end in spans:
         graph.add_interaction(u, v, t=int(start), e=int(end) + 1)
 
@@ -284,7 +344,13 @@ def rewired_pair_list(rng, nodes, count):
     -------
     list[tuple]
         Pairs sampled without replacement when possible.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation._shared import rewired_pair_list
+    >>> rewired_pair_list(num_nodes=5, snapshots=2, seed=1)
+"""
     pairs = [(nodes[i], nodes[j]) for i in range(len(nodes)) for j in range(i + 1, len(nodes))]
     if not pairs:
         return []

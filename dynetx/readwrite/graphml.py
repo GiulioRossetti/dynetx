@@ -24,8 +24,8 @@ def write_graphml(G, path, t=None):
     -------
     None
 
-    Example
-    -------
+    Examples
+    --------
     >>> import dynetx as dn
     >>> from dynetx.readwrite.graphml import write_graphml
     >>> G = dn.DynGraph()
@@ -41,7 +41,16 @@ def read_graphml(path, directed=False, t=0):
 
     The GraphML structure is treated as a static graph and imported as a
     snapshot at time ``t``.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.graphml import read_graphml
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> read_graphml("graph.graphml")
+"""
     nxg = nx.read_graphml(path)
     graph = dn.DynDiGraph() if directed or nxg.is_directed() else dn.DynGraph()
     graph.graph.update(nxg.graph)

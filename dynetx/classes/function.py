@@ -274,7 +274,15 @@ def density(G, t=None):
 
         Self loops are counted in the total number of edges so graphs with self
         loops can have density higher than 1.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.density(G)
+"""
     n = number_of_nodes(G, t)
     m = number_of_interactions(G, t)
     if m == 0 or m is None or n <= 1:
@@ -310,7 +318,15 @@ def degree_histogram(G, t=None):
         -----
         Note: the bins are width one, hence len(list) can be large
         (Order(number_of_edges))
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.degree_histogram(G)
+"""
     counts = Counter(d for n, d in G.degree(t=t).items())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
@@ -327,12 +343,28 @@ def is_directed(G):
     -------
     bool
         ``True`` when the graph stores directed interactions.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.is_directed(G)
+"""
     return G.is_directed()
 
 
 def frozen():
-    """Dummy method for raising errors when trying to modify frozen graphs"""
+    """Dummy method for raising errors when trying to modify frozen graphs
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.frozen(G)
+"""
     raise nx.NetworkXError("Frozen graph can't be modified")
 
 
@@ -355,7 +387,15 @@ def freeze(G):
         See Also
         --------
         is_frozen
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.freeze(G)
+"""
     G.add_node = frozen
     G.add_nodes_from = frozen
     G.remove_node = frozen
@@ -380,7 +420,15 @@ def is_frozen(G):
         See Also
         --------
         freeze
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.is_frozen(G)
+"""
     try:
         return G.frozen
     except AttributeError:
@@ -493,7 +541,15 @@ def subgraph(G, nbunch):
            Nodes in nbunch that are not in the graph will be (quietly)
            ignored.
 
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.subgraph(G, [0, 1])
+"""
     return G.subgraph(nbunch)
 
 
@@ -511,7 +567,15 @@ def create_empty_copy(G, with_data=True):
         Notes
         -----
         Graph and edge data is not propagated to the new graph.
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.create_empty_copy(G)
+"""
     H = G.__class__()
     H.add_nodes_from(G.nodes(data=with_data))
     if with_data:
@@ -534,7 +598,15 @@ def set_node_attributes(G, values, name=None):
            dictionary, then it is treated as a single attribute value that is then
            applied to every node in `G`.
 
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.set_node_attributes(G, {0: "red"}, name="color")
+"""
     # Set node attributes based on type of `values`
     if name is not None:  # `values` must not be a dict of dict
         try:  # `values` is a dict
@@ -567,7 +639,15 @@ def get_node_attributes(G, name):
         Returns
         -------
         Dictionary of attributes keyed by node.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.get_node_attributes(G, "color")
+"""
     return {n: d[name] for n, d in G._node.items() if name in d}
 
 
@@ -576,7 +656,15 @@ def set_edge_attributes(G, values, name=None):
 
     The helper mirrors the NetworkX convention for graph-level attribute
     assignment while updating the temporal edge payload stored by DyNetx.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.set_edge_attributes(G, {0: "red"}, name="color")
+"""
     def _edge_data(u, v):
         if G.is_directed():
             if u in G._succ and v in G._succ[u]:
@@ -628,7 +716,15 @@ def get_edge_attributes(G, name):
     -------
     dict
         Mapping from edge tuples to attribute values or dictionaries.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.get_edge_attributes(G, "weight")
+"""
     attrs = {}
     if name is None:
         for u, v, d in G.interactions_iter():
@@ -662,7 +758,15 @@ def all_neighbors(graph, node, t=None):
 
         neighbors : iterator
             Iterator of neighbors
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.all_neighbors(G, 0, t=0)
+"""
     if graph.is_directed():
         values = chain(graph.predecessors(node, t=t), graph.successors(node, t=t))
     else:
@@ -689,7 +793,15 @@ def non_neighbors(graph, node, t=None):
         -------
         non_neighbors : iterator
             Iterator of nodes in the graph that are not neighbors of the node.
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.non_neighbors(G, 0, t=0)
+"""
     if graph.is_directed():
         values = chain(graph.predecessors(node, t=t), graph.successors(node, t=t))
     else:
@@ -716,7 +828,15 @@ def non_interactions(graph, t=None):
         -------
         non_edges : iterator
         Iterator of edges that are not in the graph.
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> list(dn.non_interactions(G))
+"""
     # if graph.is_directed():
     #    for u in graph:
     #        for v in non_neighbors(graph, u, t):
@@ -749,7 +869,15 @@ def is_empty(G):
         An empty graph can have nodes but not edges. The empty graph with zero
         nodes is known as the null graph. This is an O(n) operation where n is the
         number of nodes in the graph.
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.is_empty(G)
+"""
     return not any(G.adj.values())
 
 
@@ -835,37 +963,93 @@ def temporal_degree(G, nbunch=None, t=None):
     dict or int
         Mapping from nodes to support counts, or a single degree value when
         ``nbunch`` identifies one node and ``t`` is supplied.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.temporal_degree(G)
+"""
     return G.temporal_degree(nbunch=nbunch, t=t)
 
 
 def avg_temporal_degree(G):
-    """Return the average temporal support across all nodes."""
+    """Return the average temporal support across all nodes.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.avg_temporal_degree(G)
+"""
     return G.avg_temporal_degree()
 
 
 def has_node_in_range(G, n, t_from, t_to=None, mode='any'):
-    """Check whether node ``n`` appears within a time interval."""
+    """Check whether node ``n`` appears within a time interval.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.has_node_in_range(G, 0, 0)
+"""
     return G.has_node_in_range(n, t_from, t_to=t_to, mode=mode)
 
 
 def has_interaction_in_range(G, u, v, t_from, t_to=None, mode='any'):
-    """Check whether interaction ``(u, v)`` appears within a time interval."""
+    """Check whether interaction ``(u, v)`` appears within a time interval.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.has_interaction_in_range(G, 0, 1, 0)
+"""
     return G.has_interaction_in_range(u, v, t_from, t_to=t_to, mode=mode)
 
 
 def neighbors_in_range(G, n, t_from, t_to=None, mode='any'):
-    """Return the neighbors of ``n`` observed over a time interval."""
+    """Return the neighbors of ``n`` observed over a time interval.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.neighbors_in_range(G, 0, 0)
+"""
     return G.neighbors_in_range(n, t_from, t_to=t_to, mode=mode)
 
 
 def interactions_in_range(G, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
-    """Return interactions observed within a time interval."""
+    """Return interactions observed within a time interval.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.interactions_in_range(G, t_from=0, t_to=0)
+"""
     return G.interactions_in_range(nbunch=nbunch, t_from=t_from, t_to=t_to, mode=mode, min_count=min_count)
 
 
 def window_slices(G, window, step=1, include_partial=False):
-    """Iterate over sliding temporal subgraphs."""
+    """Iterate over sliding temporal subgraphs.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> list(dn.window_slices(G, window=1))
+"""
     return G.window_slices(window, step=step, include_partial=include_partial)
 
 
@@ -883,7 +1067,15 @@ def to_networkx_graph(G, t=None):
     -------
     networkx.Graph
         Static graph representation of the dynamic graph.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.to_networkx_graph(G, t=0)
+"""
     return G.to_networkx_graph(t=t)
 
 
@@ -967,5 +1159,13 @@ def inter_event_time_distribution(G, u=None, v=None):
 
      nd : dictionary
          A dictionary from inter event time to number of occurrences
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> dn.inter_event_time_distribution(G)
+"""
     return G.inter_event_time_distribution(u, v)

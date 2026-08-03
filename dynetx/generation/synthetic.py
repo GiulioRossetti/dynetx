@@ -87,7 +87,13 @@ def generate_synthetic_graph(
     -------
     DynGraph
         Synthetic dynamic graph ready for dashboard visualization.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.generation.synthetic import generate_synthetic_graph
+    >>> generate_synthetic_graph(kind="stream", num_nodes=5, snapshots=2, seed=1)
+"""
     from dynetx import DynGraph
 
     if num_nodes <= 1:

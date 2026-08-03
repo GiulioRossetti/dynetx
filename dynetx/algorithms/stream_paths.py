@@ -37,8 +37,30 @@ __all__ = [
 ]
 
 def stream_diameter(G, start=None, end=None):
-    """
-        Return the diameter of the stream graph (largest finite distance).
+    """Return the diameter of the stream graph.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    start : int, optional
+        Lower temporal bound.
+    end : int, optional
+        Upper temporal bound.
+
+    Returns
+    -------
+    int
+        Largest finite temporal distance among all time-respecting paths.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_diameter
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_diameter(G)
+    0
     """
     from dynetx.algorithms.paths import all_time_respecting_paths
     paths = all_time_respecting_paths(G, start=start, end=end)
@@ -56,9 +78,31 @@ def stream_diameter(G, start=None, end=None):
     return max_dist
 
 def stream_lapse(G, start=None, end=None):
-    """
-        Return the lapse of the stream graph (largest finite latency).
-    """
+    """Return the lapse of the stream graph.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    start : int, optional
+        Lower temporal bound.
+    end : int, optional
+        Upper temporal bound.
+
+    Returns
+    -------
+    int
+        Largest finite latency among all time-respecting paths.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_lapse
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_lapse(G)
+"""
     from dynetx.algorithms.paths import all_time_respecting_paths
     paths = all_time_respecting_paths(G, start=start, end=end)
     if not paths:
@@ -75,9 +119,37 @@ def stream_lapse(G, start=None, end=None):
     return max_lat
 
 def stream_time_to_reach(G, u, v, alpha, start=None, end=None):
-    """
-        Minimum arrival time difference to reach target v from source u starting at or after alpha.
-    """
+    """Return the minimum arrival delay from ``u`` to ``v``.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    u : node
+        Source node.
+    v : node
+        Target node.
+    alpha : int
+        Earliest departure time.
+    start : int, optional
+        Lower temporal bound.
+    end : int, optional
+        Upper temporal bound.
+
+    Returns
+    -------
+    float
+        Minimum arrival time minus ``alpha``, or ``inf`` if no path exists.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_time_to_reach
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_time_to_reach(G, 0, 1, 0)
+"""
     from dynetx.algorithms.paths import time_respecting_paths
     tids = G.temporal_snapshots_ids()
     if not tids:
@@ -104,9 +176,31 @@ def stream_time_to_reach(G, u, v, alpha, start=None, end=None):
     return min_arrival - alpha
 
 def stream_flood_time(G, start=None, end=None):
-    """
-        Return the flood time of the stream graph.
-    """
+    """Return the flood time of the stream graph.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    start : int, optional
+        Lower temporal bound.
+    end : int, optional
+        Upper temporal bound.
+
+    Returns
+    -------
+    int
+        Maximum arrival delay required to reach all reachable nodes.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_flood_time
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_flood_time(G)
+"""
     from dynetx.algorithms.paths import all_time_respecting_paths
     paths = all_time_respecting_paths(G, start=start, end=end)
     V = G.nodes()
@@ -125,9 +219,39 @@ def stream_flood_time(G, start=None, end=None):
     return max_ft
 
 def constrained_time_respecting_paths(G, u, v=None, start=None, end=None, gamma=1, gamma_prime=None):
-    """
-        Find all simple paths from u to v under transmission delay gamma and forwarding delay gamma_prime.
-    """
+    """Find simple time-respecting paths with bounded waiting times.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    u : node
+        Source node.
+    v : node, optional
+        Destination node. If omitted, record all reachable endpoints.
+    start : int, optional
+        Lower temporal bound.
+    end : int, optional
+        Upper temporal bound.
+    gamma : int, optional
+        Minimum delay between consecutive hops.
+    gamma_prime : int, optional
+        Optional maximum extra waiting time between hops.
+
+    Returns
+    -------
+    dict
+        Mapping from endpoint pairs to lists of valid temporal paths.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import constrained_time_respecting_paths
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> constrained_time_respecting_paths(G)
+"""
     tids = G.temporal_snapshots_ids()
     if not tids:
         return {}
@@ -183,9 +307,22 @@ def constrained_time_respecting_paths(G, u, v=None, start=None, end=None, gamma=
     return results
 
 def stream_weakly_connected_components(G):
-    """
-        Return the weakly connected components of the stream graph as a list of Clusters.
-    """
+    """Return the weakly connected components of the stream graph.
+
+    Returns
+    -------
+    list[Cluster]
+        Temporal components encoded as ``Cluster`` objects.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_weakly_connected_components
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_weakly_connected_components(G)
+"""
     flat_components = list(nx.connected_components(G))
     components = []
     for comp in flat_components:
@@ -198,9 +335,22 @@ def stream_weakly_connected_components(G):
     return components
 
 def stream_strongly_connected_components(G):
-    """
-        Return the strongly connected components of the stream graph as a list of Clusters.
-    """
+    """Return the strongly connected components of the stream graph.
+
+    Returns
+    -------
+    list[Cluster]
+        Temporal components encoded as ``Cluster`` objects.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_strongly_connected_components
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_strongly_connected_components(G)
+"""
     tids = G.temporal_snapshots_ids()
     if not tids:
         return []
@@ -242,9 +392,22 @@ def stream_strongly_connected_components(G):
     return components
 
 def reachability_stream_graph(G):
-    """
-        Return the reachability stream graph of G.
-    """
+    """Return the reachability stream graph of ``G``.
+
+    Returns
+    -------
+    DynDiGraph
+        Stream graph whose edges represent reachable node pairs.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import reachability_stream_graph
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> reachability_stream_graph(G)
+"""
     R = DynDiGraph(edge_removal=G.edge_removal)
     from dynetx.algorithms.paths import all_time_respecting_paths
     paths = all_time_respecting_paths(G)
@@ -257,9 +420,23 @@ def reachability_stream_graph(G):
     return R
 
 def cluster_internal_neighborhood(G, cluster, v):
-    """
-        Return the internal neighborhood of node v involved in cluster as a Cluster.
-    """
+    """Return the internal neighborhood of ``v`` within ``cluster``.
+
+    Returns
+    -------
+    Cluster
+        Temporal neighbors of ``v`` that also belong to ``cluster``.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_internal_neighborhood
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_internal_neighborhood(G, cluster, 0)
+"""
     c = Cluster()
     v_presence_in_cluster = {t for (t, u) in cluster if u == v}
     for t in v_presence_in_cluster:
@@ -270,9 +447,23 @@ def cluster_internal_neighborhood(G, cluster, v):
     return c
 
 def cluster_external_neighborhood(G, cluster, v):
-    """
-        Return the external neighborhood of node v involved in cluster as a Cluster.
-    """
+    """Return the external neighborhood of ``v`` with respect to ``cluster``.
+
+    Returns
+    -------
+    Cluster
+        Temporal neighbors of ``v`` that fall outside ``cluster``.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_external_neighborhood
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_external_neighborhood(G, cluster, 0)
+"""
     c = Cluster()
     v_presence_in_cluster = {t for (t, u) in cluster if u == v}
     for t in v_presence_in_cluster:
@@ -283,21 +474,63 @@ def cluster_external_neighborhood(G, cluster, v):
     return c
 
 def cluster_internal_degree(G, cluster, v):
-    """
-        Return the internal degree of node v in cluster.
-    """
+    """Return the internal degree of ``v`` within ``cluster``.
+
+    Returns
+    -------
+    int
+        Number of temporal neighbors of ``v`` that are also in ``cluster``.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_internal_degree
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_internal_degree(G, cluster, 0)
+"""
     return len(cluster_internal_neighborhood(G, cluster, v))
 
 def cluster_external_degree(G, cluster, v):
-    """
-        Return the external degree of node v in cluster.
-    """
+    """Return the external degree of ``v`` within ``cluster``.
+
+    Returns
+    -------
+    int
+        Number of temporal neighbors of ``v`` that are outside ``cluster``.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_external_degree
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_external_degree(G, cluster, 0)
+"""
     return len(cluster_external_neighborhood(G, cluster, v))
 
 def cluster_average_internal_degree(G, cluster):
-    """
-        Return the average internal degree of cluster.
-    """
+    """Return the average internal degree of ``cluster``.
+
+    Returns
+    -------
+    float
+        Mean internal degree across the nodes appearing in the cluster.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_average_internal_degree
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_average_internal_degree(G, cluster)
+"""
     nodes = {u for (t, u) in cluster}
     if not cluster:
         return 0.0
@@ -305,9 +538,23 @@ def cluster_average_internal_degree(G, cluster):
     return total_int_deg / len(cluster)
 
 def cluster_average_external_degree(G, cluster):
-    """
-        Return the average external degree of cluster.
-    """
+    """Return the average external degree of ``cluster``.
+
+    Returns
+    -------
+    float
+        Mean external degree across the nodes appearing in the cluster.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_average_external_degree
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_average_external_degree(G, cluster)
+"""
     nodes = {u for (t, u) in cluster}
     if not cluster:
         return 0.0
@@ -315,9 +562,30 @@ def cluster_average_external_degree(G, cluster):
     return total_ext_deg / len(cluster)
 
 def intra_cluster_density(G, partition):
-    """
-        Intra-cluster density of a partition (list of Clusters).
-    """
+    """Return the intra-cluster density of a partition.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    partition : iterable of Cluster
+        Temporal partition of the graph.
+
+    Returns
+    -------
+    float
+        Ratio of observed internal links to possible internal links.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import intra_cluster_density
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> partition = [{(0, 0), (0, 1)}]
+    >>> intra_cluster_density(G, partition)
+"""
     total_internal_links = 0
     total_possible_internal_links = 0
     is_directed = G.is_directed()
@@ -352,9 +620,30 @@ def intra_cluster_density(G, partition):
     return total_internal_links / total_possible_internal_links
 
 def inter_cluster_density(G, partition):
-    """
-        Inter-cluster density of a partition (list of Clusters).
-    """
+    """Return the inter-cluster density of a partition.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    partition : iterable of Cluster
+        Temporal partition of the graph.
+
+    Returns
+    -------
+    float
+        Ratio of observed inter-cluster links to possible inter-cluster links.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import inter_cluster_density
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> partition = [{(0, 0), (0, 1)}]
+    >>> inter_cluster_density(G, partition)
+"""
     total_inter_links = 0
     total_possible_inter_links = 0
     is_directed = G.is_directed()
@@ -411,7 +700,17 @@ def cluster_external_density(G, cluster):
     -------
     float
         Fraction of potential external contacts that are present.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import cluster_external_density
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> cluster = {(0, 0), (0, 1)}
+    >>> cluster_external_density(G, cluster)
+"""
     tids = G.temporal_snapshots_ids()
     W = Cluster()
     for t in tids:
@@ -421,9 +720,30 @@ def cluster_external_density(G, cluster):
     return inter_cluster_density(G, [cluster, comp])
 
 def quotient_stream(G, partition):
-    """
-        Return the quotient stream graph of G induced by partition.
-    """
+    """Return the quotient stream graph induced by a partition.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to compress.
+    partition : iterable of Cluster
+        Temporal partition used to define quotient nodes.
+
+    Returns
+    -------
+    DynDiGraph
+        Quotient stream graph.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import quotient_stream
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> partition = [{(0, 0), (0, 1)}]
+    >>> quotient_stream(G, partition)
+"""
     Q = G.__class__(edge_removal=G.edge_removal)
     cluster_t_nodes = []
     for C in partition:
@@ -465,7 +785,16 @@ def line_stream(G):
     DynDiGraph
         Stream graph whose nodes are temporal edge occurrences and whose
         edges connect edge occurrences that share exactly one endpoint.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import line_stream
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> line_stream(G)
+"""
     L = G.__class__(edge_removal=G.edge_removal)
     tids = G.temporal_snapshots_ids()
     for t in tids:
@@ -480,9 +809,31 @@ def line_stream(G):
     return L
 
 def stream_k_core(G, k=None):
-    """
-        Return the stream k-core or core numbers.
-    """
+    """Return the stream ``k``-core or per-snapshot core numbers.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    k : int, optional
+        If provided, return the temporal ``k``-core. Otherwise return core
+        numbers for each temporal node.
+
+    Returns
+    -------
+    Cluster or dict
+        Temporal core nodes when ``k`` is given, otherwise a mapping from
+        temporal node occurrences to core numbers.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_k_core
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_k_core(G)
+"""
     tids = G.temporal_snapshots_ids()
     if k is not None:
         c = Cluster()
@@ -502,9 +853,33 @@ def stream_k_core(G, k=None):
         return core_numbers
 
 def stream_path_tree(G, root_node, root_time, path_type='foremost'):
-    """
-        Return foremost/shortest/fastest path trees.
-    """
+    """Return a temporal tree of foremost, shortest, or fastest paths.
+
+    Parameters
+    ----------
+    G : DynDiGraph
+        Stream graph to analyze.
+    root_node : node
+        Root node of the tree.
+    root_time : int
+        Time at which the root is activated.
+    path_type : {"foremost", "shortest", "fastest"}, optional
+        Temporal path selection strategy.
+
+    Returns
+    -------
+    DynDiGraph
+        Tree encoded as a temporal stream graph.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_path_tree
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_path_tree(G, 0, 0)
+"""
     from dynetx.algorithms.paths import time_respecting_paths, annotate_paths
     plist = time_respecting_paths(G, root_node, start=root_time)
     Tree = G.__class__(edge_removal=G.edge_removal)
@@ -528,15 +903,35 @@ def stream_path_tree(G, root_node, root_time, path_type='foremost'):
     return Tree
 
 def stream_cascade(G, root_node, root_time):
-    """
-        Return the cascade of G starting from root.
-    """
+    """Return the cascade rooted at ``root_node`` and ``root_time``.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_cascade
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_cascade(G, 0, 0)
+"""
     return stream_path_tree(G, root_node, root_time, path_type='foremost')
 
 def stream_closeness_centrality(G, v, t):
-    """
-        Return the closeness centrality of node v at time t.
-    """
+    """Return the closeness centrality of ``v`` at time ``t``.
+
+    Returns
+    -------
+    float
+        Reciprocal-distance score over time-respecting paths.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_closeness_centrality
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_closeness_centrality(G)
+"""
     total = 0.0
     for u in G.nodes():
         if u == v:
@@ -549,9 +944,16 @@ def stream_closeness_centrality(G, v, t):
     return total
 
 def stream_betweenness_centrality(G):
-    """
-        Return the temporal betweenness centrality of all (t, v) in G.
-    """
+    """Return the temporal betweenness centrality of all temporal nodes.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_betweenness_centrality
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_betweenness_centrality(G)
+"""
     from dynetx.algorithms.paths import all_time_respecting_paths
     paths = all_time_respecting_paths(G)
     
@@ -580,9 +982,16 @@ def stream_betweenness_centrality(G):
     return bc
 
 def stream_node_betweenness_centrality(G):
-    """
-        Return the node betweenness centrality for all nodes in G.
-    """
+    """Return node betweenness centrality aggregated over time.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_node_betweenness_centrality
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_node_betweenness_centrality(G)
+"""
     bc = stream_betweenness_centrality(G)
     node_bc = defaultdict(float)
     for u in G.nodes():
@@ -592,9 +1001,16 @@ def stream_node_betweenness_centrality(G):
     return dict(node_bc)
 
 def stream_time_betweenness_centrality(G):
-    """
-        Return the time betweenness centrality for all snapshots in G.
-    """
+    """Return time betweenness centrality aggregated over nodes.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import stream_time_betweenness_centrality
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> stream_time_betweenness_centrality(G)
+"""
     bc = stream_betweenness_centrality(G)
     time_bc = defaultdict(float)
     for t in G.temporal_snapshots_ids():
@@ -604,9 +1020,22 @@ def stream_time_betweenness_centrality(G):
     return dict(time_bc)
 
 def delta_substream(G, t, delta):
-    """
-        Return the substream of G restricted to the temporal window [t, t + delta].
-    """
+    """Return the substream restricted to ``[t, t + delta]``.
+
+    Returns
+    -------
+    DynDiGraph
+        Temporal subgraph induced by the requested window.
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import delta_substream
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> delta_substream(G, 0, 1)
+"""
     tids = G.temporal_snapshots_ids()
     sub = G.__class__(edge_removal=G.edge_removal)
     start = t
@@ -618,16 +1047,30 @@ def delta_substream(G, t, delta):
     return sub
 
 def delta_density(G, t, delta):
-    """
-        Return the density of G in the window [t, t + delta].
-    """
+    """Return the density of ``G`` in the window ``[t, t + delta]``.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import delta_density
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> delta_density(G, 0, 1)
+"""
     sub = delta_substream(G, t, delta)
     return sub.density()
 
 def delta_degree(G, v, t, delta):
-    """
-        Return the degree of node v in the window [t, t + delta].
-    """
+    """Return the degree of ``v`` in the window ``[t, t + delta]``.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.stream_paths import delta_degree
+    >>> G = dn.DynDiGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> delta_degree(G, 0, 0, 1)
+"""
     sub = delta_substream(G, t, delta)
     if sub.has_node(v):
         return sub.stream_degree(v)

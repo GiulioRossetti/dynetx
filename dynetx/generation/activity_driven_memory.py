@@ -69,8 +69,8 @@ def generate_activity_driven_memory_graph(
     Karsai, M., Perra, N., & Vespignani, A. (2014). Time varying networks and
     the weakness of strong ties. *Scientific Reports*, 4, 4001.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.generation.activity_driven_memory import generate_activity_driven_memory_graph
     >>> G = generate_activity_driven_memory_graph(num_nodes=5, snapshots=3, seed=7)
     >>> G.graph["generator"]

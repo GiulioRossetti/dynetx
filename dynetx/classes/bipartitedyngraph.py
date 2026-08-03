@@ -8,7 +8,14 @@ class BipartiteDynGraph(DynGraph):
 
     The class extends :class:`dynetx.classes.dyngraph.DynGraph` with simple
     partition management helpers and bipartite-specific summary methods.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+    >>> G.BipartiteDynGraph()
+"""
     def __init__(self, top_nodes=None, bottom_nodes=None, **kwargs):
         """Create a bipartite dynamic graph.
 
@@ -31,17 +38,39 @@ class BipartiteDynGraph(DynGraph):
         self.bottom = set(bottom_nodes) if bottom_nodes is not None else set()
 
     def add_node_to_top(self, node):
-        """Add a node to the top partition."""
+        """Add a node to the top partition.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+        >>> G.add_node_to_top(0)
+"""
         self.top.add(node)
         self.bottom.discard(node)
 
     def add_node_to_bottom(self, node):
-        """Add a node to the bottom partition."""
+        """Add a node to the bottom partition.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+        >>> G.add_node_to_bottom(1)
+"""
         self.bottom.add(node)
         self.top.discard(node)
 
     def is_bipartite(self):
-        """Return ``True`` when every active interaction crosses partitions."""
+        """Return ``True`` when every active interaction crosses partitions.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.is_bipartite()
+"""
         tids = self.temporal_snapshots_ids()
         for t in tids:
             for u, v, _ in self.interactions(t=t):
@@ -54,7 +83,15 @@ class BipartiteDynGraph(DynGraph):
         return True
 
     def bipartite_density(self):
-        """Return the temporal bipartite density of the graph."""
+        """Return the temporal bipartite density of the graph.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.bipartite_density()
+"""
         tids = self.temporal_snapshots_ids()
         if not tids:
             return 0.0
@@ -84,7 +121,15 @@ class BipartiteDynGraph(DynGraph):
         DynGraph
             Projection graph with temporal interactions induced by shared
             neighbors.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.bipartite_projection(target="top")
+"""
         proj = DynGraph(edge_removal=self.edge_removal)
         nodes = self.top if target == 'top' else self.bottom
         other = self.bottom if target == 'top' else self.top
@@ -104,7 +149,15 @@ class BipartiteDynGraph(DynGraph):
         return proj
 
     def bipartite_redundancy(self, v):
-        """Return the average bipartite redundancy of node ``v``."""
+        """Return the average bipartite redundancy of node ``v``.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.BipartiteDynGraph(top_nodes=[0], bottom_nodes=[1])
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.bipartite_redundancy(0)
+"""
         tids = self.temporal_snapshots_ids()
         total_red = 0.0
         count = 0

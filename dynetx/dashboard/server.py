@@ -81,7 +81,14 @@ def _detect_browser_host():
 
 
 class DashboardServerState:
-    """In-memory dashboard session state shared by the HTTP handlers."""
+    """In-memory dashboard session state shared by the HTTP handlers.
+
+    Examples
+    --------
+    >>> from dynetx.dashboard.server import DashboardServerState
+    >>> state = DashboardServerState()
+    >>> state.DashboardServerState()
+"""
 
     def __init__(self, dashboard=None):
         """Initialize the shared state object."""
@@ -89,14 +96,28 @@ class DashboardServerState:
         self.lock = threading.RLock()
 
     def load_graph(self, graph_data):
-        """Load graph data and reset the current selection."""
+        """Load graph data and reset the current selection.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.load_graph({})
+"""
         with self.lock:
             self.dashboard.load_graph_data(graph_data)
             self._default_selection()
             return self.summary()
 
     def generate_graph(self, kind="stream", num_nodes=12, snapshots=3, edge_probability=0.2, seed=42, topologies=None, dynamic_nodes=False, node_churn=0.25, ba_m=None, ws_k=None, ws_beta=0.2, sbm_groups=None, sbm_p_in=None, sbm_p_out=None, activity_m=2, activity_min=0.18, activity_max=0.65, activity_exponent=2.2, contact_duration=1, memory_alpha=1.0):
-        """Generate a synthetic graph and load it into the dashboard."""
+        """Generate a synthetic graph and load it into the dashboard.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.generate_graph(kind="stream", num_nodes=5, snapshots=2, seed=1)
+"""
         with self.lock:
             self.dashboard.set_graph(
                 generate_synthetic_graph(
@@ -126,7 +147,14 @@ class DashboardServerState:
             return self.summary()
 
     def select(self, snapshot=None, window=None):
-        """Update the active dashboard selection."""
+        """Update the active dashboard selection.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.select(snapshot=0)
+"""
         with self.lock:
             if window is not None:
                 self.dashboard.select_window(*window)
@@ -135,14 +163,28 @@ class DashboardServerState:
             return self.summary()
 
     def clear_selection(self):
-        """Clear any active snapshot or window selection."""
+        """Clear any active snapshot or window selection.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.clear_selection()
+"""
         with self.lock:
             self.dashboard.selected_snapshot = None
             self.dashboard.selected_window = None
             return self.summary()
 
     def step_snapshot(self, delta=1):
-        """Advance the current snapshot selection by ``delta`` steps."""
+        """Advance the current snapshot selection by ``delta`` steps.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.step_snapshot()
+"""
         with self.lock:
             tids = self.dashboard.graph.temporal_snapshots_ids()
             if not tids:
@@ -159,7 +201,14 @@ class DashboardServerState:
             return self.summary()
 
     def step_window(self, delta=1):
-        """Advance the current window selection by ``delta`` steps."""
+        """Advance the current window selection by ``delta`` steps.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.step_window()
+"""
         with self.lock:
             tids = self.dashboard.graph.temporal_snapshots_ids()
             if not tids:
@@ -194,7 +243,14 @@ class DashboardServerState:
             self.dashboard.selected_window = None
 
     def summary(self):
-        """Return the dashboard state as a JSON-serializable dictionary."""
+        """Return the dashboard state as a JSON-serializable dictionary.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.summary()
+"""
         with self.lock:
             stats = self.dashboard.summary_statistics()
             tids = stats["snapshots"]
@@ -216,12 +272,26 @@ class DashboardServerState:
             }
 
     def export_state(self):
-        """Return the current dashboard export payload."""
+        """Return the current dashboard export payload.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.export_state()
+"""
         with self.lock:
             return self.dashboard.export_state()
 
     def current_graph_data(self):
-        """Return the serialized graph and stream-view payload."""
+        """Return the serialized graph and stream-view payload.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.current_graph_data()
+"""
         with self.lock:
             payload = json_graph.node_link_data(self.dashboard.current_graph())
             payload["graph"] = dict(self.dashboard.graph.graph)
@@ -289,7 +359,14 @@ class DashboardServerState:
         }
 
     def chart_data(self):
-        """Return the time-series data used by the dashboard charts."""
+        """Return the time-series data used by the dashboard charts.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.chart_data()
+"""
         with self.lock:
             stats = self.dashboard.summary_statistics()
             snapshots = stats["snapshots"]
@@ -304,7 +381,14 @@ class DashboardServerState:
             }
 
     def render_page(self):
-        """Render the dashboard HTML page."""
+        """Render the dashboard HTML page.
+
+        Examples
+        --------
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.render_page()
+"""
         return _DASHBOARD_HTML.replace("__LOGO_DATA_URI__", _LOGO_DATA_URI)
 
 
@@ -418,7 +502,13 @@ def create_server(host=DEFAULT_HOST, port=DEFAULT_PORT):
     tuple
         ``(server, state)`` where ``server`` is a ``ThreadingHTTPServer``
         instance and ``state`` is the shared ``DashboardServerState``.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.dashboard.server import create_server
+    >>> create_server(port=0)
+"""
     app = DashboardServerState()
     handler = _make_handler()
     server = ThreadingHTTPServer((host, port), handler)
@@ -437,7 +527,13 @@ def _launch_server(host, port):
 
 
 def build_parser():
-    """Return the command-line parser for the dashboard entry point."""
+    """Return the command-line parser for the dashboard entry point.
+
+    Examples
+    --------
+    >>> from dynetx.dashboard.server import build_parser
+    >>> build_parser()
+"""
     parser = argparse.ArgumentParser(
         prog="dynetx_dashboard",
         description="Launch the DyNetx browser dashboard.",
@@ -460,7 +556,13 @@ def main(argv=None):
     -------
     int
         Process exit status.
-    """
+    
+
+    Examples
+    --------
+    >>> from dynetx.dashboard.server import main
+    >>> main(["--no-browser"])
+"""
     parser = build_parser()
     args = parser.parse_args(argv)
     bind_host = args.host

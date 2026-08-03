@@ -53,7 +53,16 @@ def generate_interactions(G, delimiter=' '):
     -------
     iterator[str]
         Text lines representing temporal interaction events.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import generate_interactions
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> list(generate_interactions(G))
+"""
     for e in G.stream_interactions():
         yield delimiter.join(map(make_str, e))
 
@@ -81,7 +90,16 @@ def write_interactions(G, path, delimiter=' ', encoding='utf-8'):
         Returns
         -------
         None
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import write_interactions
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> write_interactions(G, "graph.txt")
+"""
     for line in generate_interactions(G, delimiter):
         line += '\n'
         path.write(line.encode(encoding))
@@ -125,7 +143,16 @@ def read_interactions(path, comments="#", directed=False, delimiter=None,
     DynGraph or DynDiGraph
         Temporal graph reconstructed from the edge list.
 
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import read_interactions
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> read_interactions("graph.txt")
+"""
     ids = None
     lines = (line.decode(encoding) for line in path)
     if keys:
@@ -160,7 +187,16 @@ def parse_interactions(lines, comments='#', directed=False, delimiter=None, node
     -------
     DynGraph or DynDiGraph
         Parsed temporal graph.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import parse_interactions
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> parse_interactions(["0 1 0"])
+"""
     if not directed:
         G = DynGraph()
     else:
@@ -218,7 +254,16 @@ def generate_snapshots(G, delimiter=' '):
     -------
     iterator[str]
         Text lines describing every active interaction at every timestamp.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import generate_snapshots
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> list(generate_snapshots(G))
+"""
     for u, v, d in G.interactions():
         if 't' not in d:
             raise NotImplementedError("Snapshot export requires temporal data.")
@@ -258,7 +303,16 @@ def write_snapshots(G, path, delimiter=' ', encoding='utf-8'):
         Returns
         -------
         None
-        """
+        
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import write_snapshots
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> write_snapshots(G, "graph.txt")
+"""
     for line in generate_snapshots(G, delimiter):
         line += '\n'
         path.write(line.encode(encoding))
@@ -271,7 +325,16 @@ def parse_snapshots(lines, comments='#', directed=False, delimiter=None, nodetyp
     -------
     DynGraph or DynDiGraph
         Temporal graph reconstructed from the snapshot list.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import parse_snapshots
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> parse_snapshots(["0 1 0"])
+"""
     if not directed:
         G = DynGraph()
     else:
@@ -358,7 +421,16 @@ def read_snapshots(path, comments="#", directed=False, delimiter=None,
     -------
     DynGraph or DynDiGraph
         Temporal graph reconstructed from the file.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import read_snapshots
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> read_snapshots("graph.txt")
+"""
     ids = None
     lines = (line.decode(encoding) for line in path)
     if keys:
@@ -384,7 +456,16 @@ def read_ids(path, delimiter=None, timestamptype=None):
     -------
     dict
         Mapping from original time identifiers to compact indices.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.edgelist import read_ids
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> read_ids("graph.txt")
+"""
     ids = {}
     with open(path) as f:
         for line in f:

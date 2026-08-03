@@ -61,8 +61,8 @@ def generate_activity_driven_graph(
     Activity driven modeling of time varying networks. *Scientific Reports*,
     2, 469.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.generation.activity_driven import generate_activity_driven_graph
     >>> G = generate_activity_driven_graph(num_nodes=5, snapshots=3, seed=7)
     >>> G.graph["generator"]

@@ -40,8 +40,8 @@ def to_interaction_dataframe(G):
         Table with columns for source, target, interval bounds, direction,
         and any edge attributes stored on each interaction.
 
-    Example
-    -------
+    Examples
+    --------
     >>> import dynetx as dn
     >>> from dynetx.readwrite.tabular import to_interaction_dataframe
     >>> G = dn.DynGraph()
@@ -81,8 +81,8 @@ def from_interaction_dataframe(df, directed=False):
     DynGraph or DynDiGraph
         Temporal graph reconstructed from the table.
 
-    Example
-    -------
+    Examples
+    --------
     >>> import pandas as pd
     >>> from dynetx.readwrite.tabular import from_interaction_dataframe
     >>> df = pd.DataFrame([{"source": 1, "target": 2, "t_start": 0, "t_end": 1}])
@@ -115,7 +115,16 @@ def to_snapshot_dataframe(G):
     -------
     pandas.DataFrame
         Table with one row for every active edge at every timestamp.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.readwrite.tabular import to_snapshot_dataframe
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> to_snapshot_dataframe(G)
+"""
     pd = _require_pandas()
     rows = []
     for u, v, d in G.interactions_iter():
@@ -146,7 +155,14 @@ def from_snapshot_dataframe(df, directed=False):
     -------
     DynGraph or DynDiGraph
         Temporal graph reconstructed from the table.
-    """
+    
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from dynetx.readwrite.tabular import from_snapshot_dataframe
+    >>> from_snapshot_dataframe(pd.DataFrame([{"source": 0, "target": 1, "time": 0}]))
+"""
     pd = _require_pandas()
     if not isinstance(df, pd.DataFrame):
         raise TypeError("df must be a pandas DataFrame")

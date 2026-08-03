@@ -20,8 +20,8 @@ def compact_timeslot(sind_list):
     dict
         Mapping from the original snapshot identifiers to contiguous indices.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.transform import compact_timeslot
     >>> compact_timeslot([10, 20, 30])
     {10: 0, 20: 1, 30: 2}

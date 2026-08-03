@@ -127,30 +127,30 @@ def temporal_dag(G, u, v=None, start=None, end=None):
 
 def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
     """
-        Computes all the simple time respecting paths among u and v within [start, stop].
-        It assumes interaction chains of length 1 within each network snapshot.
+    Computes all the simple time respecting paths among u and v within [start, stop].
+    It assumes interaction chains of length 1 within each network snapshot.
 
-        Parameters
-        ----------
-        G : a DynGraph or DynDiGraph object
-            The graph to use for computing DAG
-        u : a node id
-            A node in G
-        v : a node id
-            A node in G
-        start : temporal id
-            min temporal id for bounding the DAG, default None
-        end : temporal id to conclude the search
-            max temporal id for bounding the DAG, default None
-        sample : percentage of connected node pairs for which compute the time respecting paths. Default 1.
+    Parameters
+    ----------
+    G : a DynGraph or DynDiGraph object
+        The graph to use for computing DAG
+    u : a node id
+        A node in G
+    v : a node id
+        A node in G
+    start : temporal id
+        min temporal id for bounding the DAG, default None
+    end : temporal id to conclude the search
+        max temporal id for bounding the DAG, default None
+    sample : percentage of connected node pairs for which compute the time respecting paths. Default 1.
 
-        Returns
-        --------
-        paths: dict
-            A dictionary that associate to each node pair (u,v) the list of time respecting paths connecting them.
+    Returns
+    -------
+    paths: dict
+        A dictionary that associate to each node pair (u,v) the list of time respecting paths connecting them.
 
-        Examples
-        --------
+    Examples
+    --------
 
         >>> import dynetx as dn
         >>> g = dn.DynGraph()
@@ -212,27 +212,27 @@ def time_respecting_paths(G, u, v=None, start=None, end=None, sample=1):
 
 def all_time_respecting_paths(G, start=None, end=None, sample=1, min_t=None):
     """
-        Computes all the simple paths among network node pairs.
-        It assumes interaction chains of length 1 within each network snapshot.
+    Computes all the simple paths among network node pairs.
+    It assumes interaction chains of length 1 within each network snapshot.
 
-        Parameters
-        ----------
-        G : a DynGraph or DynDiGraph object
-            The graph to use for computing DAG
-        start : temporal id
-            min temporal id for bounding the DAG, default None
-        end : temporal id to conclude the search
-            max temporal id for bounding the DAG, default None
-        sample : percentage of paths to compute. Default, 1
-        min_t : temporal id for the source nodes, Default, None (all possible tids in [start, end])
+    Parameters
+    ----------
+    G : a DynGraph or DynDiGraph object
+        The graph to use for computing DAG
+    start : temporal id
+        min temporal id for bounding the DAG, default None
+    end : temporal id to conclude the search
+        max temporal id for bounding the DAG, default None
+    sample : percentage of paths to compute. Default, 1
+    min_t : temporal id for the source nodes, Default, None (all possible tids in [start, end])
 
-        Returns
-        --------
-        paths: dictionary
-            A dictionary that associate to each node pair (u,v) the list of paths connecting them.
+    Returns
+    -------
+    paths: dictionary
+        A dictionary that associate to each node pair (u,v) the list of paths connecting them.
 
-        Examples
-        --------
+    Examples
+    --------
 
         >>> import dynetx as dn
         >>> g = dn.DynGraph()

@@ -28,8 +28,8 @@ def normalize_time_range(t_from, t_to=None):
     tuple
         A ``(start, end)`` pair with ``start <= end``.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.validation import normalize_time_range
     >>> normalize_time_range((1, 3))
     (1, 3)
@@ -66,8 +66,8 @@ def normalize_interaction_interval(t, e=None):
     tuple
         A ``(start, end)`` pair in inclusive form.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.validation import normalize_interaction_interval
     >>> normalize_interaction_interval((2, 4))
     (2, 4)
@@ -105,8 +105,8 @@ def inclusive_end_to_exclusive(end):
     int or None
         Exclusive upper bound suitable for internal storage.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.validation import inclusive_end_to_exclusive
     >>> inclusive_end_to_exclusive(3)
     4
@@ -129,8 +129,8 @@ def exclusive_end_to_inclusive(end):
     int or None
         Inclusive upper bound.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.validation import exclusive_end_to_inclusive
     >>> exclusive_end_to_inclusive(4)
     3
@@ -156,8 +156,8 @@ def ensure_mapping(value, name="value"):
         A shallow copy of ``value`` or an empty dictionary when ``value`` is
         ``None``.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.validation import ensure_mapping
     >>> ensure_mapping({"a": 1})
     {'a': 1}

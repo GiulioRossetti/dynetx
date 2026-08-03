@@ -310,8 +310,8 @@ def simulate_diffusion(G, model="SIModel", t=None, as_undirected=True, steps=10,
     No single publication is tied to this wrapper; the underlying dynamics are
     delegated to the selected NDlib model.
 
-    Example
-    -------
+    Examples
+    --------
     >>> import dynetx as dn
     >>> from dynetx.algorithms.diffusion import simulate_diffusion
     >>> G = dn.DynGraph()
@@ -380,8 +380,8 @@ def simulate_epidemic(G, model="SIModel", t=None, as_undirected=True, steps=10, 
     No single publication is tied to this wrapper; the underlying dynamics are
     delegated to the selected NDlib model.
 
-    Example
-    -------
+    Examples
+    --------
     >>> import dynetx as dn
     >>> from dynetx.algorithms.diffusion import simulate_epidemic
     >>> G = dn.DynGraph()
@@ -450,8 +450,8 @@ def simulate_opinion(G, model="VoterModel", t=None, as_undirected=True, steps=10
     No single publication is tied to this wrapper; the underlying dynamics are
     delegated to the selected NDlib model.
 
-    Example
-    -------
+    Examples
+    --------
     >>> import dynetx as dn
     >>> from dynetx.algorithms.diffusion import simulate_opinion
     >>> G = dn.DynGraph()
@@ -488,8 +488,8 @@ def simulate_diffusion_over_time(G, model="SIModel", window=1, step=1, include_p
     OrderedDict
         Mapping ``(start, end)`` tuples to :class:`DiffusionResult` objects.
 
-    Example
-    -------
+    Examples
+    --------
     >>> import dynetx as dn
     >>> from dynetx.algorithms.diffusion import simulate_diffusion_over_time
     >>> G = dn.DynGraph()
@@ -549,8 +549,8 @@ def diffusion_timeline_records(result):
     list
         Timeline records ready for JSON serialization or tabular export.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.results import DiffusionResult
     >>> from dynetx.algorithms.diffusion import diffusion_timeline_records
     >>> diffusion_timeline_records(DiffusionResult(timeline=[{"iteration": 0}]))

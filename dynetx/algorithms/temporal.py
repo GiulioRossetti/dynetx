@@ -31,7 +31,16 @@ def temporal_degree_centrality(G, normalized=True):
 
     The value is the sum of snapshot degrees over all snapshots, optionally
     normalized by the maximum possible degree mass.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import temporal_degree_centrality
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> temporal_degree_centrality(G)
+"""
     tids = G.temporal_snapshots_ids()
     nodes = G.nodes()
     scores = {n: 0 for n in nodes}
@@ -51,7 +60,16 @@ def temporal_clustering(G, t=None):
 
     If t is provided, compute clustering on that snapshot. Otherwise average
     clustering over all available snapshots.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import temporal_clustering
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> temporal_clustering(G)
+"""
     if t is not None:
         sg = _snapshot_graph(G, t)
         return nx.clustering(sg.to_undirected() if sg.is_directed() else sg)
@@ -73,7 +91,16 @@ def temporal_transitivity(G, t=None):
 
     If t is provided, compute transitivity on that snapshot. Otherwise average
     across snapshots.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import temporal_transitivity
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> temporal_transitivity(G)
+"""
     if t is not None:
         sg = _snapshot_graph(G, t)
         return nx.transitivity(sg.to_undirected() if sg.is_directed() else sg)
@@ -99,7 +126,16 @@ def temporal_connected_components(G, t=None):
     -------
     list[set] or dict
         Connected components for the selected snapshot or for all snapshots.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import temporal_connected_components
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> temporal_connected_components(G, t=0)
+"""
     if t is not None:
         sg = _snapshot_graph(G, t)
         base = sg.to_undirected() if sg.is_directed() else sg
@@ -109,7 +145,16 @@ def temporal_connected_components(G, t=None):
 
 
 def temporal_earliest_arrival_closeness(G, source, start=None, end=None):
-    """Return a simple earliest-arrival closeness score for source."""
+    """Return a simple earliest-arrival closeness score for source.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import temporal_earliest_arrival_closeness
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> temporal_earliest_arrival_closeness(G, 0)
+"""
     paths = all_time_respecting_paths(G, start=start, end=end)
     arrivals = {}
     for (u, v), plist in paths.items():
@@ -126,7 +171,16 @@ def temporal_earliest_arrival_closeness(G, source, start=None, end=None):
 
 
 def temporal_betweenness_centrality(G, normalized=True, start=None, end=None):
-    """Approximate temporal betweenness from shortest time-respecting paths."""
+    """Approximate temporal betweenness from shortest time-respecting paths.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import temporal_betweenness_centrality
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> temporal_betweenness_centrality(G)
+"""
     nodes = G.nodes()
     scores = {n: 0.0 for n in nodes}
     pairs = list(combinations(nodes, 2))
@@ -151,5 +205,14 @@ def temporal_betweenness_centrality(G, normalized=True, start=None, end=None):
 
 
 def path_support(path):
-    """Return the number of distinct snapshots used by a temporal path."""
+    """Return the number of distinct snapshots used by a temporal path.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.temporal import path_support
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> path_support(G)
+"""
     return len({step[-1] for step in path})

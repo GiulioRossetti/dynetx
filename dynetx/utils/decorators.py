@@ -84,8 +84,8 @@ def open_file(path_arg, mode='r'):
         Decorator that opens the designated argument as a file object when a
         path-like value is passed and closes it automatically on exit.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from dynetx.utils.decorators import open_file
     >>> @open_file(0, mode="w")
     ... def write_lines(path):

@@ -80,9 +80,17 @@ def community_detection(G, algorithm="louvain", t=None, as_undirected=True, **kw
         used.
     as_undirected : bool, optional
         Convert directed graphs to undirected graphs before calling CDlib.
-    **kwargs :
-        Passed through to the CDlib algorithm.
-    """
+    kwargs : dict
+        Additional keyword arguments passed through to the CDlib algorithm.
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.community import community_detection
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> community_detection(G, t=0)
+"""
     if t is None:
         nxg = _snapshot_graph(G, as_undirected=as_undirected)
         graph_kind = "aggregate"
@@ -131,7 +139,16 @@ def community_detection_over_time(G, algorithm="louvain", window=1, step=1, incl
     If ``window`` is 1, the helper behaves like per-snapshot detection. For
     larger windows, it performs sliding-window community detection and returns
     a mapping keyed by ``(start, end)`` tuples.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.algorithms.community import community_detection_over_time
+    >>> G = dn.DynGraph()
+    >>> G.add_interaction(0, 1, t=0)
+    >>> community_detection_over_time(G, window=1)
+"""
     out = OrderedDict()
     algo = _resolve_algorithm(algorithm)
 

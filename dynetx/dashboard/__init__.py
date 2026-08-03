@@ -120,7 +120,16 @@ class TemporalDashboard:
     The object stores a graph, an optional temporal selection, and optional
     community and diffusion results. It is used both by the browser dashboard
     and by programmatic consumers that want a compact rendering or export API.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.dashboard import TemporalDashboard
+    >>> G = dn.DynGraph()
+    >>> dashboard = TemporalDashboard(G)
+    >>> dashboard.TemporalDashboard()
+"""
 
     def __init__(self, graph=None, t=None, communities=None, diffusion=None, layout="spring", seed=42):
         """Initialize a dashboard session.
@@ -174,7 +183,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.set_graph(G)
+"""
         self.graph = graph
         self.selected_snapshot = None
         self.selected_window = None
@@ -192,7 +210,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.load_graph_data({})
+"""
         self.set_graph(json_graph.node_link_graph(data))
         return self
 
@@ -208,7 +235,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.select_snapshot(0)
+"""
         self.selected_snapshot = t
         self.selected_window = None
         return self
@@ -227,7 +263,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.select_window(0, 0)
+"""
         self.selected_snapshot = None
         self.selected_window = (start, end)
         return self
@@ -246,7 +291,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.set_node_filter([0])
+"""
         self.node_filter_nodes = None if nodes is None else set(nodes)
         self.node_filter_predicate = predicate
         return self
@@ -265,7 +319,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.set_edge_filter([(0, 1)])
+"""
         self.edge_filter_edges = None if edges is None else {tuple(edge) for edge in edges}
         self.edge_filter_predicate = predicate
         return self
@@ -282,7 +345,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.set_community_filter([0])
+"""
         self.community_filter_ids = None if community_ids is None else set(community_ids)
         return self
 
@@ -293,7 +365,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.set_metadata_filter(kind="stream")
+"""
         self.metadata_filter = dict(metadata)
         return self
 
@@ -304,7 +385,16 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             The updated dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.clear_filters()
+"""
         self.node_filter_nodes = None
         self.node_filter_predicate = None
         self.edge_filter_edges = None
@@ -320,7 +410,16 @@ class TemporalDashboard:
         -------
         DynGraph or DynDiGraph
             Graph slice matching the current temporal and entity filters.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.current_graph()
+"""
         kwargs = {}
         node_filter = _compose_node_filter(self.node_filter_nodes, self.node_filter_predicate)
         edge_filter = _compose_edge_filter(self.edge_filter_edges, self.edge_filter_predicate)
@@ -347,7 +446,16 @@ class TemporalDashboard:
         -------
         list[tuple]
             Inclusive ``(start, end)`` window boundaries.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.timeline_frames(window=1)
+"""
         tids = self.graph.temporal_snapshots_ids()
         if len(tids) == 0:
             return []
@@ -374,7 +482,16 @@ class TemporalDashboard:
         ------
         tuple
             Pairs of ``(dashboard, graph_slice)`` for each selected window.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> list(dashboard.playback(window=1))
+"""
         for start, end in self.timeline_frames(window=window, step=step, include_partial=include_partial):
             self.select_window(start, end) if window > 1 else self.select_snapshot(start)
             yield self, self.current_graph()
@@ -387,7 +504,16 @@ class TemporalDashboard:
         dict
             Snapshot ids, active-node counts, interaction counts, densities,
             and total graph sizes.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.summary_statistics()
+"""
         tids = self.graph.temporal_snapshots_ids()
         nodes = [self.graph.number_of_nodes(t) for t in tids] if tids else []
         interactions = [self.graph.interactions_per_snapshots(t) for t in tids] if tids else []
@@ -424,7 +550,16 @@ class TemporalDashboard:
         -------
         float
             Density of the currently selected graph or temporal window.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.current_density()
+"""
         current = self.current_graph()
         try:
             n = current.number_of_nodes()
@@ -465,7 +600,16 @@ class TemporalDashboard:
         -------
         list
             Selected communities or an empty list when no result is present.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.community_summary()
+"""
         result = self._select_mapped_result(self.communities)
         if result is None:
             return []
@@ -481,7 +625,16 @@ class TemporalDashboard:
         -------
         list
             Timeline entries for the active diffusion result.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.diffusion_summary()
+"""
         result = self._select_mapped_result(self.diffusion)
         if result is None:
             return []
@@ -494,7 +647,16 @@ class TemporalDashboard:
         -------
         matplotlib.axes.Axes
             Axes used for the rendering.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.render_snapshot(t=0)
+"""
         graph = self.graph if t is None else self.graph.time_slice(t)
         return vz.draw_snapshot(graph, t=None, ax=ax)
 
@@ -505,7 +667,16 @@ class TemporalDashboard:
         -------
         matplotlib.axes.Axes
             Axes used for the rendering.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.render_timeline()
+"""
         return vz.plot_temporal_summary(self.graph, ax=ax, kind="both")
 
     def render_statistics(self, ax=None):
@@ -515,7 +686,16 @@ class TemporalDashboard:
         -------
         matplotlib.axes.Axes
             Axes used for the rendering.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.render_statistics()
+"""
         plt = _require_matplotlib()
         if ax is None:
             _, ax = plt.subplots(figsize=(8, 4))
@@ -540,7 +720,16 @@ class TemporalDashboard:
         -------
         tuple
             Matplotlib figure and axes array.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.render()
+"""
         plt = _require_matplotlib()
         fig, axes = plt.subplots(2, 2, figsize=figsize)
         axes = axes.ravel()
@@ -586,7 +775,16 @@ class TemporalDashboard:
         -------
         dict
             Serializable dashboard state.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> dashboard.export_state()
+"""
         return {
             "graph": json_graph.node_link_data(self.graph),
             "layout": self.layout,
@@ -616,7 +814,17 @@ class TemporalDashboard:
         -------
         TemporalDashboard
             Reconstructed dashboard instance.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> from dynetx.dashboard import TemporalDashboard
+        >>> G = dn.DynGraph()
+        >>> dashboard = TemporalDashboard(G)
+        >>> state = dashboard.export_state()
+        >>> TemporalDashboard.from_state(state)
+"""
         graph = json_graph.node_link_graph(state["graph"])
         dashboard = cls(
             graph,
@@ -656,5 +864,13 @@ def build_dashboard(graph=None, t=None, communities=None, diffusion=None, layout
     -------
     TemporalDashboard
         Configured dashboard object.
-    """
+    
+
+    Examples
+    --------
+    >>> import dynetx as dn
+    >>> from dynetx.dashboard import build_dashboard
+    >>> G = dn.DynGraph()
+    >>> build_dashboard(G)
+"""
     return TemporalDashboard(graph, t=t, communities=communities, diffusion=diffusion, layout=layout, seed=seed)

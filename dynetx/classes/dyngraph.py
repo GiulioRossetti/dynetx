@@ -842,8 +842,8 @@ class DynGraph(nx.Graph):
         Parameters
         ----------
         n : node
-        t : snapshot id (default None)
-                If None return the presence of the node in the flattened graph.
+        t : snapshot id, default None
+            If None, return the presence of the node in the flattened graph.
 
         Examples
         --------
@@ -852,8 +852,6 @@ class DynGraph(nx.Graph):
         >>> G.add_path([0,1,2], t=0)
         >>> G.has_node(0, t=0)
         True
-
-        It is more readable and simpler to use
 
         >>> 0 in G
         True
@@ -1026,45 +1024,39 @@ class DynGraph(nx.Graph):
                 yield e[0], e[1], e[2], t
 
     def time_slice(self, t_from, t_to=None, **kwargs):
-        """Return an new graph containing nodes and interactions present in [t_from, t_to].
+        """Return a new graph containing nodes and interactions present in
+        ``[t_from, t_to]``.
 
-            Parameters
-            ----------
+        Parameters
+        ----------
+        t_from : snapshot id
+            Start of the slice.
+        t_to : snapshot id, optional
+            End of the slice. If omitted, ``t_to`` is set equal to ``t_from``.
 
-            t_from : snapshot id, mandatory
-            t_to : snapshot id, optional (default=None)
-                If None t_to will be set equal to t_from
+        Returns
+        -------
+        DynGraph
+            Graph described by interactions in ``[t_from, t_to]``.
 
-            Returns
-            -------
-            H : a DynGraph object
-                the graph described by interactions in [t_from, t_to]
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_path([0, 1, 2, 3], t=0)
+        >>> G.add_path([0, 4, 5, 6], t=1)
+        >>> H = G.time_slice(0, 1)
+        >>> H.interactions()
+        [(0, 1), (1, 2), (1, 3), (0, 4), (4, 5), (5, 6)]
 
-            Examples
-            --------
-            >>> import dynetx as dn
-            >>> G = dn.DynGraph()
-            >>> G.add_path([0,1,2,3], t=0)
-            >>> G.add_path([0,4,5,6], t=1)
-            >>> G.add_path([7,1,2,3], t=2)
-            >>> H = G.time_slice(0)
-            >>> H.interactions()
-            [(0, 1), (1, 2), (1, 3)]
-            >>> H = G.time_slice(0, 1)
-            >>> H.interactions()
-            [(0, 1), (1, 2), (1, 3), (0, 4), (4, 5), (5, 6)]
         Additional keyword arguments
-        ----------------------------
+        ---------------------------
         node_filter : callable or mapping, optional
             Filter applied to node attributes before they are copied into the
-            slice. Callables receive ``(node, attrs)`` and must return ``True``
-            to keep the node. Mappings are interpreted as exact-match
-            constraints on node attributes.
+            slice.
         edge_filter : callable or mapping, optional
             Filter applied to edge attributes before an interaction interval is
-            copied into the slice. Callables receive ``(u, v, attrs)`` and must
-            return ``True`` to keep the edge. Mappings are interpreted as
-            exact-match constraints on edge attributes.
+            copied into the slice.
         include_isolated : bool, optional
             If ``True``, keep nodes selected by ``node_filter`` even when they
             have no surviving interactions in the slice.
@@ -1145,7 +1137,15 @@ class DynGraph(nx.Graph):
 
         :param n: node id
         :return: list of snapshot ids
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.get_node_snapshots()
+"""
         snaps = []
         for t in self.temporal_snapshots_ids():
             if self.has_node(n, t):
@@ -1246,7 +1246,15 @@ class DynGraph(nx.Graph):
         nd : dictionary
             A dictionary from inter event time to number of occurrences
 
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.inter_event_time_distribution()
+"""
         dist = {}
         if u is None:
             # global inter event
@@ -1312,7 +1320,15 @@ class DynGraph(nx.Graph):
         -------
         cov : float
             The ratio of existing nodes w.r.t. the possible ones.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.coverage()
+"""
         T = len(self.snapshots)
         V = self.number_of_nodes()
         if T == 0 or V == 0:
@@ -1336,7 +1352,15 @@ class DynGraph(nx.Graph):
             -------
             ucov : float
                 Probability that u belongs to a randomly selected network timestamp.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.node_contribution()
+"""
 
         ucov = 0
         if len(self.snapshots) == 0:
@@ -1359,7 +1383,15 @@ class DynGraph(nx.Graph):
             -------
             ecov : float
                 Probability that (u, v) belongs to a randomly selected network timestamp.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.edge_contribution()
+"""
         presences = self._adj[u][v]['t']
         count = 0
         for interval in presences:
@@ -1381,7 +1413,15 @@ class DynGraph(nx.Graph):
             -------
             uniformity : float
                 Overlap between the presence times of u and v, in [0, 1]
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.node_pair_uniformity()
+"""
 
         u_presence = []
         v_presence = []
@@ -1405,7 +1445,15 @@ class DynGraph(nx.Graph):
             -------
             uniformity : float
                 Uniformity of the temporal graph in [0, 1]
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.uniformity()
+"""
         nds = self.nodes()
         numerator, denominator = 0, 0
         for u, v in combinations(nds, 2):
@@ -1424,7 +1472,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 density of the temporal graph in [0, 1]
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.density()
+"""
         nds = self.nodes()
         numerator, denominator = 0, 0
         for u, v in combinations(nds, 2):
@@ -1450,7 +1506,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 Node pair density, in [0, 1]
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.node_density()
+"""
 
         numerator, denominator = 0, 0
         presence_u = self.node_presence(u)
@@ -1472,8 +1536,18 @@ class DynGraph(nx.Graph):
             Returns
             -------
             m : float
-                Average number of active links over time (m = |E|/|T|)
-        """
+                Average number of active links over time, computed as the
+                total number of active interactions divided by the number of
+                snapshots.
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.link_count()
+"""
         T = len(self.snapshots)
         if T == 0:
             return 0.0
@@ -1487,8 +1561,17 @@ class DynGraph(nx.Graph):
             Returns
             -------
             k : float
-                Average duration of presence of a node (k = |W|/|V|)
-        """
+                Average duration of presence of a node, computed as the total
+                node-presence time divided by the number of nodes.
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.node_duration()
+"""
         V = self.nodes()
         if not V:
             return 0.0
@@ -1502,8 +1585,18 @@ class DynGraph(nx.Graph):
             Returns
             -------
             l : float
-                Average duration of presence of a link (l = |E|/|V \otimes V|)
-        """
+                Average duration of presence of a link, computed as the total
+                link-presence time divided by the number of possible node
+                pairs.
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.link_duration()
+"""
         n = self.number_of_nodes()
         if n <= 1:
             return 0.0
@@ -1521,8 +1614,18 @@ class DynGraph(nx.Graph):
             Returns
             -------
             c : float
-                Compactness of the stream graph (c = |W| / (|T'| * |V'|))
-        """
+                Compactness of the stream graph, defined as the ratio between
+                the active node-time pairs and the product of active time span
+                and active nodes.
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.compactness()
+"""
         V = self.nodes()
         if not V or not self.snapshots:
             return 0.0
@@ -1547,7 +1650,15 @@ class DynGraph(nx.Graph):
             -------
             subG : DynGraph
                 The induced substream graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.induced_substream()
+"""
         C = set(cluster)
         subG = self.__class__(edge_removal=self.edge_removal)
         for t, u in C:
@@ -1572,7 +1683,15 @@ class DynGraph(nx.Graph):
             -------
             neighborhood : Cluster
                 The temporal neighborhood of node u.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.temporal_neighborhood()
+"""
         from dynetx.classes.cluster import Cluster
         neighborhood = Cluster()
         for t in self.snapshots:
@@ -1583,7 +1702,7 @@ class DynGraph(nx.Graph):
 
     def stream_degree(self, u):
         """
-            Node degree d(u) = |N(u)|/|T|.
+            Node degree over time.
 
             Parameters
             ----------
@@ -1592,8 +1711,17 @@ class DynGraph(nx.Graph):
             Returns
             -------
             deg : float
-                The node stream degree.
-        """
+                The node stream degree, normalized by the number of
+                snapshots.
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_degree()
+"""
         T = len(self.snapshots)
         if T == 0:
             return 0.0
@@ -1607,7 +1735,15 @@ class DynGraph(nx.Graph):
             -------
             avg_deg : float
                 The average node degree over all nodes active at least once.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.average_stream_degree()
+"""
         V = self.nodes()
         if not V:
             return 0.0
@@ -1625,7 +1761,15 @@ class DynGraph(nx.Graph):
             -------
             exp_deg : float
                 The expected degree when present.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.expected_stream_degree()
+"""
         T_u = self.node_presence(u)
         if not T_u:
             return 0.0
@@ -1645,7 +1789,15 @@ class DynGraph(nx.Graph):
             -------
             deg : int
                 Instantaneous degree of node u at time t.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.degree_at_time()
+"""
         if not self.has_node(u, t):
             return 0
         return self.degree([u], t)[u]
@@ -1662,7 +1814,15 @@ class DynGraph(nx.Graph):
             -------
             exp_deg : float
                 The average degree of active nodes at time t.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.expected_degree_at_time()
+"""
         V_t = [v for v in self.nodes() if self.has_node(v, t)]
         if not V_t:
             return 0.0
@@ -1677,7 +1837,15 @@ class DynGraph(nx.Graph):
             -------
             glob_deg : float
                 The global stream degree.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.global_stream_degree()
+"""
         V = self.nodes()
         T = len(self.snapshots)
         if not V or T == 0:
@@ -1689,13 +1857,21 @@ class DynGraph(nx.Graph):
 
     def average_expected_stream_degree(self):
         """
-            Average expected degree of the stream graph (d_hat(S) = 2|E|/|W|).
+            Average expected degree of the stream graph.
 
             Returns
             -------
             avg_exp_deg : float
                 The average expected degree of the stream graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.average_expected_stream_degree()
+"""
         V = self.nodes()
         if not V:
             return 0.0
@@ -1714,7 +1890,15 @@ class DynGraph(nx.Graph):
             -------
             avg_time_deg : float
                 The average time degree.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.average_time_degree()
+"""
         return self.average_expected_stream_degree()
 
     def interaction_presence(self, u, v):
@@ -1729,7 +1913,15 @@ class DynGraph(nx.Graph):
             -------
             presence : set
                 Set of snapshot IDs.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.interaction_presence()
+"""
         if u not in self._adj or v not in self._adj[u]:
             return set()
         spans = self._adj[u][v]['t']
@@ -1754,7 +1946,15 @@ class DynGraph(nx.Graph):
             -------
             cc : float
                 Clustering coefficient of node u.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_clustering_coefficient()
+"""
         neighbors_u = self.neighbors(u)
         if len(neighbors_u) < 2:
             return 0.0
@@ -1778,7 +1978,15 @@ class DynGraph(nx.Graph):
             -------
             avg_cc : float
                 Weighted average clustering coefficient.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.average_stream_clustering_coefficient()
+"""
         V = self.nodes()
         if not V:
             return 0.0
@@ -1798,7 +2006,15 @@ class DynGraph(nx.Graph):
             -------
             tr : float
                 Global transitivity ratio.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_transitivity()
+"""
         V = self.nodes()
         if len(V) < 3:
             return 0.0
@@ -1826,7 +2042,15 @@ class DynGraph(nx.Graph):
             -------
             time_cc : float
                 Time clustering coefficient.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.time_clustering_coefficient()
+"""
         tids = self.temporal_snapshots_ids()
         if not tids:
             return 0.0
@@ -1844,7 +2068,15 @@ class DynGraph(nx.Graph):
             -------
             stream_cc : float
                 Clustering coefficient of the stream graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_clustering_coefficient_global()
+"""
         V = self.nodes()
         tids = self.temporal_snapshots_ids()
         if not V or not tids:
@@ -1870,7 +2102,15 @@ class DynGraph(nx.Graph):
             -------
             diam : int
                 The stream diameter.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_diameter()
+"""
         import dynetx.algorithms as al
         return al.stream_diameter(self, start=start, end=end)
 
@@ -1887,7 +2127,15 @@ class DynGraph(nx.Graph):
             -------
             lapse : int
                 The stream lapse.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_lapse()
+"""
         import dynetx.algorithms as al
         return al.stream_lapse(self, start=start, end=end)
 
@@ -1904,7 +2152,15 @@ class DynGraph(nx.Graph):
             -------
             ft : int
                 The stream flood time.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_flood_time()
+"""
         import dynetx.algorithms as al
         return al.stream_flood_time(self, start=start, end=end)
 
@@ -1922,7 +2178,15 @@ class DynGraph(nx.Graph):
             -------
             t_to_reach : float
                 Foremost time-to-reach.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_time_to_reach()
+"""
         import dynetx.algorithms as al
         return al.stream_time_to_reach(self, u, v, alpha, start=start, end=end)
 
@@ -1941,7 +2205,15 @@ class DynGraph(nx.Graph):
             -------
             paths : dict
                 A dictionary mapping node pairs to lists of paths.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.constrained_time_respecting_paths()
+"""
         import dynetx.algorithms as al
         return al.constrained_time_respecting_paths(self, u, v=v, start=start, end=end, gamma=gamma, gamma_prime=gamma_prime)
 
@@ -1953,7 +2225,15 @@ class DynGraph(nx.Graph):
             -------
             comp : list of Clusters
                 The weakly connected components.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_weakly_connected_components()
+"""
         import dynetx.algorithms as al
         return al.stream_weakly_connected_components(self)
 
@@ -1965,7 +2245,15 @@ class DynGraph(nx.Graph):
             -------
             comp : list of Clusters
                 The strongly connected components.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_strongly_connected_components()
+"""
         import dynetx.algorithms as al
         return al.stream_strongly_connected_components(self)
 
@@ -1977,7 +2265,15 @@ class DynGraph(nx.Graph):
             -------
             R : DynDiGraph
                 The reachability stream graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.reachability_stream_graph()
+"""
         import dynetx.algorithms as al
         return al.reachability_stream_graph(self)
 
@@ -1994,7 +2290,15 @@ class DynGraph(nx.Graph):
             -------
             c : Cluster
                 The internal neighborhood.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_internal_neighborhood()
+"""
         import dynetx.algorithms as al
         return al.cluster_internal_neighborhood(self, cluster, v)
 
@@ -2011,7 +2315,15 @@ class DynGraph(nx.Graph):
             -------
             c : Cluster
                 The external neighborhood.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_external_neighborhood()
+"""
         import dynetx.algorithms as al
         return al.cluster_external_neighborhood(self, cluster, v)
 
@@ -2028,7 +2340,15 @@ class DynGraph(nx.Graph):
             -------
             deg : int
                 The internal degree.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_internal_degree()
+"""
         import dynetx.algorithms as al
         return al.cluster_internal_degree(self, cluster, v)
 
@@ -2045,7 +2365,15 @@ class DynGraph(nx.Graph):
             -------
             deg : int
                 The external degree.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_external_degree()
+"""
         import dynetx.algorithms as al
         return al.cluster_external_degree(self, cluster, v)
 
@@ -2061,7 +2389,15 @@ class DynGraph(nx.Graph):
             -------
             avg_deg : float
                 The average internal degree.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_average_internal_degree()
+"""
         import dynetx.algorithms as al
         return al.cluster_average_internal_degree(self, cluster)
 
@@ -2077,7 +2413,15 @@ class DynGraph(nx.Graph):
             -------
             avg_deg : float
                 The average external degree.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_average_external_degree()
+"""
         import dynetx.algorithms as al
         return al.cluster_average_external_degree(self, cluster)
 
@@ -2093,7 +2437,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 Intra-cluster density.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.intra_cluster_density()
+"""
         import dynetx.algorithms as al
         return al.intra_cluster_density(self, partition)
 
@@ -2109,7 +2461,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 Inter-cluster density.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.inter_cluster_density()
+"""
         import dynetx.algorithms as al
         return al.inter_cluster_density(self, partition)
 
@@ -2125,7 +2485,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 External density.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.cluster_external_density()
+"""
         import dynetx.algorithms as al
         return al.cluster_external_density(self, cluster)
 
@@ -2141,7 +2509,15 @@ class DynGraph(nx.Graph):
             -------
             Q : DynGraph
                 Quotient stream graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.quotient_stream()
+"""
         import dynetx.algorithms as al
         return al.quotient_stream(self, partition)
 
@@ -2153,7 +2529,15 @@ class DynGraph(nx.Graph):
             -------
             L : DynGraph
                 Line stream graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.line_stream()
+"""
         import dynetx.algorithms as al
         return al.line_stream(self)
 
@@ -2169,7 +2553,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             core : Cluster or dict
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_k_core()
+"""
         import dynetx.algorithms as al
         return al.stream_k_core(self, k=k)
 
@@ -2186,7 +2578,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             Tree : DynGraph
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_path_tree()
+"""
         import dynetx.algorithms as al
         return al.stream_path_tree(self, root_node, root_time, path_type=path_type)
 
@@ -2202,7 +2602,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             Tree : DynGraph
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_cascade()
+"""
         import dynetx.algorithms as al
         return al.stream_cascade(self, root_node, root_time)
 
@@ -2218,7 +2626,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             closeness : float
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_closeness_centrality()
+"""
         import dynetx.algorithms as al
         return al.stream_closeness_centrality(self, v, t)
 
@@ -2230,7 +2646,15 @@ class DynGraph(nx.Graph):
             -------
             bc : dict
                 Mapping (t, v) -> betweenness centrality.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_betweenness_centrality()
+"""
         import dynetx.algorithms as al
         return al.stream_betweenness_centrality(self)
 
@@ -2242,7 +2666,15 @@ class DynGraph(nx.Graph):
             -------
             node_bc : dict
                 Mapping node -> betweenness centrality.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_node_betweenness_centrality()
+"""
         import dynetx.algorithms as al
         return al.stream_node_betweenness_centrality(self)
 
@@ -2254,7 +2686,15 @@ class DynGraph(nx.Graph):
             -------
             time_bc : dict
                 Mapping snapshot -> betweenness centrality.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.stream_time_betweenness_centrality()
+"""
         import dynetx.algorithms as al
         return al.stream_time_betweenness_centrality(self)
 
@@ -2271,7 +2711,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             sub : DynGraph
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.delta_substream()
+"""
         import dynetx.algorithms as al
         return al.delta_substream(self, t, delta)
 
@@ -2288,7 +2736,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             density : float
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.delta_density()
+"""
         import dynetx.algorithms as al
         return al.delta_density(self, t, delta)
 
@@ -2306,7 +2762,15 @@ class DynGraph(nx.Graph):
             Returns
             -------
             deg : float
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.delta_degree()
+"""
         import dynetx.algorithms as al
         return al.delta_degree(self, v, t, delta)
 
@@ -2325,7 +2789,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 Node pair density, in [0, 1]
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.pair_density()
+"""
 
         numerator, denominator = 0, 0
 
@@ -2345,7 +2817,15 @@ class DynGraph(nx.Graph):
             -------
             density : float
                 density of the temporal graph at time t, in [0, 1]
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.snapshot_density()
+"""
         return nx.density(self.time_slice(t))
 
     def node_presence(self, u):
@@ -2356,7 +2836,15 @@ class DynGraph(nx.Graph):
             -------
             density : set
                 temporal ids
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.node_presence(0)
+"""
         pres = []
         for t in self.snapshots:
             if self.has_node(u, t):
@@ -2369,7 +2857,15 @@ class DynGraph(nx.Graph):
 
         If t is provided, this behaves like degree(t=t). Otherwise it returns
         the number of snapshots in which each node is active.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.temporal_degree(0, t=0)
+"""
         if t is not None:
             return self.degree(nbunch, t=t)
 
@@ -2389,7 +2885,15 @@ class DynGraph(nx.Graph):
         -------
         float
             Mean number of snapshots in which a node is active.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.avg_temporal_degree()
+"""
         vals = list(self.temporal_degree().values())
         return 0.0 if len(vals) == 0 else sum(vals) / len(vals)
 
@@ -2417,16 +2921,40 @@ class DynGraph(nx.Graph):
             del self._adj[v][u]
 
     def remove_edge(self, u, v):
-        """Remove edge ``(u, v)`` from the graph."""
+        """Remove edge ``(u, v)`` from the graph.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.remove_edge(0, 1)
+"""
         self._remove_edge_instance(u, v)
 
     def remove_edges_from(self, ebunch):
-        """Remove every edge in ``ebunch``."""
+        """Remove every edge in ``ebunch``.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.remove_edges_from([(0, 1)])
+"""
         for e in ebunch:
             self.remove_edge(e[0], e[1])
 
     def remove_node(self, u):
-        """Remove node ``u`` and all of its incident interactions."""
+        """Remove node ``u`` and all of its incident interactions.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.remove_node(1)
+"""
         if u not in self._node:
             return
         for v in list(self._adj.get(u, {}).keys()):
@@ -2437,12 +2965,27 @@ class DynGraph(nx.Graph):
             del self._node[u]
 
     def remove_nodes_from(self, nbunch):
-        """Remove every node in ``nbunch``."""
+        """Remove every node in ``nbunch``.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.remove_nodes_from([1])
+"""
         for n in list(nbunch):
             self.remove_node(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
-        """Add an interaction using the NetworkX edge API."""
+        """Add an interaction using the NetworkX edge API.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+"""
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -2454,7 +2997,14 @@ class DynGraph(nx.Graph):
         self.add_interaction(u, v, t=t, e=e, **attrs)
 
     def add_edges_from(self, ebunch, attr_dict=None, **attr):
-        """Add multiple interactions using the NetworkX edge API."""
+        """Add multiple interactions using the NetworkX edge API.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interactions_from([(0, 1)], t=0)
+"""
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -2470,7 +3020,15 @@ class DynGraph(nx.Graph):
                 raise nx.NetworkXError("Each edge must be a 2-tuple or 3-tuple with attribute dict.")
 
     def edges_iter(self, nbunch=None, data=False, default=None):
-        """Iterate over the interactions of the graph."""
+        """Iterate over the interactions of the graph.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> list(G.edges_iter(t=0))
+"""
         for u, v, d in self.interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -2478,11 +3036,27 @@ class DynGraph(nx.Graph):
                 yield u, v
 
     def edges(self, nbunch=None, data=False, default=None):
-        """Return the interactions of the graph as a list."""
+        """Return the interactions of the graph as a list.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> list(G.edges(t=0))
+"""
         return list(self.edges_iter(nbunch=nbunch, data=data, default=default))
 
     def has_node_in_range(self, n, t_from, t_to=None, mode='any'):
-        """Check whether node ``n`` is present in a time interval."""
+        """Check whether node ``n`` is present in a time interval.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.has_node_in_range(0, 0)
+"""
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -2490,7 +3064,15 @@ class DynGraph(nx.Graph):
         return any(checks) if mode != 'all' else all(checks)
 
     def has_interaction_in_range(self, u, v, t_from, t_to=None, mode='any'):
-        """Check whether interaction ``(u, v)`` is present in a time interval."""
+        """Check whether interaction ``(u, v)`` is present in a time interval.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.has_interaction_in_range(0, 1, 0)
+"""
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -2498,7 +3080,15 @@ class DynGraph(nx.Graph):
         return any(checks) if mode != 'all' else all(checks)
 
     def neighbors_in_range(self, n, t_from, t_to=None, mode='any'):
-        """Return the neighbors of ``n`` observed in a time interval."""
+        """Return the neighbors of ``n`` observed in a time interval.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.neighbors_in_range(0, 0)
+"""
         if t_to is None:
             t_to = t_from
         nbrs = set()
@@ -2509,7 +3099,15 @@ class DynGraph(nx.Graph):
         return list(nbrs)
 
     def interactions_in_range(self, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
-        """Return interactions observed in a time interval."""
+        """Return interactions observed in a time interval.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.interactions_in_range(t_from=0, t_to=0)
+"""
         if t_from is None:
             t_from = min(self.temporal_snapshots_ids() or [0])
         if t_to is None:
@@ -2529,7 +3127,15 @@ class DynGraph(nx.Graph):
         return res
 
     def window_slices(self, window, step=1, include_partial=False):
-        """Yield subgraphs extracted with a sliding temporal window."""
+        """Yield subgraphs extracted with a sliding temporal window.
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> list(G.window_slices(window=1))
+"""
         tids = self.temporal_snapshots_ids()
         if len(tids) == 0:
             return
@@ -2555,7 +3161,15 @@ class DynGraph(nx.Graph):
         -------
         networkx.Graph
             Static representation of the dynamic graph.
-        """
+        
+
+        Examples
+        --------
+        >>> import dynetx as dn
+        >>> G = dn.DynGraph()
+        >>> G.add_interaction(0, 1, t=0)
+        >>> G.to_networkx_graph(t=0)
+"""
         if self.is_directed():
             nxg = nx.DiGraph()
         else:
