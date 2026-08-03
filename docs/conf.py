@@ -13,7 +13,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 import sys, os
-import sphinx_rtd_theme
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 try:
@@ -21,18 +20,11 @@ try:
 except ImportError:
     __version__ = u'0.3.0'
 
-html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme = "alabaster"
 
 version = __version__
 # The full version, including alpha/beta/rc tags.
 release = version
-
-html_theme_options = {
-    "collapse_navigation": False,
-    "display_version": False,
-    "navigation_depth": 3,
-}
 
 # -- Project information -----------------------------------------------------
 
@@ -79,7 +71,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 #
 # html_theme = 'alabaster'
 
-html_logo = 'dynetx.png'
+html_logo = 'dynetx_logo_full.png'
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -89,4 +81,4 @@ html_logo = 'dynetx.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['_static']
