@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.number\_of\_interactions
-==========================================
+﻿DynDiGraph.number\_of\_interactions
+===================================
 
 .. currentmodule:: dynetx
 

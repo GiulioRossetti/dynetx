@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.window\_slices
-================================
+﻿DynDiGraph.window\_slices
+=========================
 
 .. currentmodule:: dynetx
 

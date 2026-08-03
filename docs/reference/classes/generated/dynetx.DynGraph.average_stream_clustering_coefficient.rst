@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.average\_stream\_clustering\_coefficient
-========================================================
+﻿DynGraph.average\_stream\_clustering\_coefficient
+=================================================
 
 .. currentmodule:: dynetx
 

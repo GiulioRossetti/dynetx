@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.to\_networkx\_graph
-===================================
+﻿DynGraph.to\_networkx\_graph
+============================
 
 .. currentmodule:: dynetx
 

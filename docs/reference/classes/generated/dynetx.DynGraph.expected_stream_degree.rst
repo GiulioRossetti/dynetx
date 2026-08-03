@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.expected\_stream\_degree
-========================================
+﻿DynGraph.expected\_stream\_degree
+=================================
 
 .. currentmodule:: dynetx
 

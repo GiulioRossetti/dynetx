@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.interactions
-============================
+﻿DynGraph.interactions
+=====================
 
 .. currentmodule:: dynetx
 

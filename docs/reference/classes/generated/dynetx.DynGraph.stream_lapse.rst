@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_lapse
-=============================
+﻿DynGraph.stream\_lapse
+======================
 
 .. currentmodule:: dynetx
 

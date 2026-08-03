@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.delta\_degree
-=============================================
+﻿delta\_degree
+=============
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

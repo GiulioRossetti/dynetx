@@ -1,5 +1,5 @@
-﻿dynetx.readwrite.tabular.from\_interaction\_dataframe
-=====================================================
+﻿from\_interaction\_dataframe
+============================
 
 .. currentmodule:: dynetx.readwrite.tabular
 

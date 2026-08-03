@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_clustering\_coefficient\_global
-=======================================================
+﻿DynGraph.stream\_clustering\_coefficient\_global
+================================================
 
 .. currentmodule:: dynetx
 

@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_time\_to\_reach
-=======================================
+﻿DynGraph.stream\_time\_to\_reach
+================================
 
 .. currentmodule:: dynetx
 

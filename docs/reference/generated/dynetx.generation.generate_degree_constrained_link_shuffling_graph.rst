@@ -1,5 +1,5 @@
-﻿dynetx.generation.generate\_degree\_constrained\_link\_shuffling\_graph
-=======================================================================
+﻿generate\_degree\_constrained\_link\_shuffling\_graph
+=====================================================
 
 .. currentmodule:: dynetx.generation
 

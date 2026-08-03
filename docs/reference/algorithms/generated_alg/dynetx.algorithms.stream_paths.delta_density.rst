@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.delta\_density
-==============================================
+﻿delta\_density
+==============
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

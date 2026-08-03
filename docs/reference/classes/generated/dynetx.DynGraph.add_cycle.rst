@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.add\_cycle
-==========================
+﻿DynGraph.add\_cycle
+===================
 
 .. currentmodule:: dynetx
 

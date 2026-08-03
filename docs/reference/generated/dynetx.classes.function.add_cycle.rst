@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.add\_cycle
-==================================
+﻿add\_cycle
+==========
 
 .. currentmodule:: dynetx.classes.function
 

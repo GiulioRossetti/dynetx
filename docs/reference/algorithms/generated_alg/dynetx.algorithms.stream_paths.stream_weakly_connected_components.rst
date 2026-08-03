@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_weakly\_connected\_components
-=====================================================================
+﻿stream\_weakly\_connected\_components
+=====================================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

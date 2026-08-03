@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.in\_degree\_iter
-==================================
+﻿DynDiGraph.in\_degree\_iter
+===========================
 
 .. currentmodule:: dynetx
 

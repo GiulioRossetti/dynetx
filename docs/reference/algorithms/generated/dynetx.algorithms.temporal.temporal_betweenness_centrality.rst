@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.temporal.temporal\_betweenness\_centrality
-============================================================
+﻿temporal\_betweenness\_centrality
+=================================
 
 .. currentmodule:: dynetx.algorithms.temporal
 

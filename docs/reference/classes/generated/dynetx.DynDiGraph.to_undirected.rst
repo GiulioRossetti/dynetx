@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.to\_undirected
-================================
+﻿DynDiGraph.to\_undirected
+=========================
 
 .. currentmodule:: dynetx
 

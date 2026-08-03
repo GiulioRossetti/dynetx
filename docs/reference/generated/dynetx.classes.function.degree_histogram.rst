@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.degree\_histogram
-=========================================
+﻿degree\_histogram
+=================
 
 .. currentmodule:: dynetx.classes.function
 

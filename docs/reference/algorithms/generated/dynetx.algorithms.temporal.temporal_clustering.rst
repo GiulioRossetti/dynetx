@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.temporal.temporal\_clustering
-===============================================
+﻿temporal\_clustering
+====================
 
 .. currentmodule:: dynetx.algorithms.temporal
 

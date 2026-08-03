@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_path\_tree
-==================================================
+﻿stream\_path\_tree
+==================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

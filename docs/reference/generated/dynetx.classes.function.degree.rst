@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.degree
-==============================
+﻿degree
+======
 
 .. currentmodule:: dynetx.classes.function
 

@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_flood\_time
-===================================================
+﻿stream\_flood\_time
+===================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

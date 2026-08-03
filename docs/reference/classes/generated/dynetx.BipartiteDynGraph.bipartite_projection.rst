@@ -1,5 +1,5 @@
-﻿dynetx.BipartiteDynGraph.bipartite\_projection
-==============================================
+﻿BipartiteDynGraph.bipartite\_projection
+=======================================
 
 .. currentmodule:: dynetx
 

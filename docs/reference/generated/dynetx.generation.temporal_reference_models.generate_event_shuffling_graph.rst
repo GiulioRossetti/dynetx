@@ -1,5 +1,5 @@
-﻿dynetx.generation.temporal\_reference\_models.generate\_event\_shuffling\_graph
-===============================================================================
+﻿generate\_event\_shuffling\_graph
+=================================
 
 .. currentmodule:: dynetx.generation.temporal_reference_models
 

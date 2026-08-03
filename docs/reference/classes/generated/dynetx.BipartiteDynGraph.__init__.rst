@@ -1,5 +1,5 @@
-﻿dynetx.BipartiteDynGraph.\_\_init\_\_
-=====================================
+﻿BipartiteDynGraph.\_\_init\_\_
+==============================
 
 .. currentmodule:: dynetx
 

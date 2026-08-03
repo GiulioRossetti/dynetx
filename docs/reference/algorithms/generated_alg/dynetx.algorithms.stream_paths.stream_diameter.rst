@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_diameter
-================================================
+﻿stream\_diameter
+================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

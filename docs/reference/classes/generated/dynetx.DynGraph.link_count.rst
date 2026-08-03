@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.link\_count
-===========================
+﻿DynGraph.link\_count
+====================
 
 .. currentmodule:: dynetx
 

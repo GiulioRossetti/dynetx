@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.add\_path
-=========================
+﻿DynGraph.add\_path
+==================
 
 .. currentmodule:: dynetx
 

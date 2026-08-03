@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.quotient\_stream
-================================================
+﻿quotient\_stream
+================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

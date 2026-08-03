@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_strongly\_connected\_components
-=======================================================
+﻿DynGraph.stream\_strongly\_connected\_components
+================================================
 
 .. currentmodule:: dynetx
 

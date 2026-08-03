@@ -1,5 +1,5 @@
-﻿dynetx.visualization.plot\_temporal\_summary
-============================================
+﻿plot\_temporal\_summary
+=======================
 
 .. currentmodule:: dynetx.visualization
 

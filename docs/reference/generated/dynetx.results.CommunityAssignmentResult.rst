@@ -1,5 +1,5 @@
-﻿dynetx.results.CommunityAssignmentResult
-========================================
+﻿CommunityAssignmentResult
+=========================
 
 .. currentmodule:: dynetx.results
 

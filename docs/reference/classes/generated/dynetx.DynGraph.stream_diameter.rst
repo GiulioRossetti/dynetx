@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_diameter
-================================
+﻿DynGraph.stream\_diameter
+=========================
 
 .. currentmodule:: dynetx
 

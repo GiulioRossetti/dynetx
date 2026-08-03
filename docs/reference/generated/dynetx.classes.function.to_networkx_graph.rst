@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.to\_networkx\_graph
-===========================================
+﻿to\_networkx\_graph
+===================
 
 .. currentmodule:: dynetx.classes.function
 

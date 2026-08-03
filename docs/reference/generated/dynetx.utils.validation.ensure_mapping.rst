@@ -1,5 +1,5 @@
-﻿dynetx.utils.validation.ensure\_mapping
-=======================================
+﻿ensure\_mapping
+===============
 
 .. currentmodule:: dynetx.utils.validation
 

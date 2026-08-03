@@ -1,5 +1,5 @@
-﻿dynetx.visualization.compare\_snapshots
-=======================================
+﻿compare\_snapshots
+==================
 
 .. currentmodule:: dynetx.visualization
 

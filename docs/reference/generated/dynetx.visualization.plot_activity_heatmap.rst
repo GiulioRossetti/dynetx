@@ -1,5 +1,5 @@
-﻿dynetx.visualization.plot\_activity\_heatmap
-============================================
+﻿plot\_activity\_heatmap
+=======================
 
 .. currentmodule:: dynetx.visualization
 

@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.stream\_interactions
-============================================
+﻿stream\_interactions
+====================
 
 .. currentmodule:: dynetx.classes.function
 

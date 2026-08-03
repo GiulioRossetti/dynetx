@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.nodes\_iter
-===========================
+﻿DynGraph.nodes\_iter
+====================
 
 .. currentmodule:: dynetx
 

@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.link\_duration
-==============================
+﻿DynGraph.link\_duration
+=======================
 
 .. currentmodule:: dynetx
 

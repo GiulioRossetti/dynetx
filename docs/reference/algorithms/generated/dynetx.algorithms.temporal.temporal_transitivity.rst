@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.temporal.temporal\_transitivity
-=================================================
+﻿temporal\_transitivity
+======================
 
 .. currentmodule:: dynetx.algorithms.temporal
 

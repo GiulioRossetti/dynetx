@@ -1,5 +1,5 @@
-﻿dynetx.readwrite.edgelist.read\_snapshots
-=========================================
+﻿read\_snapshots
+===============
 
 .. currentmodule:: dynetx.readwrite.edgelist
 

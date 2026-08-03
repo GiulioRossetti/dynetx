@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.constrained\_time\_respecting\_paths
-====================================================
+﻿DynGraph.constrained\_time\_respecting\_paths
+=============================================
 
 .. currentmodule:: dynetx
 

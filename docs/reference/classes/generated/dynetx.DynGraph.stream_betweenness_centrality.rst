@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_betweenness\_centrality
-===============================================
+﻿DynGraph.stream\_betweenness\_centrality
+========================================
 
 .. currentmodule:: dynetx
 

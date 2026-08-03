@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.paths.annotate\_paths
-=======================================
+﻿annotate\_paths
+===============
 
 .. currentmodule:: dynetx.algorithms.paths
 

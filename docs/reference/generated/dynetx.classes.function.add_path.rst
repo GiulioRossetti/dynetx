@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.add\_path
-=================================
+﻿add\_path
+=========
 
 .. currentmodule:: dynetx.classes.function
 

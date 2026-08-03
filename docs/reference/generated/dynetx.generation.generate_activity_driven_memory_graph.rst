@@ -1,5 +1,5 @@
-﻿dynetx.generation.generate\_activity\_driven\_memory\_graph
-===========================================================
+﻿generate\_activity\_driven\_memory\_graph
+=========================================
 
 .. currentmodule:: dynetx.generation
 

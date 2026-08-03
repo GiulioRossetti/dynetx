@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.non\_neighbors
-======================================
+﻿non\_neighbors
+==============
 
 .. currentmodule:: dynetx.classes.function
 

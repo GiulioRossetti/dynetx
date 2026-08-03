@@ -1,5 +1,5 @@
-﻿dynetx.utils.validation.inclusive\_end\_to\_exclusive
-=====================================================
+﻿inclusive\_end\_to\_exclusive
+=============================
 
 .. currentmodule:: dynetx.utils.validation
 

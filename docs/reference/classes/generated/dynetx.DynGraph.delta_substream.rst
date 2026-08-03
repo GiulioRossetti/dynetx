@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.delta\_substream
-================================
+﻿DynGraph.delta\_substream
+=========================
 
 .. currentmodule:: dynetx
 

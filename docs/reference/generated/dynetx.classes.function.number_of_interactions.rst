@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.number\_of\_interactions
-================================================
+﻿number\_of\_interactions
+========================
 
 .. currentmodule:: dynetx.classes.function
 

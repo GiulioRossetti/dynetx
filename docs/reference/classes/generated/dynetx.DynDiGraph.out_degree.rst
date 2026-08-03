@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.out\_degree
-=============================
+﻿DynDiGraph.out\_degree
+======================
 
 .. currentmodule:: dynetx
 

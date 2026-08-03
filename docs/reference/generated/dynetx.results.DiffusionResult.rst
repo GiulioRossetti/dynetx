@@ -1,5 +1,5 @@
-﻿dynetx.results.DiffusionResult
-==============================
+﻿DiffusionResult
+===============
 
 .. currentmodule:: dynetx.results
 

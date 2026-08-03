@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.\_\_init\_\_
-============================
+﻿DynGraph.\_\_init\_\_
+=====================
 
 .. currentmodule:: dynetx
 

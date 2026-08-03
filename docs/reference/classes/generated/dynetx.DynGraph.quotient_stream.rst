@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.quotient\_stream
-================================
+﻿DynGraph.quotient\_stream
+=========================
 
 .. currentmodule:: dynetx
 

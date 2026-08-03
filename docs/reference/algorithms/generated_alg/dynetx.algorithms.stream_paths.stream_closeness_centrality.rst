@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_closeness\_centrality
-=============================================================
+﻿stream\_closeness\_centrality
+=============================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

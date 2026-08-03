@@ -1,5 +1,5 @@
-﻿dynetx.results.WindowAnalyticsResult
-====================================
+﻿WindowAnalyticsResult
+=====================
 
 .. currentmodule:: dynetx.results
 

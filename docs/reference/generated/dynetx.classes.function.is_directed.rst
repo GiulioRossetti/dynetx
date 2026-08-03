@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.is\_directed
-====================================
+﻿is\_directed
+============
 
 .. currentmodule:: dynetx.classes.function
 

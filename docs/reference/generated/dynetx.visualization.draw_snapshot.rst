@@ -1,5 +1,5 @@
-﻿dynetx.visualization.draw\_snapshot
-===================================
+﻿draw\_snapshot
+==============
 
 .. currentmodule:: dynetx.visualization
 

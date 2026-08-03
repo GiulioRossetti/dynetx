@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.create\_empty\_copy
-===========================================
+﻿create\_empty\_copy
+===================
 
 .. currentmodule:: dynetx.classes.function
 

@@ -1,5 +1,5 @@
-﻿dynetx.readwrite.tabular.to\_snapshot\_dataframe
-================================================
+﻿to\_snapshot\_dataframe
+=======================
 
 .. currentmodule:: dynetx.readwrite.tabular
 

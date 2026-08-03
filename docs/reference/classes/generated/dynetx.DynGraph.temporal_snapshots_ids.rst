@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.temporal\_snapshots\_ids
-========================================
+﻿DynGraph.temporal\_snapshots\_ids
+=================================
 
 .. currentmodule:: dynetx
 

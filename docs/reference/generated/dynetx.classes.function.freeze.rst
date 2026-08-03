@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.freeze
-==============================
+﻿freeze
+======
 
 .. currentmodule:: dynetx.classes.function
 

@@ -1,5 +1,5 @@
-﻿dynetx.results.SnapshotAnalyticsResult
-======================================
+﻿SnapshotAnalyticsResult
+=======================
 
 .. currentmodule:: dynetx.results
 

@@ -1,5 +1,5 @@
-﻿dynetx.dashboard.TemporalDashboard
-==================================
+﻿TemporalDashboard
+=================
 
 .. currentmodule:: dynetx.dashboard
 

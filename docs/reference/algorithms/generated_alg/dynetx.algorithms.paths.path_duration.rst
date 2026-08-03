@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.paths.path\_duration
-======================================
+﻿path\_duration
+==============
 
 .. currentmodule:: dynetx.algorithms.paths
 

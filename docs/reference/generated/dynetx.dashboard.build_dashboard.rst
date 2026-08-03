@@ -1,5 +1,5 @@
-﻿dynetx.dashboard.build\_dashboard
-=================================
+﻿build\_dashboard
+================
 
 .. currentmodule:: dynetx.dashboard
 

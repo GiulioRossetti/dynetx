@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.temporal\_snapshots\_ids
-================================================
+﻿temporal\_snapshots\_ids
+========================
 
 .. currentmodule:: dynetx.classes.function
 

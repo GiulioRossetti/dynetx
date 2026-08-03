@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.number\_of\_nodes
-=========================================
+﻿number\_of\_nodes
+=================
 
 .. currentmodule:: dynetx.classes.function
 

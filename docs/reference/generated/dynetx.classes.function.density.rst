@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.density
-===============================
+﻿density
+=======
 
 .. currentmodule:: dynetx.classes.function
 

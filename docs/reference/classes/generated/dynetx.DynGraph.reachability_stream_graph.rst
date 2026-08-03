@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.reachability\_stream\_graph
-===========================================
+﻿DynGraph.reachability\_stream\_graph
+====================================
 
 .. currentmodule:: dynetx
 

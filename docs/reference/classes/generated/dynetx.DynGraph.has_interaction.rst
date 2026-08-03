@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.has\_interaction
-================================
+﻿DynGraph.has\_interaction
+=========================
 
 .. currentmodule:: dynetx
 

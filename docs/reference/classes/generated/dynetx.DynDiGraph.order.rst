@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.order
-=======================
+﻿DynDiGraph.order
+================
 
 .. currentmodule:: dynetx
 

@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.avg\_temporal\_degree
-=============================================
+﻿avg\_temporal\_degree
+=====================
 
 .. currentmodule:: dynetx.classes.function
 

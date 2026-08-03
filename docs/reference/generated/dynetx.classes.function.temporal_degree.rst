@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.temporal\_degree
-========================================
+﻿temporal\_degree
+================
 
 .. currentmodule:: dynetx.classes.function
 

@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.has\_node\_in\_range
-======================================
+﻿DynDiGraph.has\_node\_in\_range
+===============================
 
 .. currentmodule:: dynetx
 

@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.reachability\_stream\_graph
-===========================================================
+﻿reachability\_stream\_graph
+===========================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

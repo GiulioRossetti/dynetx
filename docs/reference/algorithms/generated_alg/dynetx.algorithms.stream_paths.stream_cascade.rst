@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_cascade
-===============================================
+﻿stream\_cascade
+===============
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

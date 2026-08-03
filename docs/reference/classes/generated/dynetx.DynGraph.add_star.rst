@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.add\_star
-=========================
+﻿DynGraph.add\_star
+==================
 
 .. currentmodule:: dynetx
 

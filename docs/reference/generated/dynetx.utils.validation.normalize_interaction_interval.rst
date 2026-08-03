@@ -1,5 +1,5 @@
-﻿dynetx.utils.validation.normalize\_interaction\_interval
-========================================================
+﻿normalize\_interaction\_interval
+================================
 
 .. currentmodule:: dynetx.utils.validation
 

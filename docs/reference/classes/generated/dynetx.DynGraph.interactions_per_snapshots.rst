@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.interactions\_per\_snapshots
-============================================
+﻿DynGraph.interactions\_per\_snapshots
+=====================================
 
 .. currentmodule:: dynetx
 

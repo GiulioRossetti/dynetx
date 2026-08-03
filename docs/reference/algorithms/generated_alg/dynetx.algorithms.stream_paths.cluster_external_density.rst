@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.cluster\_external\_density
-==========================================================
+﻿cluster\_external\_density
+==========================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

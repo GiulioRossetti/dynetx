@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.nodes
-=============================
+﻿nodes
+=====
 
 .. currentmodule:: dynetx.classes.function
 

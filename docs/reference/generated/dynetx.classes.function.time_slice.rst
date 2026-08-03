@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.time\_slice
-===================================
+﻿time\_slice
+===========
 
 .. currentmodule:: dynetx.classes.function
 

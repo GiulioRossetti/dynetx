@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.window\_slices
-======================================
+﻿window\_slices
+==============
 
 .. currentmodule:: dynetx.classes.function
 

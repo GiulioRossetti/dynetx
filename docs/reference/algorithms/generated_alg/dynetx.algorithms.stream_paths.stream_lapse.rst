@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.stream\_lapse
-=============================================
+﻿stream\_lapse
+=============
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.compactness
-===========================
+﻿DynGraph.compactness
+====================
 
 .. currentmodule:: dynetx
 

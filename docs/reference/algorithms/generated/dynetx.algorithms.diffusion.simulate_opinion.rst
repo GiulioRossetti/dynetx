@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.diffusion.simulate\_opinion
-=============================================
+﻿simulate\_opinion
+=================
 
 .. currentmodule:: dynetx.algorithms.diffusion
 

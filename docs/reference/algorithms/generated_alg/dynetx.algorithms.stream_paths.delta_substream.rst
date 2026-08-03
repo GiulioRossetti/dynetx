@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.delta\_substream
-================================================
+﻿delta\_substream
+================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

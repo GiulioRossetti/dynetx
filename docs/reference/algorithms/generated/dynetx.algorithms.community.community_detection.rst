@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.community.community\_detection
-================================================
+﻿community\_detection
+====================
 
 .. currentmodule:: dynetx.algorithms.community
 

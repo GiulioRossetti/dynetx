@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.inter\_event\_time\_distribution
-========================================================
+﻿inter\_event\_time\_distribution
+================================
 
 .. currentmodule:: dynetx.classes.function
 

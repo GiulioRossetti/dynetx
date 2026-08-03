@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.time\_clustering\_coefficient
-=============================================
+﻿DynGraph.time\_clustering\_coefficient
+======================================
 
 .. currentmodule:: dynetx
 

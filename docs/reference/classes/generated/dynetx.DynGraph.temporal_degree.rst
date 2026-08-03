@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.temporal\_degree
-================================
+﻿DynGraph.temporal\_degree
+=========================
 
 .. currentmodule:: dynetx
 

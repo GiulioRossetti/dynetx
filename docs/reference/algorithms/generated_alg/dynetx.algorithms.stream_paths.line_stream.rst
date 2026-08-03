@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.line\_stream
-============================================
+﻿line\_stream
+============
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

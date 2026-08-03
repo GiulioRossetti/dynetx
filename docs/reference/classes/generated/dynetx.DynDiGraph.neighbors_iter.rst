@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.neighbors\_iter
-=================================
+﻿DynDiGraph.neighbors\_iter
+==========================
 
 .. currentmodule:: dynetx
 

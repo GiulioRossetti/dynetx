@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.has\_node\_in\_range
-============================================
+﻿has\_node\_in\_range
+====================
 
 .. currentmodule:: dynetx.classes.function
 

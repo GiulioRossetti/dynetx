@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.stream\_paths.cluster\_external\_neighborhood
-===============================================================
+﻿cluster\_external\_neighborhood
+===============================
 
 .. currentmodule:: dynetx.algorithms.stream_paths
 

@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_cascade
-===============================
+﻿DynGraph.stream\_cascade
+========================
 
 .. currentmodule:: dynetx
 

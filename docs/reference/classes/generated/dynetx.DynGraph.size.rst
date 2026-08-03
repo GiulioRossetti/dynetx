@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.size
-====================
+﻿DynGraph.size
+=============
 
 .. currentmodule:: dynetx
 

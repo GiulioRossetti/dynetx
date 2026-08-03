@@ -1,5 +1,5 @@
-﻿dynetx.generation.generate\_synthetic\_graph
-============================================
+﻿generate\_synthetic\_graph
+==========================
 
 .. currentmodule:: dynetx.generation
 

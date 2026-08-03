@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.non\_interactions
-=========================================
+﻿non\_interactions
+=================
 
 .. currentmodule:: dynetx.classes.function
 

@@ -1,5 +1,5 @@
-﻿dynetx.readwrite.edgelist.read\_interactions
-============================================
+﻿read\_interactions
+==================
 
 .. currentmodule:: dynetx.readwrite.edgelist
 

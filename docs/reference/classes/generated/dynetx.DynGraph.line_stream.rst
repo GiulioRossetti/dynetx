@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.line\_stream
-============================
+﻿DynGraph.line\_stream
+=====================
 
 .. currentmodule:: dynetx
 

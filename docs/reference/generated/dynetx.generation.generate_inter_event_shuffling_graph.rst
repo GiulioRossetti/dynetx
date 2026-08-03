@@ -1,5 +1,5 @@
-﻿dynetx.generation.generate\_inter\_event\_shuffling\_graph
-==========================================================
+﻿generate\_inter\_event\_shuffling\_graph
+========================================
 
 .. currentmodule:: dynetx.generation
 

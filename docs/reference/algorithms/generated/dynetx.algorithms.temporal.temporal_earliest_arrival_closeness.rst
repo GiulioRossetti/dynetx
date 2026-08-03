@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.temporal.temporal\_earliest\_arrival\_closeness
-=================================================================
+﻿temporal\_earliest\_arrival\_closeness
+======================================
 
 .. currentmodule:: dynetx.algorithms.temporal
 

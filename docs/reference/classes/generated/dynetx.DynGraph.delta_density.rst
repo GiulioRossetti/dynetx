@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.delta\_density
-==============================
+﻿DynGraph.delta\_density
+=======================
 
 .. currentmodule:: dynetx
 

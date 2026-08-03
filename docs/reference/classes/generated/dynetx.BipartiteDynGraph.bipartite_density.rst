@@ -1,5 +1,5 @@
-﻿dynetx.BipartiteDynGraph.bipartite\_density
-===========================================
+﻿BipartiteDynGraph.bipartite\_density
+====================================
 
 .. currentmodule:: dynetx
 

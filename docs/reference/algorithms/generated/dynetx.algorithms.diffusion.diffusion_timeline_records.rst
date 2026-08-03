@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.diffusion.diffusion\_timeline\_records
-========================================================
+﻿diffusion\_timeline\_records
+============================
 
 .. currentmodule:: dynetx.algorithms.diffusion
 

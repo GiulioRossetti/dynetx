@@ -1,5 +1,5 @@
-﻿dynetx.BipartiteDynGraph.is\_bipartite
-======================================
+﻿BipartiteDynGraph.is\_bipartite
+===============================
 
 .. currentmodule:: dynetx
 

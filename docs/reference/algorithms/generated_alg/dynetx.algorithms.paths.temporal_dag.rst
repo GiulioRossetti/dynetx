@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.paths.temporal\_dag
-=====================================
+﻿temporal\_dag
+=============
 
 .. currentmodule:: dynetx.algorithms.paths
 

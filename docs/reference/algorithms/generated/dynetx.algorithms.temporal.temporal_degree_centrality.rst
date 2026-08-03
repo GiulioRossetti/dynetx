@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.temporal.temporal\_degree\_centrality
-=======================================================
+﻿temporal\_degree\_centrality
+============================
 
 .. currentmodule:: dynetx.algorithms.temporal
 

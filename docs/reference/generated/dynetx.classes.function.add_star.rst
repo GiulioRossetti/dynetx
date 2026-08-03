@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.add\_star
-=================================
+﻿add\_star
+=========
 
 .. currentmodule:: dynetx.classes.function
 

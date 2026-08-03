@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.is\_frozen
-==================================
+﻿is\_frozen
+==========
 
 .. currentmodule:: dynetx.classes.function
 

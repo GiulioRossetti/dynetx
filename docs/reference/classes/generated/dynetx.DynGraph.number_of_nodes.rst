@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.number\_of\_nodes
-=================================
+﻿DynGraph.number\_of\_nodes
+==========================
 
 .. currentmodule:: dynetx
 

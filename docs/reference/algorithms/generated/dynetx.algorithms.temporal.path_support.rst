@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.temporal.path\_support
-========================================
+﻿path\_support
+=============
 
 .. currentmodule:: dynetx.algorithms.temporal
 

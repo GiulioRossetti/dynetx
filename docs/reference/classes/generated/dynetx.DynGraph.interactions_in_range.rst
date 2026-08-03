@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.interactions\_in\_range
-=======================================
+﻿DynGraph.interactions\_in\_range
+================================
 
 .. currentmodule:: dynetx
 

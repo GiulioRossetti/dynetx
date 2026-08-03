@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.diffusion.simulate\_epidemic
-==============================================
+﻿simulate\_epidemic
+==================
 
 .. currentmodule:: dynetx.algorithms.diffusion
 

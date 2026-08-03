@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_flood\_time
-===================================
+﻿DynGraph.stream\_flood\_time
+============================
 
 .. currentmodule:: dynetx
 

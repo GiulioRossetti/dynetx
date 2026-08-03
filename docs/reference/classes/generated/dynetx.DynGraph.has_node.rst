@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.has\_node
-=========================
+﻿DynGraph.has\_node
+==================
 
 .. currentmodule:: dynetx
 

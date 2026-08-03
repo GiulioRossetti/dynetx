@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_path\_tree
-==================================
+﻿DynGraph.stream\_path\_tree
+===========================
 
 .. currentmodule:: dynetx
 

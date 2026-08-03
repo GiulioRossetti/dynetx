@@ -1,5 +1,5 @@
-﻿dynetx.classes.function.has\_interaction\_in\_range
-===================================================
+﻿has\_interaction\_in\_range
+===========================
 
 .. currentmodule:: dynetx.classes.function
 

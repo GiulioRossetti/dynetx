@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.has\_successor
-================================
+﻿DynDiGraph.has\_successor
+=========================
 
 .. currentmodule:: dynetx
 

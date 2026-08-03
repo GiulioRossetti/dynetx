@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.cluster\_external\_density
-==========================================
+﻿DynGraph.cluster\_external\_density
+===================================
 
 .. currentmodule:: dynetx
 

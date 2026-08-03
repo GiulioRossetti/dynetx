@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.predecessors\_iter
-====================================
+﻿DynDiGraph.predecessors\_iter
+=============================
 
 .. currentmodule:: dynetx
 

@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.cluster\_external\_degree
-=========================================
+﻿DynGraph.cluster\_external\_degree
+==================================
 
 .. currentmodule:: dynetx
 

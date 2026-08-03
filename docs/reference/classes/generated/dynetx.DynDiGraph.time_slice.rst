@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.time\_slice
-=============================
+﻿DynDiGraph.time\_slice
+======================
 
 .. currentmodule:: dynetx
 

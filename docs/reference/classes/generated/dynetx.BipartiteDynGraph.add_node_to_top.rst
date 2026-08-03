@@ -1,5 +1,5 @@
-﻿dynetx.BipartiteDynGraph.add\_node\_to\_top
-===========================================
+﻿BipartiteDynGraph.add\_node\_to\_top
+====================================
 
 .. currentmodule:: dynetx
 

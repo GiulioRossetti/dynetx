@@ -1,5 +1,5 @@
-﻿dynetx.readwrite.graphml.write\_graphml
-=======================================
+﻿write\_graphml
+==============
 
 .. currentmodule:: dynetx.readwrite.graphml
 

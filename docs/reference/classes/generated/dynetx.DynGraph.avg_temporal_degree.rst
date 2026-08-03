@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.avg\_temporal\_degree
-=====================================
+﻿DynGraph.avg\_temporal\_degree
+==============================
 
 .. currentmodule:: dynetx
 

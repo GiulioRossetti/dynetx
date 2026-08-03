@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.cluster\_internal\_neighborhood
-===============================================
+﻿DynGraph.cluster\_internal\_neighborhood
+========================================
 
 .. currentmodule:: dynetx
 

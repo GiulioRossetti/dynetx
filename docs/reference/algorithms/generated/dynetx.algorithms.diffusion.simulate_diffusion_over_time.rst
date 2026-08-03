@@ -1,5 +1,5 @@
-﻿dynetx.algorithms.diffusion.simulate\_diffusion\_over\_time
-===========================================================
+﻿simulate\_diffusion\_over\_time
+===============================
 
 .. currentmodule:: dynetx.algorithms.diffusion
 

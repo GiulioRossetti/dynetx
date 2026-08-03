@@ -1,5 +1,5 @@
-﻿dynetx.BipartiteDynGraph.bipartite\_redundancy
-==============================================
+﻿BipartiteDynGraph.bipartite\_redundancy
+=======================================
 
 .. currentmodule:: dynetx
 

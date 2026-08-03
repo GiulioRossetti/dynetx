@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.stream\_transitivity
-====================================
+﻿DynGraph.stream\_transitivity
+=============================
 
 .. currentmodule:: dynetx
 

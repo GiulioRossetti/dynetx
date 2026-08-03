@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.delta\_degree
-=============================
+﻿DynGraph.delta\_degree
+======================
 
 .. currentmodule:: dynetx
 

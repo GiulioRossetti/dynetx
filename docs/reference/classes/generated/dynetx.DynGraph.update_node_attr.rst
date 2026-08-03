@@ -1,5 +1,5 @@
-﻿dynetx.DynGraph.update\_node\_attr
-==================================
+﻿DynGraph.update\_node\_attr
+===========================
 
 .. currentmodule:: dynetx
 

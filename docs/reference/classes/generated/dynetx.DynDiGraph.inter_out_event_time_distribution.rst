@@ -1,5 +1,5 @@
-﻿dynetx.DynDiGraph.inter\_out\_event\_time\_distribution
-=======================================================
+﻿DynDiGraph.inter\_out\_event\_time\_distribution
+================================================
 
 .. currentmodule:: dynetx
 
