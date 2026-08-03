@@ -87,7 +87,7 @@ def generate_synthetic_graph(
     -------
     DynGraph
         Synthetic dynamic graph ready for dashboard visualization.
-    
+
 
     Examples
     --------

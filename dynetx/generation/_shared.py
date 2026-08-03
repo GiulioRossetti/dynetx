@@ -18,7 +18,7 @@ def new_graph():
     -------
     DynGraph
         Empty dynamic graph ready to receive synthetic interactions.
-    
+
 
     Examples
     --------
@@ -42,7 +42,7 @@ def normalize_name(name):
     -------
     str
         Lowercase identifier with spaces and hyphens replaced by underscores.
-    
+
 
     Examples
     --------
@@ -70,7 +70,7 @@ def sample_power_law(rng, minimum, maximum, exponent):
     -------
     float
         Sampled value in the requested interval.
-    
+
 
     Examples
     --------
@@ -110,7 +110,7 @@ def stream_contact_end(start, duration, max_snapshot):
     -------
     int
         Inclusive end timestamp clipped to the available range.
-    
+
 
     Examples
     --------
@@ -139,7 +139,7 @@ def active_nodes(rng, nodes, dynamic_nodes, node_churn):
     -------
     list
         Active node identifiers sorted for deterministic output.
-    
+
 
     Examples
     --------
@@ -208,7 +208,7 @@ def base_stream_graph(
     -------
     DynGraph
         Synthetic dynamic graph storing temporal interaction spans.
-    
+
 
     Examples
     --------
@@ -280,7 +280,7 @@ def edge_timelines(graph):
     list[tuple]
         List of ``(u, v, spans)`` tuples where ``spans`` is the temporal
         support attached to the edge.
-    
+
 
     Examples
     --------
@@ -302,7 +302,7 @@ def event_rows(graph):
     -------
     list[tuple]
         Tuples of ``(u, v, start, duration)``.
-    
+
 
     Examples
     --------
@@ -344,7 +344,7 @@ def rewired_pair_list(rng, nodes, count):
     -------
     list[tuple]
         Pairs sampled without replacement when possible.
-    
+
 
     Examples
     --------

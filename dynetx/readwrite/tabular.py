@@ -115,7 +115,7 @@ def to_snapshot_dataframe(G):
     -------
     pandas.DataFrame
         Table with one row for every active edge at every timestamp.
-    
+
 
     Examples
     --------
@@ -155,7 +155,7 @@ def from_snapshot_dataframe(df, directed=False):
     -------
     DynGraph or DynDiGraph
         Temporal graph reconstructed from the table.
-    
+
 
     Examples
     --------

@@ -31,7 +31,7 @@ def temporal_degree_centrality(G, normalized=True):
 
     The value is the sum of snapshot degrees over all snapshots, optionally
     normalized by the maximum possible degree mass.
-    
+
 
     Examples
     --------
@@ -60,7 +60,7 @@ def temporal_clustering(G, t=None):
 
     If t is provided, compute clustering on that snapshot. Otherwise average
     clustering over all available snapshots.
-    
+
 
     Examples
     --------
@@ -91,7 +91,7 @@ def temporal_transitivity(G, t=None):
 
     If t is provided, compute transitivity on that snapshot. Otherwise average
     across snapshots.
-    
+
 
     Examples
     --------
@@ -126,7 +126,7 @@ def temporal_connected_components(G, t=None):
     -------
     list[set] or dict
         Connected components for the selected snapshot or for all snapshots.
-    
+
 
     Examples
     --------

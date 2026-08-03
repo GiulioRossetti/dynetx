@@ -41,7 +41,7 @@ def read_graphml(path, directed=False, t=0):
 
     The GraphML structure is treated as a static graph and imported as a
     snapshot at time ``t``.
-    
+
 
     Examples
     --------

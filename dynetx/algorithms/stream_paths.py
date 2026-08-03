@@ -93,7 +93,7 @@ def stream_lapse(G, start=None, end=None):
     -------
     int
         Largest finite latency among all time-respecting paths.
-    
+
 
     Examples
     --------
@@ -140,7 +140,7 @@ def stream_time_to_reach(G, u, v, alpha, start=None, end=None):
     -------
     float
         Minimum arrival time minus ``alpha``, or ``inf`` if no path exists.
-    
+
 
     Examples
     --------
@@ -154,21 +154,21 @@ def stream_time_to_reach(G, u, v, alpha, start=None, end=None):
     tids = G.temporal_snapshots_ids()
     if not tids:
         return float('inf')
-    
+
     start_t = None
     for t in sorted(tids):
         if t >= alpha:
             if G.has_node(u, t):
                 start_t = t
                 break
-                
+
     if start_t is None:
         return float('inf')
-        
+
     plist = time_respecting_paths(G, u, v=v, start=start_t, end=end)
     if not isinstance(plist, dict):
         return float('inf')
-        
+
     paths_uv = plist.get((u, v), [])
     if not paths_uv:
         return float('inf')
@@ -191,7 +191,7 @@ def stream_flood_time(G, start=None, end=None):
     -------
     int
         Maximum arrival delay required to reach all reachable nodes.
-    
+
 
     Examples
     --------
@@ -242,7 +242,7 @@ def constrained_time_respecting_paths(G, u, v=None, start=None, end=None, gamma=
     -------
     dict
         Mapping from endpoint pairs to lists of valid temporal paths.
-    
+
 
     Examples
     --------
@@ -270,12 +270,12 @@ def constrained_time_respecting_paths(G, u, v=None, start=None, end=None, gamma=
             return
         if v is None and curr != u:
             results[(u, curr)].append(list(path))
-        
+
         min_t = curr_t + (gamma if gamma is not None else 1)
         max_t = None
         if gamma_prime is not None:
             max_t = curr_t + (gamma if gamma is not None else 1) + gamma_prime
-        
+
         for t_next in tids:
             if t_next < min_t:
                 continue
@@ -283,7 +283,7 @@ def constrained_time_respecting_paths(G, u, v=None, start=None, end=None, gamma=
                 continue
             if t_next > end:
                 break
-            
+
             if G.has_node(curr, t_next):
                 for neighbor in G.neighbors(curr, t_next):
                     if neighbor not in visited:
@@ -313,7 +313,7 @@ def stream_weakly_connected_components(G):
     -------
     list[Cluster]
         Temporal components encoded as ``Cluster`` objects.
-    
+
 
     Examples
     --------
@@ -341,7 +341,7 @@ def stream_strongly_connected_components(G):
     -------
     list[Cluster]
         Temporal components encoded as ``Cluster`` objects.
-    
+
 
     Examples
     --------
@@ -354,21 +354,21 @@ def stream_strongly_connected_components(G):
     tids = G.temporal_snapshots_ids()
     if not tids:
         return []
-    
+
     snapshot_components = {}
     for t in tids:
         sg = G.to_networkx_graph(t=t)
         base = sg.to_undirected() if sg.is_directed() else sg
         snapshot_components[t] = {frozenset(c) for c in nx.connected_components(base)}
-    
+
     all_unique_comps = set()
     for comps in snapshot_components.values():
         all_unique_comps.update(comps)
-        
+
     components = []
     sorted_tids = sorted(tids)
     tid_indices = {t: i for i, t in enumerate(sorted_tids)}
-    
+
     for comp in all_unique_comps:
         active_tids = [t for t in sorted_tids if comp in snapshot_components[t]]
         chunks = []
@@ -381,14 +381,14 @@ def stream_strongly_connected_components(G):
                     chunks.append(curr_chunk)
                     curr_chunk = [t]
             chunks.append(curr_chunk)
-            
+
         for chunk in chunks:
             c = Cluster()
             for t in chunk:
                 for u in comp:
                     c.add((t, u))
             components.append(c)
-            
+
     return components
 
 def reachability_stream_graph(G):
@@ -398,7 +398,7 @@ def reachability_stream_graph(G):
     -------
     DynDiGraph
         Stream graph whose edges represent reachable node pairs.
-    
+
 
     Examples
     --------
@@ -426,7 +426,7 @@ def cluster_internal_neighborhood(G, cluster, v):
     -------
     Cluster
         Temporal neighbors of ``v`` that also belong to ``cluster``.
-    
+
 
     Examples
     --------
@@ -453,7 +453,7 @@ def cluster_external_neighborhood(G, cluster, v):
     -------
     Cluster
         Temporal neighbors of ``v`` that fall outside ``cluster``.
-    
+
 
     Examples
     --------
@@ -480,7 +480,7 @@ def cluster_internal_degree(G, cluster, v):
     -------
     int
         Number of temporal neighbors of ``v`` that are also in ``cluster``.
-    
+
 
     Examples
     --------
@@ -500,7 +500,7 @@ def cluster_external_degree(G, cluster, v):
     -------
     int
         Number of temporal neighbors of ``v`` that are outside ``cluster``.
-    
+
 
     Examples
     --------
@@ -520,7 +520,7 @@ def cluster_average_internal_degree(G, cluster):
     -------
     float
         Mean internal degree across the nodes appearing in the cluster.
-    
+
 
     Examples
     --------
@@ -544,7 +544,7 @@ def cluster_average_external_degree(G, cluster):
     -------
     float
         Mean external degree across the nodes appearing in the cluster.
-    
+
 
     Examples
     --------
@@ -575,7 +575,7 @@ def intra_cluster_density(G, partition):
     -------
     float
         Ratio of observed internal links to possible internal links.
-    
+
 
     Examples
     --------
@@ -589,12 +589,12 @@ def intra_cluster_density(G, partition):
     total_internal_links = 0
     total_possible_internal_links = 0
     is_directed = G.is_directed()
-    
+
     for C in partition:
         t_nodes = defaultdict(set)
         for t, u in C:
             t_nodes[t].add(u)
-            
+
         internal_links = 0
         for t, nodes in t_nodes.items():
             for u in nodes:
@@ -604,17 +604,17 @@ def intra_cluster_density(G, partition):
                             internal_links += 1
         if not is_directed:
             internal_links //= 2
-            
+
         possible = 0
         for t, nodes in t_nodes.items():
             n = len(nodes)
             possible += n * (n - 1)
         if not is_directed:
             possible //= 2
-            
+
         total_internal_links += internal_links
         total_possible_internal_links += possible
-        
+
     if total_possible_internal_links == 0:
         return 0.0
     return total_internal_links / total_possible_internal_links
@@ -633,7 +633,7 @@ def inter_cluster_density(G, partition):
     -------
     float
         Ratio of observed inter-cluster links to possible inter-cluster links.
-    
+
 
     Examples
     --------
@@ -647,14 +647,14 @@ def inter_cluster_density(G, partition):
     total_inter_links = 0
     total_possible_inter_links = 0
     is_directed = G.is_directed()
-    
+
     cluster_t_nodes = []
     for C in partition:
         t_nodes = defaultdict(set)
         for t, u in C:
             t_nodes[t].add(u)
         cluster_t_nodes.append(t_nodes)
-        
+
     k = len(partition)
     for i in range(k):
         for j in range(k):
@@ -662,9 +662,9 @@ def inter_cluster_density(G, partition):
                 continue
             C_i_t = cluster_t_nodes[i]
             C_j_t = cluster_t_nodes[j]
-            
+
             common_ts = set(C_i_t.keys()) & set(C_j_t.keys())
-            
+
             links = 0
             for t in common_ts:
                 nodes_i = C_i_t[t]
@@ -674,14 +674,14 @@ def inter_cluster_density(G, partition):
                         for v in G.neighbors(u, t):
                             if v in nodes_j:
                                 links += 1
-            
+
             possible = 0
             for t in common_ts:
                 possible += len(C_i_t[t]) * len(C_j_t[t])
-                
+
             total_inter_links += links
             total_possible_inter_links += possible
-            
+
     if total_possible_inter_links == 0:
         return 0.0
     return total_inter_links / total_possible_inter_links
@@ -700,7 +700,7 @@ def cluster_external_density(G, cluster):
     -------
     float
         Fraction of potential external contacts that are present.
-    
+
 
     Examples
     --------
@@ -733,7 +733,7 @@ def quotient_stream(G, partition):
     -------
     DynDiGraph
         Quotient stream graph.
-    
+
 
     Examples
     --------
@@ -751,7 +751,7 @@ def quotient_stream(G, partition):
         for t, u in C:
             t_nodes[t].add(u)
         cluster_t_nodes.append(t_nodes)
-        
+
     k = len(partition)
     for i in range(k):
         for j in range(i + 1, k):
@@ -785,7 +785,7 @@ def line_stream(G):
     DynDiGraph
         Stream graph whose nodes are temporal edge occurrences and whose
         edges connect edge occurrences that share exactly one endpoint.
-    
+
 
     Examples
     --------
@@ -824,7 +824,7 @@ def stream_k_core(G, k=None):
     Cluster or dict
         Temporal core nodes when ``k`` is given, otherwise a mapping from
         temporal node occurrences to core numbers.
-    
+
 
     Examples
     --------
@@ -870,7 +870,7 @@ def stream_path_tree(G, root_node, root_time, path_type='foremost'):
     -------
     DynDiGraph
         Tree encoded as a temporal stream graph.
-    
+
 
     Examples
     --------
@@ -922,7 +922,7 @@ def stream_closeness_centrality(G, v, t):
     -------
     float
         Reciprocal-distance score over time-respecting paths.
-    
+
 
     Examples
     --------
@@ -956,20 +956,20 @@ def stream_betweenness_centrality(G):
 """
     from dynetx.algorithms.paths import all_time_respecting_paths
     paths = all_time_respecting_paths(G)
-    
+
     tids = G.temporal_snapshots_ids()
     bc = {}
     for t in tids:
         for v in G.nodes(t=t):
             bc[(t, v)] = 0.0
-            
+
     for (u, w), plist in paths.items():
         if u == w:
             continue
         grouped = defaultdict(list)
         for p in plist:
             grouped[(p[0][2], p[-1][2])].append(p)
-            
+
         for (i, j), paths_ij in grouped.items():
             min_len = min(len(p) for p in paths_ij)
             optimal_paths = [p for p in paths_ij if len(p) == min_len]
@@ -1026,7 +1026,7 @@ def delta_substream(G, t, delta):
     -------
     DynDiGraph
         Temporal subgraph induced by the requested window.
-    
+
 
     Examples
     --------

@@ -53,10 +53,15 @@ autodoc_mock_imports = [
 extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.githubpages",
-    "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
 ]
+
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 
 # Add any paths that contain templates here, relative to this directory.

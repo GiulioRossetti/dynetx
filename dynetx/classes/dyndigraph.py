@@ -11,106 +11,11 @@ __email__ = "giulio.rossetti@gmail.com"
 
 class DynDiGraph(nx.DiGraph):
     """
-    Base class for directed dynamic graphs.
-
-    DynDiGraph hold directed interactions.  Self loops are allowed.
-
-    Nodes can be arbitrary (hashable) Python objects with optional
-    key/value attributes.
-
-    Interactions are represented as links between nodes.
-
-    Parameters
-    ----------
-    data : input graph
-        Data to initialize graph.  If data=None (default) an empty
-        graph is created.  The data can be an interaction list, or any
-        NetworkX graph object.
-
-    attr : keyword arguments, optional (default= no attributes)
-        Attributes to add to graph as key=value pairs.
-
-    edge_removal : bool, optional (default=True)
-        Specify if the dynamic graph instance should allows interactions removal or not.
-
-    See Also
-    --------
-    DynGraph
-    
-    Examples
-    --------
-    Create an empty graph structure (a "null graph") with no nodes and
-    no interactions.
-
-    >>> import dynetx as dn
-    >>> G = dn.DynDiGraph()
-
-    G can be grown in several ways.
-
-    **Nodes:**
-
-    Add one node at a time:
-
-    >>> G.add_node(1)
-
-    Add the nodes from any container (a list, dict, set or
-    even the lines from a file or the nodes from another graph).
-
-    >>> G.add_nodes_from([2,3])
-    >>> G.add_nodes_from(range(100,110))
-    >>> H = dn.DynDiGraph()
-    >>> H.add_nodes_from([0,1,2,3,4,5,6,7,8,9])
-    >>> G.add_nodes_from(H)
-
-    In addition to strings and integers any hashable Python object
-    (except None) can represent a node.
-
-    >>> G.add_node(H)
-
-    **Edges:**
-
-    G can also be grown by adding interaction and specifying their timestamp.
-
-    Add one interaction,
-
-    >>> G.add_interaction(1, 2, t=0)
-
-    a list of interaction
-
-    >>> G.add_interactions_from([(3, 2), (1,3)], t=1)
-
-    If some interaction connect nodes not yet in the graph, the nodes
-    are added automatically.
-
-    To traverse all interactions of a graph a time t use the interactions(t) method.
-
-    >>> G.interactions(t=1)
-    [(3, 2), (1, 3)]
     """
 
     def __init__(self, data=None, edge_removal=True, **attr):
-        """Initialize a directed graph with interaction, name, graph attributes.
-
-        Parameters
-        ----------
-        data : input graph
-            Data to initialize graph.  If data=None (default) an empty
-            graph is created.  The data can be an interaction list, or any
-            NetworkX/DyNetx graph object.  If the corresponding optional Python
-            packages are installed the data can also be a NumPy matrix
-            or 2d ndarray, a SciPy sparse matrix, or a PyGraphviz graph.
-
-        edge_removal : bool, optional (default=True)
-            Specify if the dynamic graph instance should allows edge removal or not.
-
-        attr : keyword arguments, optional (default= no attributes)
-            Attributes to add to graph as key=value pairs.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> H = dn.DynDiGraph(edge_removal=True)
+        """
+        Initialize a directed graph with interaction, name, graph attributes.
         """
         super(DynDiGraph, self).__init__(data, **attr)
         self.time_to_edge = defaultdict(int)
@@ -119,30 +24,8 @@ class DynDiGraph(nx.DiGraph):
         self.directed = True
 
     def nodes_iter(self, t=None, data=False):
-        """Return an iterator over the nodes with respect to a given temporal snapshot.
-
-        Parameters
-        ----------
-        t : snapshot id (default=None).
-            If None the iterator returns all the nodes of the flattened graph.
-
-        data: node data(default=False)
-
-        Returns
-        -------
-        niter : iterator
-            An iterator over nodes.  If data=True the iterator gives
-            two-tuples containing (node, node data, dictionary)
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, 0)
-        >>> G.add_interaction(1,2, 0)
-
-        >>> [n for n, d in G.nodes_iter(t=0)]
-        [0, 1, 2]
+        """
+        Return an iterator over the nodes with respect to a given temporal snapshot.
         """
         if t is not None:
             if not data:
@@ -156,32 +39,8 @@ class DynDiGraph(nx.DiGraph):
             return self._node
 
     def nodes(self, t=None, data=False):
-        """Return a list of the nodes in the graph at a given snapshot.
-
-        Parameters
-        ----------
-        t : snapshot id (default=None)
-            If None the the method returns all the nodes of the flattened graph.
-        data : boolean, optional (default=False)
-               If False return a list of nodes.  If True return a
-               two-tuple of node and node data dictionary
-
-        Returns
-        -------
-        nlist : list
-            A list of nodes.  If data=True a list of two-tuples containing
-            (node, node data dictionary).
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()   # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> G.add_interaction(0, 1, 0)
-        >>> G.nodes(t=0)
-        [0, 1]
-        >>> G.add_interaction(1, 4, t=1)
-        >>> G.nodes(t=0)
-        [0, 1]
+        """
+        Return a list of the nodes in the graph at a given snapshot.
         """
         if data:
             return [(k, v) for k, v in self.nodes_iter(t=t, data=data).items()]
@@ -189,21 +48,8 @@ class DynDiGraph(nx.DiGraph):
             return [k for k in self.nodes_iter(t=t, data=data)]
 
     def has_node(self, n, t=None):
-        """Return True if the graph, at time t, contains the node n.
-
-        Parameters
-        ----------
-        n : node
-        t : snapshot id, default None
-            If None, return the presence of the node in the flattened graph.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.has_node(0, t=0)
-        True
+        """
+        Return True if the graph, at time t, contains the node n.
         """
         if t is None:
             try:
@@ -219,19 +65,7 @@ class DynDiGraph(nx.DiGraph):
 
     def get_node_snapshots(self, n):
         """
-        Return the snapshot ids for which the given node is in the graph
-
-        :param n: node id
-        :return: list of snapshot ids
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.get_node_snapshots()
-"""
+        """
         snaps = []
         for t in self.temporal_snapshots_ids():
             if self.has_node(n, t):
@@ -239,46 +73,8 @@ class DynDiGraph(nx.DiGraph):
         return snaps
 
     def interactions(self, nbunch=None, t=None):
-        """Return the list of interaction present in a given snapshot.
-
-        Edges are returned as tuples
-        in the order (node, neighbor).
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default= all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-        t : snapshot id (default=None)
-            If None the the method returns all the edges of the flattened graph.
-
-        Returns
-        --------
-        interaction_list: list of interaction tuples
-            Interactions that are adjacent to any node in nbunch, or a list
-            of all interactions if nbunch is not specified.
-
-        See Also
-        --------
-        edges_iter : return an iterator over the interactions
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-interaction.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.add_interaction(2, 3, t=1)
-        >>> G.interactions(t=0)
-        [(0, 1)]
-        >>> G.interactions()
-        [(0, 1), (2, 3)]
-        >>> G.interactions([0,3], t=0)
-        [(0, 1)]
+        """
+        Return the list of interaction present in a given snapshot.
         """
         return list(self.interactions_iter(nbunch, t))
 
@@ -297,30 +93,8 @@ class DynDiGraph(nx.DiGraph):
         return False
 
     def number_of_nodes(self, t=None):
-        """Return the number of nodes in the t snapshot of a dynamic graph.
-
-        Parameters
-        ----------
-        t : snapshot id (default=None)
-               If None return the number of nodes in the flattened graph.
-
-
-        Returns
-        -------
-        nnodes : int
-            The number of nodes in the graph.
-
-        See Also
-        --------
-        order  which is identical
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.number_of_nodes(0)
-        2
+        """
+        Return the number of nodes in the t snapshot of a dynamic graph.
         """
         if t is None:
             return len(self._node)
@@ -329,61 +103,16 @@ class DynDiGraph(nx.DiGraph):
             return nds
 
     def avg_number_of_nodes(self):
-        """Return the number of nodes in the t snapshot of a dynamic graph.
-
-
-            Returns
-            -------
-            nnodes : int
-                The average number of nodes in the dynamic graph.
-
-
-            Examples
-            --------
-            >>> import dynetx as dn
-            >>> G = dn.DynDiGraph()
-            >>> G.add_path([0,1,2], t=0)
-            >>> G.add_path([0,1], t=1)
-            >>> G.avg_number_of_nodes()
-            2.5
+        """
+        Return the number of nodes in the t snapshot of a dynamic graph.
         """
         nds = sum([self.number_of_nodes(t) for t in self.temporal_snapshots_ids()])
         return 0.0 if len(self.snapshots) == 0 else nds/len(self.snapshots)
 
     def degree_iter(self, nbunch=None, t=None):
-        """Return an iterator for (node, degree) at time t.
-
-            The node degree is the number of edges adjacent to the node in a given timeframe.
-
-            Parameters
-            ----------
-            nbunch : iterable container, optional (default=all nodes)
-                A container of nodes.  The container will be iterated
-                through once.
-
-            t : snapshot id (default=None)
-                If None will be returned an iterator over the degree of nodes on the flattened graph.
-
-
-            Returns
-            -------
-            nd_iter : an iterator
-                The iterator returns two-tuples of (node, degree).
-
-            See Also
-            --------
-            degree
-
-            Examples
-            --------
-            >>> import dynetx as dn
-            >>> G = dn.DynDiGraph()
-            >>> G.add_interaction(0, 1, t=0)
-            >>> list(G.degree_iter(0, t=0))
-            [(0, 1)]
-            >>> list(G.degree_iter([0,1], t=0))
-            [(0, 1), (1, 1)]
-            """
+        """
+        Return an iterator for (node, degree) at time t.
+        """
 
         if nbunch is None:
             nodes_nbrs = ((n, succs, self._pred[n]) for n, succs in self._succ.items())
@@ -401,39 +130,8 @@ class DynDiGraph(nx.DiGraph):
                 yield n, edges_succ + edges_pred
 
     def degree(self, nbunch=None, t=None):
-        """Return the degree of a node or nodes at time t.
-
-        The node degree is the number of interaction adjacent to that node in a given time frame.
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default=all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-
-        t : snapshot id (default=None)
-            If None will be returned the degree of nodes on the flattened graph.
-
-
-        Returns
-        -------
-        nd : dictionary, or number
-            A dictionary with nodes as keys and degree as values or
-            a number if a single node is specified.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, t=0)
-        >>> G.add_interaction(1,2, t=0)
-        >>> G.add_interaction(2,3, t=0)
-        >>> G.degree(0, t=0)
-        1
-        >>> G.degree([0,1], t=1)
-        {0: 0, 1: 0}
-        >>> list(G.degree([0,1], t=0).values())
-        [1, 2]
+        """
+        Return the degree of a node or nodes at time t.
         """
         if nbunch in self:  # return a single node
             return next(self.degree_iter(nbunch, t))[1]
@@ -441,40 +139,8 @@ class DynDiGraph(nx.DiGraph):
             return dict(self.degree_iter(nbunch, t))
 
     def interactions_iter(self, nbunch=None, t=None):
-        """Return an iterator over the interaction present in a given snapshot.
-
-        Edges are returned as tuples
-        in the order (node, neighbor).
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default= all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-        t : snapshot id (default=None)
-            If None the the method returns an iterator over the edges of the flattened graph.
-
-        Returns
-        -------
-        edge_iter : iterator
-            An iterator of (u,v) tuples of interaction.
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-interaction.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, 0)
-        >>> G.add_interaction(1,2, 0)
-        >>> G.add_interaction(2,3,1)
-        >>> [e for e in G.interactions_iter(t=0)]
-        [(0, 1), (1, 2)]
-        >>> list(G.interactions_iter())
-        [(0, 1), (1, 2), (2, 3)]
+        """
+        Return an iterator over the interaction present in a given snapshot.
         """
         if nbunch is None:
             nodes_nbrs_succ = self._succ.items()
@@ -490,41 +156,8 @@ class DynDiGraph(nx.DiGraph):
                     yield n, nbr, self._succ[n][nbr]
 
     def add_interaction(self, u, v, t=None, e=None, **attr):
-        """Add an interaction between u and v at time t vanishing (optional) at time e.
-
-        The nodes u and v will be automatically added if they are
-        not already in the graph.
-
-        Parameters
-        ----------
-        u, v : nodes
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : appearance snapshot id, mandatory
-        e : vanishing snapshot id, optional (default=None)
-
-        See Also
-        --------
-        add_edges_from : add a collection of interaction at time t
-
-        Notes
-        -----
-        Adding an interaction that already exists but with different snapshot id updates the interaction data.
-
-        Examples
-        --------
-        The following all add the interaction e=(1,2, 0) to graph G:
-
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(1, 2, 0)
-        >>> G.add_interaction( [(1,2)], t=0 )
-
-        Specify the vanishing of the interaction
-
-        >>>> G.add_interaction(1, 3, t=1, e=10)
-
-        will produce an interaction present in snapshots [0, 9]
+        """
+        Add an interaction between u and v at time t vanishing (optional) at time e.
         """
         if t is None:
             raise nx.NetworkXError(
@@ -626,23 +259,8 @@ class DynDiGraph(nx.DiGraph):
         self._pred[v][u] = datadict
 
     def add_interactions_from(self, ebunch, t=None, e=None, **attr):
-        """Add all the interaction in ebunch at time t.
-
-        Parameters
-        ----------
-        ebunch : container of interaction
-            Each interaction given in the container will be added to the
-            graph. The interaction must be given as as 2-tuples (u,v) or
-            3-tuples (u,v,d) where d is a dictionary containing interaction
-            data.
-        t : appearance snapshot id, mandatory
-        e : vanishing snapshot id, optional
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interactions_from([(0,1),(1,2)], t=0)
+        """
+        Add all the interaction in ebunch at time t.
         """
         # set up attribute dict
         if t is None:
@@ -660,39 +278,8 @@ class DynDiGraph(nx.DiGraph):
                 raise nx.NetworkXError("Each interaction must be a 2-tuple or 3-tuple with attribute dict.")
 
     def in_interactions_iter(self, nbunch=None, t=None):
-        """Return an iterator over the in interactions present in a given snapshot.
-
-        Edges are returned as tuples in the order (node, neighbor).
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default= all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-        t : snapshot id (default=None)
-            If None the the method returns an iterator over the edges of the flattened graph.
-
-        Returns
-        -------
-        edge_iter : iterator
-            An iterator of (u,v) tuples of interaction.
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-interaction.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, 0)
-        >>> G.add_interaction(1,2, 0)
-        >>> G.add_interaction(2,3,1)
-        >>> [e for e in G.in_interactions_iter(t=0)]
-        [(0, 1), (1, 2)]
-        >>> list(G.in_interactions_iter())
-        [(0, 1), (1, 2), (2, 3)]
+        """
+        Return an iterator over the in interactions present in a given snapshot.
         """
         if nbunch is None:
             nodes_nbrs_pred = self._pred.items()
@@ -710,40 +297,8 @@ class DynDiGraph(nx.DiGraph):
                         yield nbr, n, self._pred[n][nbr]
 
     def out_interactions_iter(self, nbunch=None, t=None):
-        """Return an iterator over the out interactions present in a given snapshot.
-
-        Edges are returned as tuples
-        in the order (node, neighbor).
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default= all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-        t : snapshot id (default=None)
-            If None the the method returns an iterator over the edges of the flattened graph.
-
-        Returns
-        -------
-        edge_iter : iterator
-            An iterator of (u,v) tuples of interaction.
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-interaction.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, 0)
-        >>> G.add_interaction(1,2, 0)
-        >>> G.add_interaction(2,3,1)
-        >>> [e for e in G.out_interactions_iter(t=0)]
-        [(0, 1), (1, 2)]
-        >>> list(G.out_interactions_iter())
-        [(0, 1), (1, 2), (2, 3)]
+        """
+        Return an iterator over the out interactions present in a given snapshot.
         """
         if nbunch is None:
             nodes_nbrs_succ = self._succ.items()
@@ -760,118 +315,20 @@ class DynDiGraph(nx.DiGraph):
                         yield n, nbr, self._succ[n][nbr]
 
     def in_interactions(self, nbunch=None, t=None):
-        """Return the list of incoming interaction present in a given snapshot.
-
-        Edges are returned as tuples
-        in the order (node, neighbor).
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default= all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-        t : snapshot id (default=None)
-            If None the the method returns all the edges of the flattened graph.
-
-        Returns
-        --------
-        interaction_list: list of interaction tuples
-            Interactions that are adjacent to any node in nbunch, or a list
-            of all interactions if nbunch is not specified.
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-interaction.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.add_interaction(2, 3, t=1)
-        >>> G.in_interactions(t=0)
-        [(1, 0)]
-        >>> G.in_interactions()
-        [(1, 0), (3, 2)]
-        >>> G.in_interactions([0,3], t=0)
-        [(3, 2)]
+        """
+        Return the list of incoming interaction present in a given snapshot.
         """
         return list(self.in_interactions_iter(nbunch, t))
 
     def out_interactions(self, nbunch=None, t=None):
-        """Return the list of out interaction present in a given snapshot.
-
-        Edges are returned as tuples
-        in the order (node, neighbor).
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default= all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-        t : snapshot id (default=None)
-            If None the the method returns all the edges of the flattened graph.
-
-        Returns
-        --------
-        interaction_list: list of interaction tuples
-            Interactions that are adjacent to any node in nbunch, or a list
-            of all interactions if nbunch is not specified.
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-interaction.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.add_interaction(2, 3, t=1)
-        >>> G.out_interactions(t=0)
-        [(0, 1)]
-        >>> G.out_interactions()
-        [(0, 1), (2, 3)]
-        >>> G.out_interactions([0,3], t=0)
-        [(0, 1)]
+        """
+        Return the list of out interaction present in a given snapshot.
         """
         return list(self.out_interactions_iter(nbunch, t))
 
     def number_of_interactions(self, u=None, v=None, t=None):
-        """Return the number of interaction between two nodes at time t.
-
-        Parameters
-        ----------
-        u, v : nodes, optional (default=all interaction)
-            If u and v are specified, return the number of interaction between
-            u and v. Otherwise return the total number of all interaction.
-        t : snapshot id (default=None)
-            If None will be returned the number of edges on the flattened graph.
-
-        Returns
-        -------
-        nedges : int
-            The number of interaction in the graph.  If nodes u and v are specified
-            return the number of interaction between those nodes. If a single node is specified return None.
-
-        See Also
-        --------
-        size
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_path([0,1,2,3], t=0)
-        >>> G.number_of_interactions()
-        3
-        >>> G.number_of_interactions(0,1, t=0)
-        1
-        >>> G.add_edge(3, 4, t=1)
-        >>> G.number_of_interactions()
-        4
+        """
+        Return the number of interaction between two nodes at time t.
         """
         if t is None:
             if u is None:
@@ -892,35 +349,8 @@ class DynDiGraph(nx.DiGraph):
                         return 0
 
     def has_interaction(self, u, v, t=None):
-        """Return True if the interaction (u,v) is in the graph at time t.
-
-        Parameters
-        ----------
-        u, v : nodes
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-
-        Returns
-        -------
-        edge_ind : bool
-            True if interaction is in the graph, False otherwise.
-
-        Examples
-        --------
-        Can be called either using two nodes u,v or interaction tuple (u,v)
-
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, t=0)
-        >>> G.add_interaction(1,2, t=0)
-        >>> G.add_interaction(2,3, t=0)
-        >>> G.has_interaction(0,1, t=0)
-        True
-        >>> G.has_interaction(0,1, t=1)
-        False
+        """
+        Return True if the interaction (u,v) is in the graph at time t.
         """
         try:
             if t is None:
@@ -931,74 +361,20 @@ class DynDiGraph(nx.DiGraph):
             return False
 
     def has_successor(self, u, v, t=None):
-        """Return True if node u has successor v at time t (optional).
-
-        This is true if graph has the edge u->v.
-
-        Parameters
-        ----------
-        u, v : nodes
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.has_successor(0, 1, t=0)
-"""
+        """
+        Return True if node u has successor v at time t (optional).
+        """
         return self.has_interaction(u, v, t)
 
     def has_predecessor(self, u, v, t=None):
-        """Return True if node u has predecessor v at time t (optional).
-
-        This is true if graph has the edge u<-v.
-
-        Parameters
-        ----------
-        u, v : nodes
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.has_predecessor(0, 1, t=0)
-"""
+        """
+        Return True if node u has predecessor v at time t (optional).
+        """
         return self.has_interaction(v, u, t)
 
     def successors_iter(self, n, t=None):
         """
-        Return an iterator over successor nodes of n at time t (optional).
-
-        Parameters
-        ----------
-        n : node
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.successors_iter()
-"""
+        """
         try:
             if t is None:
                 return iter(self._succ[n])
@@ -1008,26 +384,9 @@ class DynDiGraph(nx.DiGraph):
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
     def predecessors_iter(self, n, t=None):
-        """Return an iterator over predecessors nodes of n at time t (optional).
-
-        Parameters
-        ----------
-        n : node
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.predecessors_iter()
-"""
+        """
+        Return an iterator over predecessors nodes of n at time t (optional).
+        """
         try:
             if t is None:
                 return iter(self._pred[n])
@@ -1037,47 +396,15 @@ class DynDiGraph(nx.DiGraph):
             raise nx.NetworkXError("The node %s is not in the graph." % (n,))
 
     def successors(self, n, t=None):
-        """Return a list of successor nodes of n at time t (optional).
-
-        Parameters
-        ----------
-        n : node
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.successors(0, t=0)
-"""
+        """
+        Return a list of successor nodes of n at time t (optional).
+        """
         return list(self.successors_iter(n, t))
 
     def predecessors(self, n, t=None):
-        """Return a list of predecessor nodes of n at time t (optional).
-
-        Parameters
-        ----------
-        n : node
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
-        t : snapshot id (default=None)
-            If None will be returned the presence of the interaction on the flattened graph.
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.predecessors(0, t=0)
-"""
+        """
+        Return a list of predecessor nodes of n at time t (optional).
+        """
         return list(self.predecessors_iter(n, t))
 
     # dyndigraph definitions
@@ -1085,39 +412,8 @@ class DynDiGraph(nx.DiGraph):
     neighbors_iter = successors_iter
 
     def in_degree(self, nbunch=None, t=None):
-        """Return the in degree of a node or nodes at time t.
-
-        The node in degree is the number of incoming interaction to that node in a given time frame.
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default=all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-
-        t : snapshot id (default=None)
-            If None will be returned the degree of nodes on the flattened graph.
-
-
-        Returns
-        -------
-        nd : dictionary, or number
-            A dictionary with nodes as keys and degree as values or
-            a number if a single node is specified.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, t=0)
-        >>> G.add_interaction(1,2, t=0)
-        >>> G.add_interaction(2,3, t=0)
-        >>> G.in_degree(0, t=0)
-        1
-        >>> G.in_degree([0,1], t=1)
-        {0: 0, 1: 0}
-        >>> list(G.in_degree([0,1], t=0).values())
-        [1, 2]
+        """
+        Return the in degree of a node or nodes at time t.
         """
         if nbunch in self:  # return a single node
             return next(self.in_degree_iter(nbunch, t))[1]
@@ -1125,38 +421,8 @@ class DynDiGraph(nx.DiGraph):
             return dict(self.in_degree_iter(nbunch, t))
 
     def in_degree_iter(self, nbunch=None, t=None):
-        """Return an iterator for (node, in_degree) at time t.
-
-        The node degree is the number of edges incoming to the node in a given timeframe.
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default=all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-
-        t : snapshot id (default=None)
-            If None will be returned an iterator over the degree of nodes on the flattened graph.
-
-
-        Returns
-        -------
-        nd_iter : an iterator
-            The iterator returns two-tuples of (node, degree).
-
-        See Also
-        --------
-        degree
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.in_degree_iter(0, t=0))
-        [(0, 0)]
-        >>> list(G.in_degree_iter([0,1], t=0))
-        [(0, 0), (1, 1)]
+        """
+        Return an iterator for (node, in_degree) at time t.
         """
         if nbunch is None:
             nodes_nbrs = self._pred.items()
@@ -1176,39 +442,8 @@ class DynDiGraph(nx.DiGraph):
                     yield n, 0
 
     def out_degree(self, nbunch=None, t=None):
-        """Return the out degree of a node or nodes at time t.
-
-        The node degree is the number of interaction outgoing from that node in a given time frame.
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default=all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-
-        t : snapshot id (default=None)
-            If None will be returned the degree of nodes on the flattened graph.
-
-
-        Returns
-        -------
-        nd : dictionary, or number
-            A dictionary with nodes as keys and degree as values or
-            a number if a single node is specified.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interactions(0,1, t=0)
-        >>> G.add_interactions(1,2, t=0)
-        >>> G.add_interactions(2,3, t=0)
-        >>> G.out_degree(0, t=0)
-        1
-        >>> G.out_degree([0,1], t=1)
-        {0: 0, 1: 0}
-        >>> list(G.out_degree([0,1], t=0).values())
-        [1, 2]
+        """
+        Return the out degree of a node or nodes at time t.
         """
         if nbunch in self:  # return a single node
             return next(self.out_degree_iter(nbunch, t))[1]
@@ -1216,38 +451,8 @@ class DynDiGraph(nx.DiGraph):
             return dict(self.out_degree_iter(nbunch, t))
 
     def out_degree_iter(self, nbunch=None, t=None):
-        """Return an iterator for (node, out_degree) at time t.
-
-        The node out degree is the number of interactions outgoing from the node in a given timeframe.
-
-        Parameters
-        ----------
-        nbunch : iterable container, optional (default=all nodes)
-            A container of nodes.  The container will be iterated
-            through once.
-
-        t : snapshot id (default=None)
-            If None will be returned an iterator over the degree of nodes on the flattened graph.
-
-
-        Returns
-        -------
-        nd_iter : an iterator
-            The iterator returns two-tuples of (node, degree).
-
-        See Also
-        --------
-        degree
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.out_degree_iter(0, t=0))
-        [(0, 1)]
-        >>> list(G.out_degree_iter([0,1], t=0))
-        [(0, 1)]
+        """
+        Return an iterator for (node, out_degree) at time t.
         """
         if nbunch is None:
             nodes_nbrs = self._succ.items()
@@ -1267,53 +472,15 @@ class DynDiGraph(nx.DiGraph):
                     yield n, 0
 
     def size(self, t=None):
-        """Return the number of edges at time t.
-
-        Parameters
-        ----------
-        t : snapshot id (default=None)
-            If None will be returned the size of the flattened graph.
-
-
-        Returns
-        -------
-        nedges : int
-            The number of edges
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDinGraph()
-        >>> G.add_interaction(0,1, t=0)
-        >>> G.add_interaction(1,2, t=0)
-        >>> G.add_interaction(2,3, t=0)
-        >>> G.size(t=0)
-        3
+        """
+        Return the number of edges at time t.
         """
         s = sum(self.degree(t=t).values()) / 2
         return int(s)
 
     def stream_interactions(self):
-        """Generate a temporal ordered stream of interactions.
-        Only incoming interactions are returned.
-
-        Returns
-        -------
-        nd_iter : an iterator
-            The iterator returns a 4-tuples of (node, node, op, timestamp).
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, t=0)
-        >>> G.add_interaction(1,2, t=0)
-        >>> G.add_interaction(2,3, t=0)
-        >>> G.add_interaction(3,4, t=1)
-        >>> G.add_interaction(4,5, t=1)
-        >>> G.add_interaction(5,6, t=1)
-        >>> list(G.stream_interactions())
-        [(0, 1, '+', 0), (1, 2, '+', 0), (2, 3, '+', 0), (3, 4, '+', 1), (4, 5, '+', 1), (5, 6, '+', 1)]
+        """
+        Generate a temporal ordered stream of interactions. Only incoming interactions are returned.
         """
         timestamps = sorted(self.time_to_edge.keys())
         for t in timestamps:
@@ -1321,46 +488,8 @@ class DynDiGraph(nx.DiGraph):
                 yield e[0], e[1], e[2], t
 
     def time_slice(self, t_from, t_to=None, **kwargs):
-        """Return a new graph containing nodes and interactions present in
-        ``[t_from, t_to]``.
-
-        Parameters
-        ----------
-        t_from : snapshot id
-            Start of the slice.
-        t_to : snapshot id, optional
-            End of the slice. If omitted, ``t_to`` is set equal to ``t_from``.
-
-        Returns
-        -------
-        DynDiGraph
-            Graph described by interactions in ``[t_from, t_to]``.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.add_interaction(1, 2, t=0)
-        >>> G.add_interaction(2, 3, t=0)
-        >>> G.add_interaction(0, 4, t=1)
-        >>> G.add_interaction(4, 5, t=1)
-        >>> G.add_interaction(5, 6, t=1)
-        >>> H = G.time_slice(0, 1)
-        >>> H.interactions()
-        [(0, 1), (1, 2), (1, 3), (0, 4), (4, 5), (5, 6)]
-
-        Additional keyword arguments
-        ---------------------------
-        node_filter : callable or mapping, optional
-            Filter applied to node attributes before they are copied into the
-            slice.
-        edge_filter : callable or mapping, optional
-            Filter applied to edge attributes before an interaction interval is
-            copied into the slice.
-        include_isolated : bool, optional
-            If ``True``, keep nodes selected by ``node_filter`` even when they
-            have no surviving interactions in the slice.
+        """
+        Return a new graph containing nodes and interactions present in ``[t_from, t_to]``.
         """
         # create new graph and copy subgraph into it
         H = self.__class__()
@@ -1417,104 +546,27 @@ class DynDiGraph(nx.DiGraph):
         return H
 
     def update_node_attr(self, n, **data):
-        """Updates the attributes of a specified node.
-
-            Parameters
-            ----------
-
-            n : node id
-            data : keyword arguments
-                The attributes and their new values.
-
-            Examples
-            --------
-            >>> import dynetx as dn
-            >>> G = dn.DynGraph()
-            >>> G.add_node(0, Label="A")
-            >>> G.update_node_attr(0, Label="B")
+        """
+        Updates the attributes of a specified node.
         """
         self._node.setdefault(n, {}).update(data)
 
     def update_node_attr_from(self, nlist, **data):
-        """Updates the attributes of a specified node.
-
-            Parameters
-            ----------
-
-            nlist : list of node ids
-            data : keyword arguments
-                The attributes and their new values.
-
-            Examples
-            --------
-            >>> import dynetx as dn
-            >>> G = dn.DynGraph()
-            >>> G.add_nodes_from([0, 1, 2], Label="A")
-            >>> G.update_node_attr_from([0, 2], Label="B")
+        """
+        Updates the attributes of a specified node.
         """
         for n in nlist:
             self._node.setdefault(n, {}).update(data)
 
     def temporal_snapshots_ids(self):
-        """Return the ordered list of snapshot ids present in the dynamic graph.
-
-            Returns
-            -------
-
-            nd : list
-                a list of snapshot ids
-
-            Examples
-            --------
-            >>> import dynetx as dn
-            >>> G = dn.DynDiGraph()
-            >>> G.add_interaction(0,1, t=0)
-            >>> G.add_interaction(1,2, t=0)
-            >>> G.add_interaction(2,3, t=0)
-            >>> G.add_interaction(0,4, t=1)
-            >>> G.add_interaction(4,5, t=1)
-            >>> G.add_interaction(5,6, t=1)
-            >>> G.add_interaction(7,1, t=2)
-            >>> G.add_interaction(1,2, t=2)
-            >>> G.add_interaction(2,3, t=2)
-            >>> G.temporal_snapshots_ids()
-            [0, 1, 2]
+        """
+        Return the ordered list of snapshot ids present in the dynamic graph.
         """
         return sorted(self.snapshots.keys())
 
     def interactions_per_snapshots(self, t=None):
-        """Return the number of interactions within snapshot t.
-
-        Parameters
-        ----------
-
-        t : snapshot id (default=None)
-            If None will be returned total number of interactions across all snapshots
-
-        Returns
-        -------
-
-        nd : dictionary, or number
-            A dictionary with snapshot ids as keys and interaction count as values or
-            a number if a single snapshot id is specified.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0,1, t=0)
-        >>> G.add_interaction(1,2, t=0)
-        >>> G.add_interaction(2,3, t=0)
-        >>> G.add_interaction(0,4, t=1)
-        >>> G.add_interaction(4,5, t=1)
-        >>> G.add_interaction(5,6, t=1)
-        >>> G.add_interaction(7,1, t=2)
-        >>> G.add_interaction(1,2, t=2)
-        >>> G.add_interaction(2,3, t=2)
-        >>> G.interactions_per_snapshots(t=0)
-        3
-        >>> G.interactions_per_snapshots()
-        {0: 3, 1: 3, 2: 3}
+        """
+        Return the number of interactions within snapshot t.
         """
         if t is None:
             return dict(self.snapshots)
@@ -1525,32 +577,9 @@ class DynDiGraph(nx.DiGraph):
                 return 0
 
     def inter_out_event_time_distribution(self, u=None, v=None):
-        """Return the distribution of inter event time for out interactions.
-        If u and v are None the dynamic graph intere event distribution is returned.
-        If u is specified the inter event time distribution of interactions involving u is returned.
-        If u and v are specified the inter event time distribution of (u, v) interactions is returned
-
-        Parameters
-        ----------
-
-        u : node id
-        v : node id
-
-        Returns
-        -------
-
-        nd : dictionary
-            A dictionary from inter event time to number of occurrences
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.inter_out_event_time_distribution()
-"""
+        """
+        Return the distribution of inter event time for out interactions. If u and v are None the dynamic graph intere event distribution is returned. If u is specified the inter event time distribution of interactions involving u is returned. If u and v are specified the inter event time distribution of (u, v) interactions is returned
+        """
         dist = {}
         if u is None:
             # global inter event
@@ -1614,32 +643,9 @@ class DynDiGraph(nx.DiGraph):
         return dist
 
     def inter_in_event_time_distribution(self, u=None, v=None):
-        """Return the distribution of inter event time for in interactions.
-        If u and v are None the dynamic graph intere event distribution is returned.
-        If u is specified the inter event time distribution of interactions involving u is returned.
-        If u and v are specified the inter event time distribution of (u, v) interactions is returned
-
-        Parameters
-        ----------
-
-        u : node id
-        v : node id
-
-        Returns
-        -------
-
-        nd : dictionary
-            A dictionary from inter event time to number of occurrences
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.inter_in_event_time_distribution()
-"""
+        """
+        Return the distribution of inter event time for in interactions. If u and v are None the dynamic graph intere event distribution is returned. If u is specified the inter event time distribution of interactions involving u is returned. If u and v are specified the inter event time distribution of (u, v) interactions is returned
+        """
         dist = {}
         if u is None:
             # global inter event
@@ -1702,32 +708,9 @@ class DynDiGraph(nx.DiGraph):
         return dist
 
     def inter_event_time_distribution(self, u=None, v=None):
-        """Return the distribution of inter event time.
-        If u and v are None the dynamic graph intere event distribution is returned.
-        If u is specified the inter event time distribution of interactions involving u is returned.
-        If u and v are specified the inter event time distribution of (u, v) interactions is returned
-
-        Parameters
-        ----------
-
-        u : node id
-        v : node id
-
-        Returns
-        -------
-
-        nd : dictionary
-            A dictionary from inter event time to number of occurrences
-
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.inter_event_time_distribution()
-"""
+        """
+        Return the distribution of inter event time. If u and v are None the dynamic graph intere event distribution is returned. If u is specified the inter event time distribution of interactions involving u is returned. If u and v are specified the inter event time distribution of (u, v) interactions is returned
+        """
         dist = {}
         if u is None:
             # global inter event
@@ -1792,15 +775,9 @@ class DynDiGraph(nx.DiGraph):
         return dist
 
     def remove_edge(self, u, v):
-        """Remove directed edge ``(u, v)`` from the graph.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.remove_edge(0, 1)
-"""
+        """
+        Remove directed edge ``(u, v)`` from the graph.
+        """
         if u not in self._succ or v not in self._succ[u]:
             return
         datadict = self._succ[u][v]
@@ -1820,28 +797,16 @@ class DynDiGraph(nx.DiGraph):
         del self._pred[v][u]
 
     def remove_edges_from(self, ebunch):
-        """Remove every directed edge in ``ebunch``.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.remove_edges_from([(0, 1)])
-"""
+        """
+        Remove every directed edge in ``ebunch``.
+        """
         for e in ebunch:
             self.remove_edge(e[0], e[1])
 
     def remove_node(self, u):
-        """Remove node ``u`` and all incoming and outgoing interactions.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.remove_node(1)
-"""
+        """
+        Remove node ``u`` and all incoming and outgoing interactions.
+        """
         if u not in self._node:
             return
         for v in list(self._succ.get(u, {}).keys()):
@@ -1856,27 +821,16 @@ class DynDiGraph(nx.DiGraph):
             del self._node[u]
 
     def remove_nodes_from(self, nbunch):
-        """Remove every node in ``nbunch``.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.remove_nodes_from([1])
-"""
+        """
+        Remove every node in ``nbunch``.
+        """
         for n in list(nbunch):
             self.remove_node(n)
 
     def add_edge(self, u, v, attr_dict=None, **attr):
-        """Add a directed interaction using the NetworkX edge API.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_edge(0, 1, t=0)
-"""
+        """
+        Add a directed interaction using the NetworkX edge API.
+        """
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -1888,14 +842,9 @@ class DynDiGraph(nx.DiGraph):
         self.add_interaction(u, v, t=t, e=e, **attrs)
 
     def add_edges_from(self, ebunch, attr_dict=None, **attr):
-        """Add multiple directed interactions using the NetworkX edge API.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interactions_from([(0, 1)], t=0)
-"""
+        """
+        Add multiple directed interactions using the NetworkX edge API.
+        """
         attrs = {}
         if attr_dict:
             attrs.update(attr_dict)
@@ -1911,15 +860,9 @@ class DynDiGraph(nx.DiGraph):
                 raise nx.NetworkXError("Each interaction must be a 2-tuple or 3-tuple with attribute dict.")
 
     def edges_iter(self, nbunch=None, data=False, default=None):
-        """Iterate over directed interactions.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.edges_iter(t=0))
-"""
+        """
+        Iterate over directed interactions.
+        """
         for u, v, d in self.interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -1927,15 +870,9 @@ class DynDiGraph(nx.DiGraph):
                 yield u, v
 
     def in_edges_iter(self, nbunch=None, data=False, default=None):
-        """Iterate over incoming interactions.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.in_edges_iter(t=0))
-"""
+        """
+        Iterate over incoming interactions.
+        """
         for u, v, d in self.in_interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -1943,15 +880,9 @@ class DynDiGraph(nx.DiGraph):
                 yield u, v
 
     def out_edges_iter(self, nbunch=None, data=False, default=None):
-        """Iterate over outgoing interactions.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.out_edges_iter(t=0))
-"""
+        """
+        Iterate over outgoing interactions.
+        """
         for u, v, d in self.out_interactions_iter(nbunch):
             if data:
                 yield u, v, d
@@ -1959,46 +890,20 @@ class DynDiGraph(nx.DiGraph):
                 yield u, v
 
     def in_edges(self, nbunch=None, data=False):
-        """Return incoming interactions as a list.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.in_edges(t=0))
-"""
+        """
+        Return incoming interactions as a list.
+        """
         return list(self.in_edges_iter(nbunch=nbunch, data=data))
 
     def out_edges(self, nbunch=None, data=False):
-        """Return outgoing interactions as a list.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.out_edges(t=0))
-"""
+        """
+        Return outgoing interactions as a list.
+        """
         return list(self.out_edges_iter(nbunch=nbunch, data=data))
 
     def node_presence(self, u):
         """
-            Timestamps of presence for node u
-
-            Returns
-            -------
-            density : set
-                temporal ids
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.node_presence(0)
-"""
+        """
         pres = []
         for t in self.snapshots:
             if self.has_node(u, t):
@@ -2007,15 +912,9 @@ class DynDiGraph(nx.DiGraph):
         return set(pres)
 
     def temporal_degree(self, nbunch=None, t=None):
-        """Return the temporal support of one or more nodes.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.temporal_degree(0, t=0)
-"""
+        """
+        Return the temporal support of one or more nodes.
+        """
         if t is not None:
             return self.degree(nbunch, t=t)
         if nbunch is None:
@@ -2027,28 +926,16 @@ class DynDiGraph(nx.DiGraph):
         return {n: len(self.node_presence(n)) for n in nodes}
 
     def avg_temporal_degree(self):
-        """Return the average temporal support across all nodes.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.avg_temporal_degree()
-"""
+        """
+        Return the average temporal support across all nodes.
+        """
         vals = list(self.temporal_degree().values())
         return 0.0 if len(vals) == 0 else sum(vals) / len(vals)
 
     def has_node_in_range(self, n, t_from, t_to=None, mode='any'):
-        """Check whether node ``n`` is present in a time interval.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.has_node_in_range(0, 0)
-"""
+        """
+        Check whether node ``n`` is present in a time interval.
+        """
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -2056,15 +943,9 @@ class DynDiGraph(nx.DiGraph):
         return any(checks) if mode != 'all' else all(checks)
 
     def has_interaction_in_range(self, u, v, t_from, t_to=None, mode='any'):
-        """Check whether interaction ``(u, v)`` is present in a time interval.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.has_interaction_in_range(0, 1, 0)
-"""
+        """
+        Check whether interaction ``(u, v)`` is present in a time interval.
+        """
         if t_to is None:
             t_to = t_from
         tids = range(t_from, t_to + 1)
@@ -2072,15 +953,9 @@ class DynDiGraph(nx.DiGraph):
         return any(checks) if mode != 'all' else all(checks)
 
     def neighbors_in_range(self, n, t_from, t_to=None, mode='any'):
-        """Return the neighbors of ``n`` observed in a time interval.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.neighbors_in_range(0, 0)
-"""
+        """
+        Return the neighbors of ``n`` observed in a time interval.
+        """
         if t_to is None:
             t_to = t_from
         nbrs = set()
@@ -2091,15 +966,9 @@ class DynDiGraph(nx.DiGraph):
         return list(nbrs)
 
     def interactions_in_range(self, nbunch=None, t_from=None, t_to=None, mode='any', min_count=1):
-        """Return interactions observed in a time interval.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.interactions_in_range(t_from=0, t_to=0)
-"""
+        """
+        Return interactions observed in a time interval.
+        """
         if t_from is None:
             t_from = min(self.temporal_snapshots_ids() or [0])
         if t_to is None:
@@ -2119,15 +988,9 @@ class DynDiGraph(nx.DiGraph):
         return res
 
     def window_slices(self, window, step=1, include_partial=False):
-        """Yield subgraphs extracted with a sliding temporal window.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> list(G.window_slices(window=1))
-"""
+        """
+        Yield subgraphs extracted with a sliding temporal window.
+        """
         tids = self.temporal_snapshots_ids()
         if len(tids) == 0:
             return
@@ -2142,15 +1005,9 @@ class DynDiGraph(nx.DiGraph):
             cur += step
 
     def to_networkx_graph(self, t=None):
-        """Return a NetworkX graph for a snapshot or for the aggregate graph.
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.to_networkx_graph(t=0)
-"""
+        """
+        Return a NetworkX graph for a snapshot or for the aggregate graph.
+        """
         if self.is_directed():
             nxg = nx.DiGraph()
         else:
@@ -2168,54 +1025,9 @@ class DynDiGraph(nx.DiGraph):
         return nxg
 
     def to_undirected(self, reciprocal=False, **kwargs):
-        """Return an undirected representation of the dyndigraph.
-
-        Parameters
-        ----------
-        reciprocal : bool (optional)
-          If True only keep edges that appear in both directions
-          in the original dyndigraph.
-
-        Returns
-        -------
-        G : DynGraph
-            An undirected dynamic graph with the same name and nodes and
-            with edge (u,v,data) if either (u,v,data) or (v,u,data)
-            is in the dyndigraph.  If both edges exist in dyndigraph and
-            their edge data is different, only one edge is created
-            with an arbitrary choice of which edge data to use.
-            You must check and correct for this manually if desired.
-
-        Notes
-        -----
-        If edges in both directions (u,v) and (v,u) exist in the
-        graph, attributes for the new undirected edge will be a combination of
-        the attributes of the directed edges.  The edge data is updated
-        in the (arbitrary) order that the edges are encountered.  For
-        more customized control of the edge attributes use add_edge().
-
-        This returns a "deepcopy" of the edge, node, and
-        graph attributes which attempts to completely copy
-        all of the data and references.
-
-        This is in contrast to the similar G=DynDiGraph(D) which returns a
-        shallow copy of the data.
-
-        See the Python copy module for more information on shallow
-        and deep copies, http://docs.python.org/library/copy.html.
-
-        Warning: If you have subclassed DiGraph to use dict-like objects
-        in the data structure, those changes do not transfer to the Graph
-        created by this method.
-        
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_interaction(0, 1, t=0)
-        >>> G.to_undirected()
-"""
+        """
+        Return an undirected representation of the dyndigraph.
+        """
         from .dyngraph import DynGraph
         H = DynGraph()
         H.name = self.name
@@ -2254,23 +1066,8 @@ class DynDiGraph(nx.DiGraph):
         return H
 
     def add_path(self, nodes, t=None):
-        """Add a path at time t.
-
-        Parameters
-        ----------
-        nodes : iterable container
-            A container of nodes.
-        t : snapshot id (default=None)
-
-        See Also
-        --------
-        add_path, add_cycle
-
-        Examples
-        --------
-        >>> import dynetx as dn
-        >>> G = dn.DynDiGraph()
-        >>> G.add_path([0,1,2,3], t=0)
+        """
+        Add a path at time t.
         """
         nlist = list(nodes)
         interaction = zip(nlist[:-1], nlist[1:])

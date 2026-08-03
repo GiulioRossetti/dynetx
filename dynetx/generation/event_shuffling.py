@@ -61,7 +61,7 @@ def generate_event_shuffling_graph(
     ----------
     Gauvin, L., Panisson, A., & Cattuto, C. (2022). Randomized reference
     models for temporal networks. *SIAM Review*, 64(4), 763-830.
-    
+
 
     Examples
     --------

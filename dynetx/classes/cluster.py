@@ -2,7 +2,7 @@ class Cluster(set):
     """
     A Cluster is a set of temporal node occurrences (t, u) representing a subset of W.
     It inherits from python's built-in set class to support all standard set operations.
-    
+
 
     Examples
     --------
@@ -23,7 +23,7 @@ class Cluster(set):
         ----------
         t : timestamp
         u : node id
-        
+
 
         Examples
         --------
@@ -40,7 +40,7 @@ class Cluster(set):
         ----------
         t : timestamp
         u : node id
-        
+
 
         Examples
         --------

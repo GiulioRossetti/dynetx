@@ -81,14 +81,17 @@ def _detect_browser_host():
 
 
 class DashboardServerState:
-    """In-memory dashboard session state shared by the HTTP handlers.
-
-    Examples
-    --------
-    >>> from dynetx.dashboard.server import DashboardServerState
-    >>> state = DashboardServerState()
-    >>> state.DashboardServerState()
-"""
+    """
+    In-memory dashboard session state shared by the HTTP handlers.
+    
+    Example::
+    
+    
+    
+        >>> from dynetx.dashboard.server import DashboardServerState
+        >>> state = DashboardServerState()
+        >>> state.DashboardServerState()
+    """
 
     def __init__(self, dashboard=None):
         """Initialize the shared state object."""
@@ -96,28 +99,34 @@ class DashboardServerState:
         self.lock = threading.RLock()
 
     def load_graph(self, graph_data):
-        """Load graph data and reset the current selection.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.load_graph({})
-"""
+        """
+        Load graph data and reset the current selection.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.load_graph({})
+        """
         with self.lock:
             self.dashboard.load_graph_data(graph_data)
             self._default_selection()
             return self.summary()
 
     def generate_graph(self, kind="stream", num_nodes=12, snapshots=3, edge_probability=0.2, seed=42, topologies=None, dynamic_nodes=False, node_churn=0.25, ba_m=None, ws_k=None, ws_beta=0.2, sbm_groups=None, sbm_p_in=None, sbm_p_out=None, activity_m=2, activity_min=0.18, activity_max=0.65, activity_exponent=2.2, contact_duration=1, memory_alpha=1.0):
-        """Generate a synthetic graph and load it into the dashboard.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.generate_graph(kind="stream", num_nodes=5, snapshots=2, seed=1)
-"""
+        """
+        Generate a synthetic graph and load it into the dashboard.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.generate_graph(kind="stream", num_nodes=5, snapshots=2, seed=1)
+        """
         with self.lock:
             self.dashboard.set_graph(
                 generate_synthetic_graph(
@@ -147,14 +156,17 @@ class DashboardServerState:
             return self.summary()
 
     def select(self, snapshot=None, window=None):
-        """Update the active dashboard selection.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.select(snapshot=0)
-"""
+        """
+        Update the active dashboard selection.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.select(snapshot=0)
+        """
         with self.lock:
             if window is not None:
                 self.dashboard.select_window(*window)
@@ -163,28 +175,34 @@ class DashboardServerState:
             return self.summary()
 
     def clear_selection(self):
-        """Clear any active snapshot or window selection.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.clear_selection()
-"""
+        """
+        Clear any active snapshot or window selection.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.clear_selection()
+        """
         with self.lock:
             self.dashboard.selected_snapshot = None
             self.dashboard.selected_window = None
             return self.summary()
 
     def step_snapshot(self, delta=1):
-        """Advance the current snapshot selection by ``delta`` steps.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.step_snapshot()
-"""
+        """
+        Advance the current snapshot selection by ``delta`` steps.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.step_snapshot()
+        """
         with self.lock:
             tids = self.dashboard.graph.temporal_snapshots_ids()
             if not tids:
@@ -201,14 +219,17 @@ class DashboardServerState:
             return self.summary()
 
     def step_window(self, delta=1):
-        """Advance the current window selection by ``delta`` steps.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.step_window()
-"""
+        """
+        Advance the current window selection by ``delta`` steps.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.step_window()
+        """
         with self.lock:
             tids = self.dashboard.graph.temporal_snapshots_ids()
             if not tids:
@@ -243,14 +264,17 @@ class DashboardServerState:
             self.dashboard.selected_window = None
 
     def summary(self):
-        """Return the dashboard state as a JSON-serializable dictionary.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.summary()
-"""
+        """
+        Return the dashboard state as a JSON-serializable dictionary.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.summary()
+        """
         with self.lock:
             stats = self.dashboard.summary_statistics()
             tids = stats["snapshots"]
@@ -272,26 +296,32 @@ class DashboardServerState:
             }
 
     def export_state(self):
-        """Return the current dashboard export payload.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.export_state()
-"""
+        """
+        Return the current dashboard export payload.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.export_state()
+        """
         with self.lock:
             return self.dashboard.export_state()
 
     def current_graph_data(self):
-        """Return the serialized graph and stream-view payload.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.current_graph_data()
-"""
+        """
+        Return the serialized graph and stream-view payload.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.current_graph_data()
+        """
         with self.lock:
             payload = json_graph.node_link_data(self.dashboard.current_graph())
             payload["graph"] = dict(self.dashboard.graph.graph)
@@ -359,14 +389,17 @@ class DashboardServerState:
         }
 
     def chart_data(self):
-        """Return the time-series data used by the dashboard charts.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.chart_data()
-"""
+        """
+        Return the time-series data used by the dashboard charts.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.chart_data()
+        """
         with self.lock:
             stats = self.dashboard.summary_statistics()
             snapshots = stats["snapshots"]
@@ -381,14 +414,17 @@ class DashboardServerState:
             }
 
     def render_page(self):
-        """Render the dashboard HTML page.
-
-        Examples
-        --------
-        >>> from dynetx.dashboard.server import DashboardServerState
-        >>> state = DashboardServerState()
-        >>> state.render_page()
-"""
+        """
+        Render the dashboard HTML page.
+        
+        Example::
+        
+        
+        
+            >>> from dynetx.dashboard.server import DashboardServerState
+            >>> state = DashboardServerState()
+            >>> state.render_page()
+        """
         return _DASHBOARD_HTML.replace("__LOGO_DATA_URI__", _LOGO_DATA_URI)
 
 
@@ -488,27 +524,16 @@ def _make_handler():
 
 
 def create_server(host=DEFAULT_HOST, port=DEFAULT_PORT):
-    """Create a dashboard HTTP server and its shared state.
-
-    Parameters
-    ----------
-    host : str, optional
-        Interface to bind.
-    port : int, optional
-        TCP port to bind.
-
-    Returns
-    -------
-    tuple
-        ``(server, state)`` where ``server`` is a ``ThreadingHTTPServer``
-        instance and ``state`` is the shared ``DashboardServerState``.
+    """
+    Create a dashboard HTTP server and its shared state.
     
-
-    Examples
-    --------
-    >>> from dynetx.dashboard.server import create_server
-    >>> create_server(port=0)
-"""
+    Example::
+    
+    
+    
+        >>> from dynetx.dashboard.server import create_server
+        >>> create_server(port=0)
+    """
     app = DashboardServerState()
     handler = _make_handler()
     server = ThreadingHTTPServer((host, port), handler)
@@ -527,13 +552,16 @@ def _launch_server(host, port):
 
 
 def build_parser():
-    """Return the command-line parser for the dashboard entry point.
-
-    Examples
-    --------
-    >>> from dynetx.dashboard.server import build_parser
-    >>> build_parser()
-"""
+    """
+    Return the command-line parser for the dashboard entry point.
+    
+    Example::
+    
+    
+    
+        >>> from dynetx.dashboard.server import build_parser
+        >>> build_parser()
+    """
     parser = argparse.ArgumentParser(
         prog="dynetx_dashboard",
         description="Launch the DyNetx browser dashboard.",
@@ -545,24 +573,16 @@ def build_parser():
 
 
 def main(argv=None):
-    """Run the dashboard server from the command line.
-
-    Parameters
-    ----------
-    argv : list[str], optional
-        Argument vector to parse instead of ``sys.argv``.
-
-    Returns
-    -------
-    int
-        Process exit status.
+    """
+    Run the dashboard server from the command line.
     
-
-    Examples
-    --------
-    >>> from dynetx.dashboard.server import main
-    >>> main(["--no-browser"])
-"""
+    Example::
+    
+    
+    
+        >>> from dynetx.dashboard.server import main
+        >>> main(["--no-browser"])
+    """
     parser = build_parser()
     args = parser.parse_args(argv)
     bind_host = args.host
@@ -611,23 +631,23 @@ _DASHBOARD_HTML = """
       --input-border: #cbd5e1;
       --input-focus-border: #4f46e5;
       --input-focus-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-      
+
       --card-bg: #f8fafc;
       --card-border: #cbd5e1;
       --card-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-      
+
       --tab-bg: transparent;
       --tab-color: #475569;
       --tab-active-bg: #4f46e5;
       --tab-active-color: #ffffff;
       --tab-active-border: #4f46e5;
-      
+
       --btn-secondary-bg: #ffffff;
       --btn-secondary-border: #cbd5e1;
       --btn-secondary-color: #334155;
       --btn-secondary-hover-bg: #f1f5f9;
       --btn-secondary-hover-border: #94a3b8;
-      
+
       --logo-filter: invert(0.85);
       --scrollbar-track: #cbd5e1;
       --scrollbar-thumb: #94a3b8;
@@ -647,23 +667,23 @@ _DASHBOARD_HTML = """
       --input-border: rgba(15, 23, 42, 1);
       --input-focus-border: rgba(99, 102, 241, 0.8);
       --input-focus-shadow: 0 10px rgba(99, 102, 241, 0.5);
-      
+
       --card-bg: rgba(2, 6, 23, 0.4);
       --card-border: rgba(15, 23, 42, 1);
       --card-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-      
+
       --tab-bg: transparent;
       --tab-color: #94a3b8;
       --tab-active-bg: rgba(30, 41, 59, 0.8);
       --tab-active-color: #ffffff;
       --tab-active-border: rgba(255, 255, 255, 0.1);
-      
+
       --btn-secondary-bg: rgba(30, 41, 59, 0.45);
       --btn-secondary-border: rgba(255, 255, 255, 0.05);
       --btn-secondary-color: #cbd5e1;
       --btn-secondary-hover-bg: rgba(15, 23, 42, 0.8);
       --btn-secondary-hover-border: rgba(255, 255, 255, 0.1);
-      
+
       --logo-filter: none;
       --scrollbar-track: #1e293b;
       --scrollbar-thumb: #475569;
@@ -1335,15 +1355,15 @@ _DASHBOARD_HTML = """
       background-color: #f1f5f9 !important;
       border-bottom: 1px solid #cbd5e1 !important;
     }
-    body[data-theme="day"] input[type="number"], 
-    body[data-theme="day"] input[type="file"], 
+    body[data-theme="day"] input[type="number"],
+    body[data-theme="day"] input[type="file"],
     body[data-theme="day"] select {
       background-color: #ffffff !important;
       border: 1px solid #cbd5e1 !important;
       color: #1e293b !important;
     }
-    body[data-theme="day"] input[type="number"]:focus, 
-    body[data-theme="day"] input[type="file"]:focus, 
+    body[data-theme="day"] input[type="number"]:focus,
+    body[data-theme="day"] input[type="file"]:focus,
     body[data-theme="day"] select:focus {
       border-color: #4f46e5 !important;
       box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
@@ -1663,7 +1683,7 @@ _DASHBOARD_HTML = """
           </div>
           <button class="icon-button compact-icon-button" onclick="toggleAdvancedControls()" id="adv-toggle-btn" title="Advanced controls" aria-label="Advanced controls" style="flex-shrink: 0;">⌄</button>
         </div>
-        
+
         <!-- Advanced Collapsible Area -->
         <div id="advanced-controls-panel" style="display: none; border-top: 1px solid var(--panel-border); padding-top: 10px; margin-top: 2px; flex-direction: column; gap: 12px;">
           <div class="floating-controls-grid" style="display: grid; gap: 10px; grid-template-columns: 1.15fr 1fr 1fr auto; align-items: end;">

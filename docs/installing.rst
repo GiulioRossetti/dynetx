@@ -41,7 +41,7 @@ You can install from source by downloading a source archive file (tar.gz or zip)
 -------------------
 Source archive file
 -------------------
-Download the source (tar.gz or zip file) from pypl_  or get the latest development version from GitHub_ 
+Download the source (tar.gz or zip file) from pypl_  or get the latest development version from GitHub_
 
 Unpack and change directory to the source directory (it should have the files README.txt and setup.py).
 
@@ -93,7 +93,7 @@ To use DyNetx you need Python 2.7, 3.2 or later.
 
 The easiest way to get Python and most optional packages is to install the Enthought Python distribution “Canopy” or using Anaconda.
 
-There are several other distributions that contain the key packages you need for scientific computing. 
+There are several other distributions that contain the key packages you need for scientific computing.
 
 -----------------
 Required packages

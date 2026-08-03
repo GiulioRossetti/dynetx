@@ -68,7 +68,7 @@ def draw_snapshot(G, t=None, ax=None, layout="spring", pos=None, with_labels=Tru
     ----------
     No publication is associated with this rendering helper; it is a
     convenience function for the DyNetx documentation and dashboard.
-    
+
 
     Examples
     --------
@@ -118,7 +118,7 @@ def plot_temporal_summary(G, ax=None, kind="interactions", title=None, color="ta
     -------
     matplotlib.axes.Axes
         The axes used for rendering.
-    
+
 
     Examples
     --------
@@ -182,7 +182,7 @@ def plot_activity_heatmap(G, ax=None, title=None, cmap="Blues", sort_nodes=True,
     -------
     matplotlib.axes.Axes
         The axes used for rendering.
-    
+
 
     Examples
     --------
@@ -230,7 +230,7 @@ def compare_snapshots(G, t1, t2, layout="spring", title=None, **kwargs):
     -------
     tuple
         Matplotlib figure and axes array.
-    
+
 
     Examples
     --------

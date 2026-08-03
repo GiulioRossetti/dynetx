@@ -139,7 +139,7 @@ def community_detection_over_time(G, algorithm="louvain", window=1, step=1, incl
     If ``window`` is 1, the helper behaves like per-snapshot detection. For
     larger windows, it performs sliding-window community detection and returns
     a mapping keyed by ``(start, end)`` tuples.
-    
+
 
     Examples
     --------

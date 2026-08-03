@@ -8,7 +8,7 @@ class BipartiteDynGraph(DynGraph):
 
     The class extends :class:`dynetx.classes.dyngraph.DynGraph` with simple
     partition management helpers and bipartite-specific summary methods.
-    
+
 
     Examples
     --------
@@ -121,7 +121,7 @@ class BipartiteDynGraph(DynGraph):
         DynGraph
             Projection graph with temporal interactions induced by shared
             neighbors.
-        
+
 
         Examples
         --------
@@ -133,14 +133,14 @@ class BipartiteDynGraph(DynGraph):
         proj = DynGraph(edge_removal=self.edge_removal)
         nodes = self.top if target == 'top' else self.bottom
         other = self.bottom if target == 'top' else self.top
-        
+
         tids = self.temporal_snapshots_ids()
         for t in tids:
             sg = self.to_networkx_graph(t=t)
             active = set(self.nodes(t=t))
             active_target = nodes & active
             active_other = other & active
-            
+
             for w in active_other:
                 neighbors = list(sg.neighbors(w))
                 target_neighbors = [n for n in neighbors if n in active_target]
@@ -167,7 +167,7 @@ class BipartiteDynGraph(DynGraph):
                 neighbors = list(sg.neighbors(v))
                 if len(neighbors) < 2:
                     continue
-                
+
                 shared_count = 0
                 for u, w in combinations(neighbors, 2):
                     common = set(sg.neighbors(u)) & set(sg.neighbors(w))
